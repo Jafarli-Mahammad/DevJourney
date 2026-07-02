@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Tests/" />
+  <Project Path="Application\Application.csproj" />
+  <Project Path="DataAccessLayer\DataAccessLayer.csproj" />
+  <Project Path="Devjourney\Devjourney.csproj" />
+  <Project Path="Domain\Domain.csproj" />
+  <Project Path="Infrastructure\Infrastructure.csproj" />
+  <Project Path="Repository\Repository.csproj" />
+</Solution>
