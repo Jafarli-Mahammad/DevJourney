@@ -2,7 +2,7 @@
 
 namespace Domain.Models.Entities.Student
 {
-    public class Skill : AuditableEntity
+    public class Langauge : AuditableEntity
     {
         public string Name { get; set; }
 

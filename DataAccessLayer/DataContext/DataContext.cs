@@ -14,7 +14,7 @@ namespace DataAccessLayer.DataContext
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DbSet<StudentProfile> StudentProfiles { get; set; }
-        public DbSet<Skill> Skills { get; set; }
+        public DbSet<Langauge> Skills { get; set; }
         public DbSet<Language> Languages { get; set; }
 
 

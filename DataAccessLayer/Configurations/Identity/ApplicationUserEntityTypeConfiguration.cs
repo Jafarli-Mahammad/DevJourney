@@ -1,4 +1,5 @@
-﻿using Domain.Models.Entities.Identity;
+﻿using DataAccessLayer.Configurations.Helper;
+using Domain.Models.Entities.Identity;
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,12 +10,9 @@ namespace DataAccessLayer.Configurations.Identity
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.Property(m => m.FirstName).HasColumnType("nvarchar").HasMaxLength(250).IsRequired();
-            builder.Property(m => m.LastName).HasColumnType("nvarchar").HasMaxLength(250).IsRequired();
-            builder.Property(m => m.CreatedAt).HasColumnType("datetime2").IsRequired();
-            builder.Property(m => m.LastModifiedAt).HasColumnType("datetime2");
-            builder.Property(m => m.DeletedAt).HasColumnType("datetime2");
-            builder.Property(m => m.IsDeleted).IsRequired();
+            builder.Property(m => m.FirstName).HasMaxLength(250).IsRequired();
+            builder.Property(m => m.LastName).HasMaxLength(250).IsRequired();
+            builder.ConfigureAuditable();
 
             builder.HasKey(m => m.Id);
             builder.ToTable("ApplicationUsers", "Identity");
