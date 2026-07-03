@@ -1,6 +1,4 @@
-﻿using Domain.Models.Concrates;
-
-namespace Domain.Models.Entities.Student
+﻿namespace Domain.Models.Entities.Student
 {
     public class StudentSkill
     {
@@ -8,6 +6,6 @@ namespace Domain.Models.Entities.Student
 
         public StudentProfile StudentProfile { get; set; }
         public Guid SkillId { get; set; }
-        public Skill Skill { get; set; }
+        public Langauge Skill { get; set; }
     }
 }
