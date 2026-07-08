@@ -1,5 +1,5 @@
 ﻿using DataAccessLayer.Configurations.Helper;
-using Domain.Models.Entities.Identity;
+using DataAccessLayer.IdentityEntities;
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,10 +16,6 @@ namespace DataAccessLayer.Configurations.Identity
 
             builder.HasKey(m => m.Id);
             builder.ToTable("ApplicationUsers", "Identity");
-
-            builder.HasOne<StudentProfile>()
-                .WithOne(s => s.ApplicationUser)
-                .HasForeignKey<StudentProfile>(s => s.ApplicationUserId);
         }
     }
 }

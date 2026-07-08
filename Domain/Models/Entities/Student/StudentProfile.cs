@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Concrates;
-using Domain.Models.Entities.Identity;
 using Domain.Models.Enums;
 
 namespace Domain.Models.Entities.Student
@@ -16,10 +15,7 @@ namespace Domain.Models.Entities.Student
         public ExperienceLevel Experience { get; set; }
         public string Achievements { get; set; }
         public string? Bio {  get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-
         public WorkFormat PreferredWorkFormat { get; set; }
-
         public ICollection<StudentSkill> StudentSkills { get; set; }
         public ICollection<StudentLanguage> StudentLanguages { get; set; }
     }

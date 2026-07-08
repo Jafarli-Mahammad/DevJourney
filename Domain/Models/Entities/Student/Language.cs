@@ -1,4 +1,4 @@
-﻿using Domain.Models.Concrates;
+using Domain.Models.Concrates;
 
 namespace Domain.Models.Entities.Student
 {

@@ -5,5 +5,4 @@
   <Project Path="Devjourney\Devjourney.csproj" />
   <Project Path="Domain\Domain.csproj" />
   <Project Path="Infrastructure\Infrastructure.csproj" />
-  <Project Path="Repository\Repository.csproj" />
 </Solution>

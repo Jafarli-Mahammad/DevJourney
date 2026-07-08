@@ -1,4 +1,4 @@
-﻿using Domain.Models.Entities.Identity;
+﻿using DataAccessLayer.IdentityEntities;
 using Domain.Models.Entities.Student;
 using Domain.Models.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace DataAccessLayer.DataContext
+namespace DataAccessLayer.DataContexts
 {
     public class DataContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DbSet<StudentProfile> StudentProfiles { get; set; }
-        public DbSet<Langauge> Skills { get; set; }
+        public DbSet<Skill> Skills { get; set; }
         public DbSet<Language> Languages { get; set; }
 
 
@@ -25,6 +25,7 @@ namespace DataAccessLayer.DataContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("Identity");
             base.OnModelCreating(modelBuilder);  // this line
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
         }

@@ -1,7 +1,6 @@
 ﻿using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DataAccessLayer.Configurations.Helper;
 
 namespace DataAccessLayer.Configurations
 {

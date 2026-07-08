@@ -1,9 +1,7 @@
-﻿using Domain.Models.Concrates;
-using Domain.Models.Interfaces;
+﻿using Domain.Models.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-
-namespace Domain.Models.Entities.Identity
+namespace DataAccessLayer.IdentityEntities
 {
     public class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     {
