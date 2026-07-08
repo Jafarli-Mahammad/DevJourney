@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Configurations.Helper;
+using DataAccessLayer.IdentityEntities;
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,6 +24,11 @@ namespace DataAccessLayer.Configurations
 
             builder.HasKey(s => s.Id);
             builder.ToTable("StudentProfiles", "Student");
+
+            builder.HasOne<ApplicationUser>()
+                .WithOne()
+                .HasForeignKey<StudentProfile>(s => s.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

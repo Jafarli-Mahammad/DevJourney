@@ -1,5 +1,8 @@
-using DataAccessLayer.DataContext;
-using Domain.Models.Entities.Identity;
+using Application.Behaviors;
+using Autofac.Core;
+using DataAccessLayer.DataContexts;
+using DataAccessLayer.IdentityEntities;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +20,8 @@ public partial class Program
             .AddDefaultTokenProviders();
 
         builder.Services.AddHttpContextAccessor();
+
+        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 
         var app = builder.Build();

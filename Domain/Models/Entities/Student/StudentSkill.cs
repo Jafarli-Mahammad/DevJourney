@@ -3,9 +3,8 @@
     public class StudentSkill
     {
         public Guid StudentProfileId { get; set; }
-
         public StudentProfile StudentProfile { get; set; }
         public Guid SkillId { get; set; }
-        public Langauge Skill { get; set; }
+        public Skill Skill { get; set; }
     }
 }

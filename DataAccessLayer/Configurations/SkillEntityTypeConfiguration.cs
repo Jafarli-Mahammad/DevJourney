@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataAccessLayer.Configurations
 {
-    public class SkillEntityTypeConfiguration : IEntityTypeConfiguration<Langauge>
+    public class SkillEntityTypeConfiguration : IEntityTypeConfiguration<Skill>
     {
-        public void Configure(EntityTypeBuilder<Langauge> builder)
+        public void Configure(EntityTypeBuilder<Skill> builder)
         {
             builder.Property(s => s.Name).IsRequired().HasMaxLength(100);
             builder.ConfigureAuditable();
