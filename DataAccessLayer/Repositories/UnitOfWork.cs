@@ -1,5 +1,7 @@
 ﻿using Application.Repositories;
 using DataAccessLayer.DataContexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccessLayer.Repositories
 {
@@ -11,6 +13,9 @@ namespace DataAccessLayer.Repositories
         {
             this.dataContext = dataContext;
         }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+            => await dataContext.Database.BeginTransactionAsync(cancellationToken);
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

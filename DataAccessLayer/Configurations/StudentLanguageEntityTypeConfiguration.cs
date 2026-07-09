@@ -8,7 +8,7 @@ namespace DataAccessLayer.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentLanguage> builder)
         {
-            builder.Property(s => s.ProficiencyLevel).HasMaxLength(10).IsRequired();
+            builder.Property(s => s.ProficiencyLevel).HasConversion<string>();
             builder.Property(s => s.StudentProfileId).IsRequired();
             builder.Property(s => s.LanguageId).IsRequired();
 

@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using Application.Modules.Languages;
+using Application.Modules.Skills;
+using AutoMapper;
+using Domain.Models.Entities.Student;
 
 namespace Application.Mappings
 {
@@ -6,7 +9,8 @@ namespace Application.Mappings
     {
         public MappingProfile()
         {
-            
+            CreateMap<Skill, SkillDto>();
+            CreateMap<Language, LanguageDto>();
         }
     }
 }
