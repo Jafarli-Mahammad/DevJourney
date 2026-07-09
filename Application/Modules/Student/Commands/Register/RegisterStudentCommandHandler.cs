@@ -32,46 +32,46 @@ namespace Application.Modules.Student.Commands.Register
 
         public async Task<Guid> Handle(RegisterStudentCommand request, CancellationToken cancellationToken)
         {
-            var userId = await authService.RegisterAsync(request.FirstName, request.LastName, request.UserName, request.Email, request.Password);
+            using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
 
-            var profile = new StudentProfile
+            try
             {
-                ApplicationUserId = userId,
-                Age = request.Age,
-                Location = request.Location,
-                Role = request.Role,
-                CVUrl = request.CVUrl,
-                LinkedinUrl = request.LinkedinUrl,
-                GitHubUrl = request.GitHubUrl,
-                Experience = request.Experience,
-                Achievements = request.Achievements,
-                Bio = request.Bio,
-                PreferredWorkFormat = request.PreferredWorkFormat
-            };
+                var userId = await authService.RegisterAsync(
+                    request.FirstName, request.LastName,
+                    request.UserName, request.Email, request.Password);
 
-            if (request.SkillIds?.Any() == true)
-            {
-                profile.StudentSkills = request.SkillIds.Select(skillId => new StudentSkill
+                var profile = new StudentProfile
                 {
-                    SkillId = skillId,
-                    StudentProfileId = profile.Id
-                }).ToList();
-            }
+                    ApplicationUserId = userId,
+                    Age = request.Age,
+                    Location = request.Location,
+                    Role = request.Role,
+                    CVUrl = request.CVUrl,
+                    LinkedinUrl = request.LinkedinUrl,
+                    GitHubUrl = request.GitHubUrl,
+                    Experience = request.Experience,
+                    Achievements = request.Achievements,
+                    Bio = request.Bio,
+                    PreferredWorkFormat = request.PreferredWorkFormat
+                };
 
-            if (request.Languages?.Any() == true)
+                foreach (var skillId in request.SkillIds ?? [])
+                    profile.AddSkill(skillId);
+
+                foreach (var lang in request.Languages ?? [])
+                    profile.AddLanguage(lang.LanguageId, lang.ProficiencyLevel);
+
+                await studentProfileRepository.AddAsync(profile, cancellationToken);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+                return userId;
+            }
+            catch
             {
-                profile.StudentLanguages = request.Languages.Select(l => new StudentLanguage
-                {
-                    LanguageId = l.LanguageId,
-                    ProficiencyLevel = l.ProficiencyLevel,
-                    StudentProfileId = profile.Id
-                }).ToList();
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
             }
-
-            await studentProfileRepository.AddAsync(profile, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return userId;
         }
     }
 }

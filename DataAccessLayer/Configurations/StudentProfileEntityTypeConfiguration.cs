@@ -22,6 +22,9 @@ namespace DataAccessLayer.Configurations
             builder.Property(s => s.ApplicationUserId).IsRequired();
             builder.ConfigureAuditable();
 
+            builder.Navigation(s => s.StudentSkills).HasField("_studentSkills");
+            builder.Navigation(s => s.StudentLanguages).HasField("_studentLanguages");
+
             builder.HasKey(s => s.Id);
             builder.ToTable("StudentProfiles", "Student");
 

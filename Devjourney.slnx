@@ -4,5 +4,4 @@
   <Project Path="DataAccessLayer\DataAccessLayer.csproj" />
   <Project Path="Devjourney\Devjourney.csproj" />
   <Project Path="Domain\Domain.csproj" />
-  <Project Path="Infrastructure\Infrastructure.csproj" />
 </Solution>

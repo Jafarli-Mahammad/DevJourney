@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Concrates;
+using Domain.Models.Enums;
 
 namespace Domain.Models.Entities.Student
 {
@@ -10,7 +11,7 @@ namespace Domain.Models.Entities.Student
         public Guid LanguageId { get; set; }
         public Language Language { get; set; }
 
-        public string ProficiencyLevel { get; set; }
+        public LanguageProficiencyLevel ProficiencyLevel { get; set; }
 
     }
 }
