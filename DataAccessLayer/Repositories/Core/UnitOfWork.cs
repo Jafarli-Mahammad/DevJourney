@@ -1,6 +1,5 @@
-﻿using Application.Repositories;
+using Application.Repositories;
 using DataAccessLayer.DataContexts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccessLayer.Repositories

@@ -5,8 +5,8 @@ namespace DataAccessLayer.IdentityEntities
 {
     public class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        //public string FirstName { get; set; }
+        //public string LastName { get; set; }
         public Guid? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid? LastModifiedBy { get; set; }

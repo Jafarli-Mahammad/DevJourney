@@ -1,4 +1,7 @@
 ﻿using DataAccessLayer.IdentityEntities;
+using Domain.Models.Entities.Company;
+using Domain.Models.Entities.Partner;
+using Domain.Models.Entities.University;
 using Domain.Models.Entities.Student;
 using Domain.Models.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +16,9 @@ namespace DataAccessLayer.DataContexts
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        public DbSet<CompanyProfile> CompanyProfiles { get; set; }
+        public DbSet<UniversityProfile> UniversityProfiles { get; set; }
+        public DbSet<PartnerProfile> PartnerProfiles { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Language> Languages { get; set; }

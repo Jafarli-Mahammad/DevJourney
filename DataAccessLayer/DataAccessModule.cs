@@ -20,6 +20,18 @@ namespace DataAccessLayer
                 .As<IStudentProfileRepository>()
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<CompanyProfileRepository>()
+                .As<ICompanyProfileRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<UniversityProfileRepository>()
+                .As<IUniversityProfileRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<PartnerProfileRepository>()
+                .As<IPartnerProfileRepository>()
+                .InstancePerLifetimeScope();
+
             builder.RegisterType<SkillRepository>()
                 .As<ISkillRepository>()
                 .InstancePerLifetimeScope();

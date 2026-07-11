@@ -1,8 +1,8 @@
-﻿using Domain.Models.Entities.Student;
+using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DataAccessLayer.Configurations
+namespace DataAccessLayer.Configurations.Student
 {
     public class StudentLanguageEntityTypeConfiguration : IEntityTypeConfiguration<StudentLanguage>
     {

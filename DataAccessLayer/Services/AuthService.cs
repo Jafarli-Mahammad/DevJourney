@@ -20,12 +20,10 @@ namespace DataAccessLayer.Services
             return await userManager.CheckPasswordAsync(user, password);
         }
 
-        public async Task<Guid> RegisterAsync(string firstName, string lastName, string userName, string email, string password)
+        public async Task<Guid> RegisterAsync(string userName, string email, string password)
         {
             var user = new ApplicationUser
             {
-                FirstName = firstName,
-                LastName = lastName,
                 UserName = userName,
                 Email = email,
             };
