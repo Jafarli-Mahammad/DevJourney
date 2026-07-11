@@ -1,10 +1,10 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Application.Modules.Student.Commands.Register
 {
-    public class RegisterStudentCommandValidator : AbstractValidator<RegisterStudentCommand>
+    public class StudentRegisterRequestValidator : AbstractValidator<StudentRegisterRequest>
     {
-        public RegisterStudentCommandValidator()
+        public StudentRegisterRequestValidator()
         {
             RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage("First name is required.")
@@ -31,8 +31,8 @@ namespace Application.Modules.Student.Commands.Register
             RuleFor(x => x.Age)
                 .InclusiveBetween(16, 100).WithMessage("Age must be between 16 and 100.");
 
-            RuleFor(x => x.Role)
-                .IsInEnum().WithMessage("Invalid role.");
+            // RuleFor(x => x.Role)
+            //     .IsInEnum().WithMessage("Invalid role.");
 
             RuleFor(x => x.Experience)
                 .IsInEnum().WithMessage("Invalid experience level.");

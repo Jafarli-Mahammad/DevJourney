@@ -6,9 +6,11 @@ namespace Domain.Models.Entities.Student
     public class StudentProfile : AuditableEntity
     {
         public Guid ApplicationUserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public int Age { get; set; }
         public string? Location { get; set; }
-        public PrimaryRole Role { get; set; }
+        //public PrimaryRole Role { get; set; }
         public string? CVUrl { get; set; }
         public string? LinkedinUrl { get; set; }
         public string? GitHubUrl { get; set; }

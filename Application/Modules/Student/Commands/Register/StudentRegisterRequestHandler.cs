@@ -1,4 +1,4 @@
-﻿using Application.Repositories;
+using Application.Repositories;
 using Application.Services;
 using AutoMapper;
 using Domain.Models.Entities.Student;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Modules.Student.Commands.Register
 {
-    public class RegisterStudentCommandHandler : IRequestHandler<RegisterStudentCommand, Guid>
+    public class StudentRegisterRequestHandler : IRequestHandler<StudentRegisterRequest, Guid>
     {
         private readonly IStudentProfileRepository studentProfileRepository;
         private readonly ISkillRepository skillRepository;
@@ -16,7 +16,7 @@ namespace Application.Modules.Student.Commands.Register
         private readonly ILanguageRepository languageRepository;
         private readonly IAuthService authService;
 
-        public RegisterStudentCommandHandler( 
+        public StudentRegisterRequestHandler(
             IStudentProfileRepository studentProfileRepository,
             ISkillRepository skillRepository,
             IUnitOfWork unitOfWork,
@@ -30,22 +30,23 @@ namespace Application.Modules.Student.Commands.Register
             this.authService = authService;
         }
 
-        public async Task<Guid> Handle(RegisterStudentCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(StudentRegisterRequest request, CancellationToken cancellationToken)
         {
             using var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 var userId = await authService.RegisterAsync(
-                    request.FirstName, request.LastName,
                     request.UserName, request.Email, request.Password);
 
                 var profile = new StudentProfile
                 {
                     ApplicationUserId = userId,
                     Age = request.Age,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
                     Location = request.Location,
-                    Role = request.Role,
+                    //Role = request.Role,
                     CVUrl = request.CVUrl,
                     LinkedinUrl = request.LinkedinUrl,
                     GitHubUrl = request.GitHubUrl,
