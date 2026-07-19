@@ -34,6 +34,8 @@ public partial class Program
 
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddHttpContextAccessor();
+
         var app = builder.Build();
 
         app.MapGet("/", () => "Hello World!");
@@ -45,6 +47,7 @@ public partial class Program
                 await seeder.SeedAsync();
         }
 
+        app.UseDefaultFiles();
         app.UseStaticFiles();
 
         app.UseSwagger();
@@ -57,9 +60,9 @@ public partial class Program
 
         //app.UseCors("allowAll");
 
-        //app.UseAuthentication();
+        app.UseAuthentication();
 
-        //app.UseAuthorization();
+        app.UseAuthorization();
 
         //app.MapRazorPages();
 

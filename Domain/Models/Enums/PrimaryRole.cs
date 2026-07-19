@@ -4,8 +4,18 @@ using System.Text;
 
 namespace Domain.Models.Enums
 {
+    /// <summary>
+    /// Same role set as Identity.Role lookup seeds / TeamMemberSearch TargetRoles:
+    /// Programmer, Designer, QA, DevOps, PM, Data Analyst, Robotics Developer.
+    /// </summary>
     public enum PrimaryRole
     {
-        Developer, Designer, QA, DataAnalytics, DevOps, PM, RoboticsDev
+        Programmer,
+        Designer,
+        QA,
+        DevOps,
+        PM,
+        DataAnalyst,
+        RoboticsDeveloper
     }
 }

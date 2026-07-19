@@ -182,6 +182,42 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("CompanyProfiles", "Company");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.IdeaField", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LookupIdeaFields", "Identity");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Partner.PartnerProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -242,6 +278,209 @@ namespace DataAccessLayer.Migrations
                         .IsUnique();
 
                     b.ToTable("PartnerProfiles", "Partner");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.CourseType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseTypes", "Identity");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.EventType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventTypes", "Identity");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CreatedAt")
+                        .IsDescending();
+
+                    b.ToTable("Posts", "Posts");
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPostRole", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PostId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("TeamMemberSearchPostRoles", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPostSkill", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PostId", "SkillId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("TeamMemberSearchPostSkills", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamSearchPostIdeaField", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdeaFieldId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PostId", "IdeaFieldId");
+
+                    b.HasIndex("IdeaFieldId");
+
+                    b.ToTable("TeamSearchPostIdeaFields", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Student.Language", b =>
@@ -626,6 +865,248 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens", "Identity");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Post.B2BCoursePromoPost", b =>
+                {
+                    b.HasBaseType("Domain.Models.Entities.Post.Post");
+
+                    b.Property<string>("ApplicationLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ApplicationMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("CourseTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DiscountNote")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("DurationInfo")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventFormat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("HasCertificate")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasDiscount")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LocationOrLink")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("MaxAttendees")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TargetMajor")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasIndex("CourseTypeId");
+
+                    b.ToTable("B2BCoursePromoPosts", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.CorporateEventPost", b =>
+                {
+                    b.HasBaseType("Domain.Models.Entities.Post.Post");
+
+                    b.Property<string>("ApplicationLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ApplicationMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConfidentialityNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventLanguage")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("EventTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("decimal(18, 9)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("decimal(18, 9)");
+
+                    b.Property<int>("MaxAttendees")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("SpecialOccasion")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TargetAudience")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasIndex("EventTypeId");
+
+                    b.ToTable("CorporateEventPosts", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.NetworkingEventPost", b =>
+                {
+                    b.HasBaseType("Domain.Models.Entities.Post.Post");
+
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("decimal(18, 9)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("decimal(18, 9)");
+
+                    b.Property<int>("MaxAttendees")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TicketContact")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.ToTable("NetworkingEventPosts", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPost", b =>
+                {
+                    b.HasBaseType("Domain.Models.Entities.Post.Post");
+
+                    b.Property<string>("AdditionalNote")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("IdeaFieldId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("LookingForAge")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("LookingForLanguageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LookingForLocation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("MembersNeeded")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SocialLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeamName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("WorkMode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("IdeaFieldId");
+
+                    b.HasIndex("LookingForLanguageId");
+
+                    b.ToTable("TeamMemberSearchPosts", "Posts");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamSearchPost", b =>
+                {
+                    b.HasBaseType("Domain.Models.Entities.Post.Post");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.ToTable("TeamSearchPosts", "Posts");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Company.CompanyProfile", b =>
                 {
                     b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
@@ -642,6 +1123,68 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("Domain.Models.Entities.Partner.PartnerProfile", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.Post", b =>
+                {
+                    b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPostRole", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.TeamMemberSearchPost", "Post")
+                        .WithMany("TargetRoles")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPostSkill", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.TeamMemberSearchPost", null)
+                        .WithMany("TargetSkills")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Student.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamSearchPostIdeaField", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.IdeaField", "IdeaField")
+                        .WithMany()
+                        .HasForeignKey("IdeaFieldId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Post.TeamSearchPost", "Post")
+                        .WithMany("IdeaFields")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IdeaField");
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Student.StudentLanguage", b =>
@@ -751,6 +1294,170 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Post.B2BCoursePromoPost", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.CourseType", "CourseType")
+                        .WithMany()
+                        .HasForeignKey("CourseTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Post.Post", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Models.Entities.Post.B2BCoursePromoPost", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Models.Entities.Post.InstructorProfile", "Instructor", b1 =>
+                        {
+                            b1.Property<Guid>("B2BCoursePromoPostId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("LinkedIn")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("InstructorLinkedIn");
+
+                            b1.Property<string>("Name")
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("InstructorName");
+
+                            b1.Property<string>("ReviewsLink")
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)")
+                                .HasColumnName("InstructorReviewsLink");
+
+                            b1.HasKey("B2BCoursePromoPostId");
+
+                            b1.ToTable("B2BCoursePromoPosts", "Posts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("B2BCoursePromoPostId");
+                        });
+
+                    b.Navigation("CourseType");
+
+                    b.Navigation("Instructor")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.CorporateEventPost", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.EventType", "EventType")
+                        .WithMany()
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Post.Post", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Models.Entities.Post.CorporateEventPost", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Domain.Models.Entities.Post.CorporateEventAgendaItem", "Agenda", b1 =>
+                        {
+                            b1.Property<Guid>("PostId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Order")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Order"));
+
+                            b1.Property<string>("Activity")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("nvarchar(255)");
+
+                            b1.Property<string>("Time")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
+
+                            b1.HasKey("PostId", "Order");
+
+                            b1.ToTable("CorporateEventAgendaItems", "Posts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PostId");
+                        });
+
+                    b.Navigation("Agenda");
+
+                    b.Navigation("EventType");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.NetworkingEventPost", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.Post", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Models.Entities.Post.NetworkingEventPost", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Domain.Models.Entities.Post.NetworkingEventStop", "Stops", b1 =>
+                        {
+                            b1.Property<Guid>("PostId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Order")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Order"));
+
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("nvarchar(500)");
+
+                            b1.HasKey("PostId", "Order");
+
+                            b1.ToTable("NetworkingEventStops", "Posts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PostId");
+                        });
+
+                    b.Navigation("Stops");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPost", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.Post", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Models.Entities.Post.TeamMemberSearchPost", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.IdeaField", "IdeaField")
+                        .WithMany()
+                        .HasForeignKey("IdeaFieldId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Student.Language", "LookingForLanguage")
+                        .WithMany()
+                        .HasForeignKey("LookingForLanguageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("IdeaField");
+
+                    b.Navigation("LookingForLanguage");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamSearchPost", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Post.Post", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Models.Entities.Post.TeamSearchPost", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Student.Language", b =>
                 {
                     b.Navigation("StudentLanguages");
@@ -766,6 +1473,18 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("StudentLanguages");
 
                     b.Navigation("StudentSkills");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPost", b =>
+                {
+                    b.Navigation("TargetRoles");
+
+                    b.Navigation("TargetSkills");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Post.TeamSearchPost", b =>
+                {
+                    b.Navigation("IdeaFields");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿using DataAccessLayer.IdentityEntities;
+using DataAccessLayer.IdentityEntities;
+using Domain.Models.Entities;
+using Domain.Models.Entities.Post;
 using Domain.Models.Entities.Company;
 using Domain.Models.Entities.Partner;
 using Domain.Models.Entities.University;
@@ -20,10 +22,18 @@ namespace DataAccessLayer.DataContexts
         public DbSet<UniversityProfile> UniversityProfiles { get; set; }
         public DbSet<PartnerProfile> PartnerProfiles { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<TeamMemberSearchPost> TeamMemberSearchPosts { get; set; }
+        public DbSet<TeamSearchPost> TeamSearchPosts { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Language> Languages { get; set; }
-
-
+        public DbSet<Role> LookupRoles { get; set; }
+        public DbSet<NetworkingEventPost> NetworkingEventPosts { get; set; }
+        public DbSet<CorporateEventPost> CorporateEventPosts { get; set; }
+        public DbSet<B2BCoursePromoPost> B2BCoursePromoPosts { get; set; }
+        public DbSet<EventType> EventTypes { get; set; }
+        public DbSet<CourseType> CourseTypes { get; set; }
+        public DbSet<IdeaField> LookupIdeaFields { get; set; }
         public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;

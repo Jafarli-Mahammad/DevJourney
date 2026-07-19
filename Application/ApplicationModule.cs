@@ -1,4 +1,5 @@
-﻿using Application.Behaviors;
+using Application.Behaviors;
+using Application.Modules.Posts.Notifications;
 using Autofac;
 using AutoMapper;
 using FluentValidation;
@@ -13,10 +14,6 @@ namespace Application
         {
             base.Load(builder);
 
-            //builder.RegisterType<JwtService>()
-            //    .As<IJwtService>()
-            //    .InstancePerLifetimeScope();
-
             //builder.RegisterType<CryptoService>()
             //    .As<ICryptoService>()
             //    .InstancePerLifetimeScope();
@@ -25,11 +22,16 @@ namespace Application
             //.As<IFileService>()
             //.InstancePerLifetimeScope();
 
-            //builder.RegisterType<ValidatorInterceptor>()
-            //    .As<IValidatorInterceptor>()
-            //    .SingleInstance();
+
+            builder.RegisterAssemblyTypes(typeof(PostCreatedNotification).Assembly)
+               .AsClosedTypesOf(typeof(INotificationHandler<>))
+               .InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(ValidationBehavior<,>))
+                .As(typeof(IPipelineBehavior<,>))
+                .InstancePerLifetimeScope();
+
+            builder.RegisterGeneric(typeof(VerifiedAuthorBehaviour<,>))
                 .As(typeof(IPipelineBehavior<,>))
                 .InstancePerLifetimeScope();
 
