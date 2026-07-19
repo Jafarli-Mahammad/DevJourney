@@ -18,7 +18,7 @@ namespace DataAccessLayer.Repositories
         public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? expression = null,
                                                 CancellationToken cancellationToken = default)
         {
-            IQueryable<T> query = DataContext.Set<T>();
+            IQueryable<T> query = DataContext.Set<T>().AsNoTracking();
             if (expression is not null)
                 query = query.Where(expression);
             return await query.ToListAsync(cancellationToken);
@@ -29,7 +29,7 @@ namespace DataAccessLayer.Repositories
             Func<IQueryable<T>, IQueryable<T>>? include = null,
             CancellationToken cancellationToken = default)
         {
-            IQueryable<T> query = DataContext.Set<T>();
+            IQueryable<T> query = DataContext.Set<T>().AsNoTracking();
 
             if (expression is not null)
             {

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Devjourney API QA Harness</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Consolas, "Courier New", monospace; margin: 0; padding: 12px; padding-bottom: 280px; background: #f5f5f5; color: #222; font-size: 13px; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    h2 { font-size: 15px; margin: 0 0 8px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    h3 { font-size: 13px; margin: 12px 0 6px; }
+    section { background: #fff; border: 1px solid #ccc; padding: 12px; margin-bottom: 12px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-bottom: 8px; }
+    label { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #444; }
+    input[type=text], input[type=email], input[type=password], input[type=number], input[type=url],
+    input[type=datetime-local], select, textarea { font: inherit; padding: 4px 6px; min-width: 140px; border: 1px solid #999; }
+    select[multiple] { min-height: 100px; min-width: 220px; }
+    textarea { min-width: 280px; min-height: 60px; }
+    button { font: inherit; padding: 5px 10px; cursor: pointer; }
+    .muted { color: #666; font-size: 11px; }
+    .note { background: #fff3cd; border: 1px solid #e0c35a; padding: 8px; margin-bottom: 12px; }
+    fieldset { border: 1px solid #ddd; margin: 8px 0; padding: 8px; }
+    legend { font-size: 12px; font-weight: bold; }
+    .lang-row, .agenda-row { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+    ul.results { list-style: none; padding: 0; margin: 0; }
+    ul.results li { border-top: 1px solid #ddd; padding: 8px 0; white-space: pre-wrap; word-break: break-word; }
+    #debugPanel { position: fixed; bottom: 0; left: 0; right: 0; height: 240px; background: #1e1e1e; color: #d4d4d4; border-top: 2px solid #666; z-index: 100; display: flex; flex-direction: column; }
+    #debugPanel .bar { padding: 4px 10px; background: #333; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
+    #debugOut { flex: 1; overflow: auto; margin: 0; padding: 8px 10px; white-space: pre-wrap; word-break: break-word; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Devjourney API QA Harness</h1>
+  <p class="muted">Throwaway tool. Serve from API host (e.g. <code>/qa/</code>) for same-origin requests.</p>
+  <div class="note">Create endpoints require Authorization; auth not wired in this harness</div>
+
+  <section>
+    <h2>Config</h2>
+    <div class="row">
+      <label>API base URL (empty = same origin)
+        <input type="text" id="baseUrl" placeholder="http://localhost:5074" style="min-width:280px" />
+      </label>
+    </div>
+  </section>
+
+  <!-- ═══════════════ REGISTRATION ═══════════════ -->
+  <section>
+    <h2>Register — Student</h2>
+    <form id="regStudent" onsubmit="return false;">
+      <div class="row">
+        <label>age <input type="number" name="age" required /></label>
+        <label>firstName <input type="text" name="firstName" required /></label>
+        <label>lastName <input type="text" name="lastName" required /></label>
+        <label>userName <input type="text" name="userName" required /></label>
+        <label>email <input type="email" name="email" required /></label>
+        <label>password <input type="password" name="password" required /></label>
+        <label>location <input type="text" name="location" /></label>
+        <label>cvUrl <input type="url" name="cvUrl" /></label>
+        <label>linkedinUrl <input type="url" name="linkedinUrl" /></label>
+        <label>gitHubUrl <input type="url" name="gitHubUrl" /></label>
+        <label>experience (0-3)
+          <select name="experience">
+            <option value="0">0</option><option value="1">1</option>
+            <option value="2">2</option><option value="3">3</option>
+          </select>
+        </label>
+        <label>preferredWorkFormat (0-2)
+          <select name="preferredWorkFormat">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>achievements <textarea name="achievements" required></textarea></label>
+        <label>bio <textarea name="bio"></textarea></label>
+        <label>skillIds
+          <select name="skillIds" id="studentSkills" multiple></select>
+        </label>
+      </div>
+      <fieldset>
+        <legend>languages [{languageId, proficiencyLevel}]</legend>
+        <div id="studentLangs"></div>
+        <button type="button" onclick="addLangRow('studentLangs')">+ language</button>
+      </fieldset>
+      <button type="button" onclick="submitStudent()">POST /api/Auth/register/student</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Register — Company</h2>
+    <form id="regCompany" onsubmit="return false;">
+      <div class="row">
+        <label>userName <input type="text" name="userName" required /></label>
+        <label>email <input type="email" name="email" required /></label>
+        <label>password <input type="password" name="password" required /></label>
+        <label>companyName <input type="text" name="companyName" required /></label>
+        <label>companySize (0-3)
+          <select name="companySize">
+            <option value="0">0</option><option value="1">1</option>
+            <option value="2">2</option><option value="3">3</option>
+          </select>
+        </label>
+        <label>companySector <input type="text" name="companySector" /></label>
+        <label>websiteUrl <input type="url" name="websiteUrl" /></label>
+        <label>linkedInUrl <input type="url" name="linkedInUrl" /></label>
+        <label>location <input type="text" name="location" /></label>
+        <label>representativeName <input type="text" name="representativeName" /></label>
+        <label>representativeEmail <input type="email" name="representativeEmail" /></label>
+      </div>
+      <button type="button" onclick="submitCompany()">POST /api/Auth/register/company</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Register — University</h2>
+    <form id="regUniversity" onsubmit="return false;">
+      <div class="row">
+        <label>userName <input type="text" name="userName" required /></label>
+        <label>email <input type="email" name="email" required /></label>
+        <label>password <input type="password" name="password" required /></label>
+        <label>universityName <input type="text" name="universityName" required /></label>
+        <label>websiteUrl <input type="url" name="websiteUrl" /></label>
+        <label>location <input type="text" name="location" /></label>
+        <label>representativeName <input type="text" name="representativeName" /></label>
+        <label>representativeEmail <input type="email" name="representativeEmail" /></label>
+      </div>
+      <button type="button" onclick="submitUniversity()">POST /api/Auth/register/University</button>
+    </form>
+  </section>
+
+  <!-- ═══════════════ CREATE POSTS ═══════════════ -->
+  <section>
+    <h2>Create — TeamMemberSearch</h2>
+    <form id="createTms" onsubmit="return false;">
+      <div class="row">
+        <label>ideaFieldId <input type="text" name="ideaFieldId" required /></label>
+        <label>teamName <input type="text" name="teamName" required /></label>
+        <label>membersNeeded <input type="number" name="membersNeeded" required /></label>
+        <label>workMode (0-2)
+          <select name="workMode">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+          </select>
+        </label>
+        <label>socialLink <input type="text" name="socialLink" required /></label>
+        <label>lookingForAge <input type="number" name="lookingForAge" /></label>
+        <label>lookingForLocation <input type="text" name="lookingForLocation" /></label>
+        <label>lookingForLanguageId
+          <select name="lookingForLanguageId" id="tmsLookingLang" class="lang-select">
+            <option value="">—</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>additionalNote <textarea name="additionalNote"></textarea></label>
+        <label>targetRoleIds (one guid per line) <textarea name="targetRoleIds"></textarea></label>
+        <label>targetSkillIds
+          <select name="targetSkillIds" id="tmsSkills" multiple class="skill-select"></select>
+        </label>
+      </div>
+      <button type="button" onclick="submitTms()">POST /api/posts/team-member-search</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Create — TeamSearch</h2>
+    <form id="createTs" onsubmit="return false;">
+      <div class="row">
+        <label>note <textarea name="note"></textarea></label>
+        <label>ideaFieldIds (one guid per line) <textarea name="ideaFieldIds" required></textarea></label>
+      </div>
+      <button type="button" onclick="submitTs()">POST /api/posts/team-search</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Create — NetworkingEvent</h2>
+    <form id="createNet" onsubmit="return false;">
+      <div class="row">
+        <label>organizationName <input type="text" name="organizationName" required /></label>
+        <label>location <input type="text" name="location" required /></label>
+        <label>latitude <input type="number" step="any" name="latitude" /></label>
+        <label>longitude <input type="number" step="any" name="longitude" /></label>
+        <label>startAt <input type="datetime-local" name="startAt" required /></label>
+        <label>endAt <input type="datetime-local" name="endAt" required /></label>
+        <label>maxAttendees <input type="number" name="maxAttendees" required /></label>
+        <label>ticketContact <input type="text" name="ticketContact" /></label>
+        <label>isPaid <select name="isPaid"><option value="false">false</option><option value="true">true</option></select></label>
+        <label>price <input type="number" step="any" name="price" /></label>
+      </div>
+      <div class="row">
+        <label>stops (one per line) <textarea name="stops"></textarea></label>
+      </div>
+      <button type="button" onclick="submitNet()">POST /api/posts/networking-events</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Create — CorporateEvent</h2>
+    <form id="createCorp" onsubmit="return false;">
+      <div class="row">
+        <label>title <input type="text" name="title" required /></label>
+        <label>eventTypeId <input type="text" name="eventTypeId" required /></label>
+        <label>specialOccasion <input type="text" name="specialOccasion" /></label>
+        <label>startAt <input type="datetime-local" name="startAt" required /></label>
+        <label>endAt <input type="datetime-local" name="endAt" required /></label>
+        <label>location <input type="text" name="location" required /></label>
+        <label>latitude <input type="number" step="any" name="latitude" /></label>
+        <label>longitude <input type="number" step="any" name="longitude" /></label>
+        <label>targetAudience <input type="text" name="targetAudience" required /></label>
+        <label>maxAttendees <input type="number" name="maxAttendees" required /></label>
+        <label>confidentialityNote <input type="text" name="confidentialityNote" /></label>
+        <label>applicationMethod (0-4)
+          <select name="applicationMethod">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+          </select>
+        </label>
+        <label>applicationLink <input type="text" name="applicationLink" /></label>
+        <label>eventLanguage <input type="text" name="eventLanguage" /></label>
+        <label>isPaid <select name="isPaid"><option value="false">false</option><option value="true">true</option></select></label>
+        <label>price <input type="number" step="any" name="price" /></label>
+      </div>
+      <fieldset>
+        <legend>agenda [{time, activity}]</legend>
+        <div id="corpAgenda"></div>
+        <button type="button" onclick="addAgendaRow()">+ agenda row</button>
+      </fieldset>
+      <button type="button" onclick="submitCorp()">POST /api/posts/corporate-events</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Create — B2BCoursePromo</h2>
+    <form id="createB2b" onsubmit="return false;">
+      <div class="row">
+        <label>courseName <input type="text" name="courseName" required /></label>
+        <label>title <input type="text" name="title" required /></label>
+        <label>courseTypeId <input type="text" name="courseTypeId" required /></label>
+        <label>eventFormat (0-2)
+          <select name="eventFormat">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+          </select>
+        </label>
+        <label>targetMajor <input type="text" name="targetMajor" required /></label>
+        <label>startAt <input type="datetime-local" name="startAt" required /></label>
+        <label>endAt <input type="datetime-local" name="endAt" required /></label>
+        <label>locationOrLink <input type="text" name="locationOrLink" required /></label>
+        <label>maxAttendees <input type="number" name="maxAttendees" required /></label>
+        <label>durationInfo <input type="text" name="durationInfo" /></label>
+        <label>isPaid <select name="isPaid"><option value="false">false</option><option value="true">true</option></select></label>
+        <label>price <input type="number" step="any" name="price" /></label>
+        <label>hasDiscount <select name="hasDiscount"><option value="false">false</option><option value="true">true</option></select></label>
+        <label>discountNote <input type="text" name="discountNote" /></label>
+        <label>hasCertificate
+          <select name="hasCertificate">
+            <option value="">—</option><option value="true">true</option><option value="false">false</option>
+          </select>
+        </label>
+        <label>applicationMethod (0-4)
+          <select name="applicationMethod">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+          </select>
+        </label>
+        <label>applicationLink <input type="text" name="applicationLink" /></label>
+        <label>instructorName <input type="text" name="instructorName" /></label>
+        <label>instructorLinkedIn <input type="text" name="instructorLinkedIn" /></label>
+        <label>instructorReviewsLink <input type="text" name="instructorReviewsLink" /></label>
+      </div>
+      <div class="row">
+        <label>content <textarea name="content" required style="min-width:400px;min-height:80px"></textarea></label>
+      </div>
+      <button type="button" onclick="submitB2b()">POST /api/posts/b2b-course-promos</button>
+    </form>
+  </section>
+
+  <!-- ═══════════════ BROWSE ═══════════════ -->
+  <section>
+    <h2>Browse — TeamMemberSearch</h2>
+    <form id="browseTms" onsubmit="return false;">
+      <div class="row">
+        <label>RoleIds (one guid per line) <textarea name="RoleIds"></textarea></label>
+        <label>SkillIds
+          <select name="SkillIds" id="browseTmsSkills" multiple class="skill-select"></select>
+        </label>
+        <label>IdeaFieldId <input type="text" name="IdeaFieldId" /></label>
+        <label>Location <input type="text" name="Location" /></label>
+        <label>LanguageId
+          <select name="LanguageId" id="browseTmsLang" class="lang-select"><option value="">—</option></select>
+        </label>
+        <label>Page <input type="number" name="Page" value="1" /></label>
+        <label>PageSize <input type="number" name="PageSize" value="10" /></label>
+      </div>
+      <button type="button" onclick="browseTms()">GET /api/posts/team-member-search</button>
+    </form>
+    <ul class="results" id="resTms"></ul>
+  </section>
+
+  <section>
+    <h2>Browse — TeamSearch</h2>
+    <form id="browseTs" onsubmit="return false;">
+      <div class="row">
+        <label>IdeaFieldIds (one guid per line) <textarea name="IdeaFieldIds"></textarea></label>
+        <label>Page <input type="number" name="Page" value="1" /></label>
+        <label>PageSize <input type="number" name="PageSize" value="10" /></label>
+      </div>
+      <button type="button" onclick="browseTs()">GET /api/posts/team-search</button>
+    </form>
+    <ul class="results" id="resTs"></ul>
+  </section>
+
+  <section>
+    <h2>Browse — NetworkingEvent</h2>
+    <form id="browseNet" onsubmit="return false;">
+      <div class="row">
+        <label>IsPaid
+          <select name="IsPaid"><option value="">—</option><option value="true">true</option><option value="false">false</option></select>
+        </label>
+        <label>Location <input type="text" name="Location" /></label>
+        <label>StartAtMin <input type="datetime-local" name="StartAtMin" /></label>
+        <label>StartAtMax <input type="datetime-local" name="StartAtMax" /></label>
+        <label>Page <input type="number" name="Page" value="1" /></label>
+        <label>PageSize <input type="number" name="PageSize" value="10" /></label>
+      </div>
+      <button type="button" onclick="browseNet()">GET /api/posts/networking-events</button>
+    </form>
+    <ul class="results" id="resNet"></ul>
+  </section>
+
+  <section>
+    <h2>Browse — CorporateEvent</h2>
+    <form id="browseCorp" onsubmit="return false;">
+      <div class="row">
+        <label>EventTypeId <input type="text" name="EventTypeId" /></label>
+        <label>CompanySector <input type="text" name="CompanySector" /></label>
+        <label>StartAtMin <input type="datetime-local" name="StartAtMin" /></label>
+        <label>StartAtMax <input type="datetime-local" name="StartAtMax" /></label>
+        <label>IsPaid
+          <select name="IsPaid"><option value="">—</option><option value="true">true</option><option value="false">false</option></select>
+        </label>
+        <label>TargetMajor <input type="text" name="TargetMajor" /></label>
+        <label>Page <input type="number" name="Page" value="1" /></label>
+        <label>PageSize <input type="number" name="PageSize" value="10" /></label>
+      </div>
+      <button type="button" onclick="browseCorp()">GET /api/posts/corporate-events</button>
+    </form>
+    <ul class="results" id="resCorp"></ul>
+  </section>
+
+  <section>
+    <h2>Browse — B2BCoursePromo</h2>
+    <form id="browseB2b" onsubmit="return false;">
+      <div class="row">
+        <label>CourseTypeId <input type="text" name="CourseTypeId" /></label>
+        <label>EventFormat
+          <select name="EventFormat"><option value="">—</option><option value="0">0</option><option value="1">1</option><option value="2">2</option></select>
+        </label>
+        <label>IsPaid
+          <select name="IsPaid"><option value="">—</option><option value="true">true</option><option value="false">false</option></select>
+        </label>
+        <label>TargetMajor <input type="text" name="TargetMajor" /></label>
+        <label>StartAtMin <input type="datetime-local" name="StartAtMin" /></label>
+        <label>StartAtMax <input type="datetime-local" name="StartAtMax" /></label>
+        <label>Page <input type="number" name="Page" value="1" /></label>
+        <label>PageSize <input type="number" name="PageSize" value="10" /></label>
+      </div>
+      <button type="button" onclick="browseB2b()">GET /api/posts/b2b-course-promos</button>
+    </form>
+    <ul class="results" id="resB2b"></ul>
+  </section>
+
+  <div id="debugPanel">
+    <div class="bar">
+      <span>Debug — last request / response</span>
+      <button type="button" onclick="document.getElementById('debugOut').textContent=''">clear</button>
+    </div>
+    <pre id="debugOut">(no requests yet)</pre>
+  </div>
+
+<script>
+let skillsCache = [];
+let languagesCache = [];
+
+function base() {
+  return (document.getElementById('baseUrl').value || '').replace(/\/$/, '');
+}
+
+function str(v) {
+  if (v == null) return '';
+  return String(v).trim();
+}
+
+function emptyToNull(v) {
+  const s = str(v);
+  return s === '' ? null : s;
+}
+
+function emptyOmit(obj) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+    if (v === '') continue;
+    if (v === null) { out[k] = null; continue; }
+    out[k] = v;
+  }
+  return out;
+}
+
+function toIso(localVal) {
+  const s = str(localVal);
+  if (!s) return null;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return s;
+  return d.toISOString();
+}
+
+function linesToGuids(text) {
+  return str(text).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+}
+
+function linesToStrings(text) {
+  return str(text).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+}
+
+function selectedValues(sel) {
+  return Array.from(sel.selectedOptions).map(o => o.value).filter(Boolean);
+}
+
+function formData(form) {
+  return new FormData(form);
+}
+
+function fd(form, name) {
+  return form.elements[name] ? form.elements[name].value : '';
+}
+
+async function api(method, path, body) {
+  const url = base() + path;
+  const headers = { 'Accept': 'application/json' };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (window.__qaToken) headers['Authorization'] = 'Bearer ' + window.__qaToken;
+
+  const reqDebug = {
+    method,
+    url,
+    headers: { ...headers, Authorization: headers.Authorization ? 'Bearer ***' : undefined },
+    body: body === undefined ? null : body
+  };
+
+  let status = 0;
+  let resText = '';
+  let resJson = null;
+  try {
+    const res = await fetch(url, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+    status = res.status;
+    resText = await res.text();
+    try { resJson = JSON.parse(resText); } catch { resJson = null; }
+  } catch (err) {
+    resText = String(err);
+  }
+
+  document.getElementById('debugOut').textContent =
+    '=== REQUEST ===\n' + JSON.stringify(reqDebug, null, 2) +
+    '\n\n=== RESPONSE status=' + status + ' ===\n' +
+    (resJson !== null ? JSON.stringify(resJson, null, 2) : resText);
+
+  return { status, text: resText, json: resJson };
+}
+
+function renderItems(listEl, data) {
+  listEl.innerHTML = '';
+  let items = [];
+  if (Array.isArray(data)) items = data;
+  else if (data && Array.isArray(data.items)) items = data.items;
+  else if (data && Array.isArray(data.Items)) items = data.Items;
+  else if (data != null) items = [data];
+
+  if (!items.length) {
+    const li = document.createElement('li');
+    li.textContent = '(no items)\n' + JSON.stringify(data, null, 2);
+    listEl.appendChild(li);
+    return;
+  }
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.textContent = JSON.stringify(item, null, 2);
+    listEl.appendChild(li);
+  }
+}
+
+function fillSkillSelects() {
+  document.querySelectorAll('.skill-select, #studentSkills').forEach(sel => {
+    const keep = new Set(selectedValues(sel));
+    sel.innerHTML = '';
+    for (const s of skillsCache) {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = (s.name || s.id) + ' (' + s.id + ')';
+      if (keep.has(s.id)) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function fillLangSelects() {
+  document.querySelectorAll('.lang-select').forEach(sel => {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">—</option>';
+    for (const l of languagesCache) {
+      const opt = document.createElement('option');
+      opt.value = l.id;
+      opt.textContent = (l.name || l.id) + ' (' + l.id + ')';
+      sel.appendChild(opt);
+    }
+    if (cur) sel.value = cur;
+  });
+}
+
+function addLangRow(containerId) {
+  const div = document.createElement('div');
+  div.className = 'lang-row';
+  const sel = document.createElement('select');
+  sel.className = 'lang-id';
+  sel.innerHTML = '<option value="">— language —</option>';
+  for (const l of languagesCache) {
+    const opt = document.createElement('option');
+    opt.value = l.id;
+    opt.textContent = (l.name || l.id);
+    sel.appendChild(opt);
+  }
+  const prof = document.createElement('select');
+  prof.className = 'lang-prof';
+  for (let i = 0; i <= 5; i++) {
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent = 'proficiencyLevel ' + i;
+    prof.appendChild(opt);
+  }
+  const rm = document.createElement('button');
+  rm.type = 'button';
+  rm.textContent = 'remove';
+  rm.onclick = () => div.remove();
+  div.appendChild(sel);
+  div.appendChild(prof);
+  div.appendChild(rm);
+  document.getElementById(containerId).appendChild(div);
+}
+
+function collectLanguages(containerId) {
+  const rows = document.getElementById(containerId).querySelectorAll('.lang-row');
+  const out = [];
+  rows.forEach(row => {
+    const lid = row.querySelector('.lang-id').value;
+    if (!lid) return;
+    out.push({
+      languageId: lid,
+      proficiencyLevel: parseInt(row.querySelector('.lang-prof').value, 10)
+    });
+  });
+  return out;
+}
+
+function addAgendaRow() {
+  const div = document.createElement('div');
+  div.className = 'agenda-row';
+  div.innerHTML =
+    '<label>time <input type="text" class="ag-time" /></label>' +
+    '<label>activity <input type="text" class="ag-activity" style="min-width:220px" /></label>';
+  const rm = document.createElement('button');
+  rm.type = 'button';
+  rm.textContent = 'remove';
+  rm.onclick = () => div.remove();
+  div.appendChild(rm);
+  document.getElementById('corpAgenda').appendChild(div);
+}
+
+function collectAgenda() {
+  const rows = document.getElementById('corpAgenda').querySelectorAll('.agenda-row');
+  const out = [];
+  rows.forEach(row => {
+    const time = str(row.querySelector('.ag-time').value);
+    const activity = str(row.querySelector('.ag-activity').value);
+    if (!time && !activity) return;
+    out.push({ time, activity });
+  });
+  return out.length ? out : null;
+}
+
+function buildQuery(params) {
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === '') continue;
+    if (Array.isArray(v)) {
+      v.forEach(item => qs.append(k, item));
+    } else {
+      qs.append(k, v);
+    }
+  }
+  const s = qs.toString();
+  return s ? '?' + s : '';
+}
+
+/* ── Register ── */
+
+async function submitStudent() {
+  const f = document.getElementById('regStudent');
+  const body = emptyOmit({
+    age: parseInt(fd(f, 'age'), 10),
+    firstName: str(fd(f, 'firstName')),
+    lastName: str(fd(f, 'lastName')),
+    userName: str(fd(f, 'userName')),
+    email: str(fd(f, 'email')),
+    password: str(fd(f, 'password')),
+    location: emptyToNull(fd(f, 'location')),
+    cvUrl: emptyToNull(fd(f, 'cvUrl')),
+    linkedinUrl: emptyToNull(fd(f, 'linkedinUrl')),
+    gitHubUrl: emptyToNull(fd(f, 'gitHubUrl')),
+    experience: parseInt(fd(f, 'experience'), 10),
+    achievements: str(fd(f, 'achievements')),
+    bio: emptyToNull(fd(f, 'bio')),
+    preferredWorkFormat: parseInt(fd(f, 'preferredWorkFormat'), 10),
+    skillIds: selectedValues(f.elements.skillIds),
+    languages: collectLanguages('studentLangs')
+  });
+  await api('POST', '/api/Auth/register/student', body);
+}
+
+async function submitCompany() {
+  const f = document.getElementById('regCompany');
+  const body = emptyOmit({
+    userName: str(fd(f, 'userName')),
+    email: str(fd(f, 'email')),
+    password: str(fd(f, 'password')),
+    companyName: str(fd(f, 'companyName')),
+    companySize: parseInt(fd(f, 'companySize'), 10),
+    companySector: emptyToNull(fd(f, 'companySector')),
+    websiteUrl: emptyToNull(fd(f, 'websiteUrl')),
+    linkedInUrl: emptyToNull(fd(f, 'linkedInUrl')),
+    location: emptyToNull(fd(f, 'location')),
+    representativeName: emptyToNull(fd(f, 'representativeName')),
+    representativeEmail: emptyToNull(fd(f, 'representativeEmail'))
+  });
+  await api('POST', '/api/Auth/register/company', body);
+}
+
+async function submitUniversity() {
+  const f = document.getElementById('regUniversity');
+  const body = emptyOmit({
+    userName: str(fd(f, 'userName')),
+    email: str(fd(f, 'email')),
+    password: str(fd(f, 'password')),
+    universityName: str(fd(f, 'universityName')),
+    websiteUrl: emptyToNull(fd(f, 'websiteUrl')),
+    location: emptyToNull(fd(f, 'location')),
+    representativeName: emptyToNull(fd(f, 'representativeName')),
+    representativeEmail: emptyToNull(fd(f, 'representativeEmail'))
+  });
+  await api('POST', '/api/Auth/register/University', body);
+}
+
+/* ── Create posts ── */
+
+async function submitTms() {
+  const f = document.getElementById('createTms');
+  const lookingAge = str(fd(f, 'lookingForAge'));
+  const body = emptyOmit({
+    ideaFieldId: str(fd(f, 'ideaFieldId')),
+    teamName: str(fd(f, 'teamName')),
+    membersNeeded: parseInt(fd(f, 'membersNeeded'), 10),
+    workMode: parseInt(fd(f, 'workMode'), 10),
+    socialLink: str(fd(f, 'socialLink')),
+    lookingForAge: lookingAge === '' ? null : parseInt(lookingAge, 10),
+    lookingForLocation: emptyToNull(fd(f, 'lookingForLocation')),
+    lookingForLanguageId: emptyToNull(fd(f, 'lookingForLanguageId')),
+    additionalNote: emptyToNull(fd(f, 'additionalNote')),
+    targetRoleIds: linesToGuids(fd(f, 'targetRoleIds')),
+    targetSkillIds: selectedValues(f.elements.targetSkillIds)
+  });
+  await api('POST', '/api/posts/team-member-search', body);
+}
+
+async function submitTs() {
+  const f = document.getElementById('createTs');
+  const body = emptyOmit({
+    note: emptyToNull(fd(f, 'note')),
+    ideaFieldIds: linesToGuids(fd(f, 'ideaFieldIds'))
+  });
+  await api('POST', '/api/posts/team-search', body);
+}
+
+async function submitNet() {
+  const f = document.getElementById('createNet');
+  const lat = str(fd(f, 'latitude'));
+  const lng = str(fd(f, 'longitude'));
+  const price = str(fd(f, 'price'));
+  const body = emptyOmit({
+    organizationName: str(fd(f, 'organizationName')),
+    location: str(fd(f, 'location')),
+    latitude: lat === '' ? null : Number(lat),
+    longitude: lng === '' ? null : Number(lng),
+    startAt: toIso(fd(f, 'startAt')),
+    endAt: toIso(fd(f, 'endAt')),
+    maxAttendees: parseInt(fd(f, 'maxAttendees'), 10),
+    ticketContact: emptyToNull(fd(f, 'ticketContact')),
+    isPaid: fd(f, 'isPaid') === 'true',
+    price: price === '' ? null : Number(price),
+    stops: linesToStrings(fd(f, 'stops'))
+  });
+  await api('POST', '/api/posts/networking-events', body);
+}
+
+async function submitCorp() {
+  const f = document.getElementById('createCorp');
+  const lat = str(fd(f, 'latitude'));
+  const lng = str(fd(f, 'longitude'));
+  const price = str(fd(f, 'price'));
+  const body = emptyOmit({
+    title: str(fd(f, 'title')),
+    eventTypeId: str(fd(f, 'eventTypeId')),
+    specialOccasion: emptyToNull(fd(f, 'specialOccasion')),
+    startAt: toIso(fd(f, 'startAt')),
+    endAt: toIso(fd(f, 'endAt')),
+    location: str(fd(f, 'location')),
+    latitude: lat === '' ? null : Number(lat),
+    longitude: lng === '' ? null : Number(lng),
+    targetAudience: str(fd(f, 'targetAudience')),
+    maxAttendees: parseInt(fd(f, 'maxAttendees'), 10),
+    confidentialityNote: emptyToNull(fd(f, 'confidentialityNote')),
+    applicationMethod: parseInt(fd(f, 'applicationMethod'), 10),
+    applicationLink: emptyToNull(fd(f, 'applicationLink')),
+    eventLanguage: emptyToNull(fd(f, 'eventLanguage')),
+    isPaid: fd(f, 'isPaid') === 'true',
+    price: price === '' ? null : Number(price),
+    agenda: collectAgenda()
+  });
+  await api('POST', '/api/posts/corporate-events', body);
+}
+
+async function submitB2b() {
+  const f = document.getElementById('createB2b');
+  const price = str(fd(f, 'price'));
+  const hasCert = str(fd(f, 'hasCertificate'));
+  const body = emptyOmit({
+    courseName: str(fd(f, 'courseName')),
+    title: str(fd(f, 'title')),
+    courseTypeId: str(fd(f, 'courseTypeId')),
+    eventFormat: parseInt(fd(f, 'eventFormat'), 10),
+    targetMajor: str(fd(f, 'targetMajor')),
+    startAt: toIso(fd(f, 'startAt')),
+    endAt: toIso(fd(f, 'endAt')),
+    locationOrLink: str(fd(f, 'locationOrLink')),
+    maxAttendees: parseInt(fd(f, 'maxAttendees'), 10),
+    durationInfo: emptyToNull(fd(f, 'durationInfo')),
+    isPaid: fd(f, 'isPaid') === 'true',
+    price: price === '' ? null : Number(price),
+    hasDiscount: fd(f, 'hasDiscount') === 'true',
+    discountNote: emptyToNull(fd(f, 'discountNote')),
+    hasCertificate: hasCert === '' ? null : hasCert === 'true',
+    content: str(fd(f, 'content')),
+    applicationMethod: parseInt(fd(f, 'applicationMethod'), 10),
+    applicationLink: emptyToNull(fd(f, 'applicationLink')),
+    instructorName: emptyToNull(fd(f, 'instructorName')),
+    instructorLinkedIn: emptyToNull(fd(f, 'instructorLinkedIn')),
+    instructorReviewsLink: emptyToNull(fd(f, 'instructorReviewsLink'))
+  });
+  await api('POST', '/api/posts/b2b-course-promos', body);
+}
+
+/* ── Browse ── */
+
+async function browseTms() {
+  const f = document.getElementById('browseTms');
+  const q = buildQuery({
+    RoleIds: linesToGuids(fd(f, 'RoleIds')),
+    SkillIds: selectedValues(f.elements.SkillIds),
+    IdeaFieldId: emptyToNull(fd(f, 'IdeaFieldId')),
+    Location: emptyToNull(fd(f, 'Location')),
+    LanguageId: emptyToNull(fd(f, 'LanguageId')),
+    Page: fd(f, 'Page') || 1,
+    PageSize: fd(f, 'PageSize') || 10
+  });
+  const { json } = await api('GET', '/api/posts/team-member-search' + q);
+  renderItems(document.getElementById('resTms'), json);
+}
+
+async function browseTs() {
+  const f = document.getElementById('browseTs');
+  const q = buildQuery({
+    IdeaFieldIds: linesToGuids(fd(f, 'IdeaFieldIds')),
+    Page: fd(f, 'Page') || 1,
+    PageSize: fd(f, 'PageSize') || 10
+  });
+  const { json } = await api('GET', '/api/posts/team-search' + q);
+  renderItems(document.getElementById('resTs'), json);
+}
+
+async function browseNet() {
+  const f = document.getElementById('browseNet');
+  const q = buildQuery({
+    IsPaid: emptyToNull(fd(f, 'IsPaid')),
+    Location: emptyToNull(fd(f, 'Location')),
+    StartAtMin: toIso(fd(f, 'StartAtMin')),
+    StartAtMax: toIso(fd(f, 'StartAtMax')),
+    Page: fd(f, 'Page') || 1,
+    PageSize: fd(f, 'PageSize') || 10
+  });
+  const { json } = await api('GET', '/api/posts/networking-events' + q);
+  renderItems(document.getElementById('resNet'), json);
+}
+
+async function browseCorp() {
+  const f = document.getElementById('browseCorp');
+  const q = buildQuery({
+    EventTypeId: emptyToNull(fd(f, 'EventTypeId')),
+    CompanySector: emptyToNull(fd(f, 'CompanySector')),
+    StartAtMin: toIso(fd(f, 'StartAtMin')),
+    StartAtMax: toIso(fd(f, 'StartAtMax')),
+    IsPaid: emptyToNull(fd(f, 'IsPaid')),
+    TargetMajor: emptyToNull(fd(f, 'TargetMajor')),
+    Page: fd(f, 'Page') || 1,
+    PageSize: fd(f, 'PageSize') || 10
+  });
+  const { json } = await api('GET', '/api/posts/corporate-events' + q);
+  renderItems(document.getElementById('resCorp'), json);
+}
+
+async function browseB2b() {
+  const f = document.getElementById('browseB2b');
+  const q = buildQuery({
+    CourseTypeId: emptyToNull(fd(f, 'CourseTypeId')),
+    EventFormat: emptyToNull(fd(f, 'EventFormat')),
+    IsPaid: emptyToNull(fd(f, 'IsPaid')),
+    TargetMajor: emptyToNull(fd(f, 'TargetMajor')),
+    StartAtMin: toIso(fd(f, 'StartAtMin')),
+    StartAtMax: toIso(fd(f, 'StartAtMax')),
+    Page: fd(f, 'Page') || 1,
+    PageSize: fd(f, 'PageSize') || 10
+  });
+  const { json } = await api('GET', '/api/posts/b2b-course-promos' + q);
+  renderItems(document.getElementById('resB2b'), json);
+}
+
+/* ── boot ── */
+
+async function loadLookups() {
+  try {
+    const skillsRes = await api('GET', '/api/Lookups/skills');
+    skillsCache = Array.isArray(skillsRes.json) ? skillsRes.json : [];
+  } catch { skillsCache = []; }
+  try {
+    const langsRes = await api('GET', '/api/Lookups/languages');
+    languagesCache = Array.isArray(langsRes.json) ? langsRes.json : [];
+  } catch { languagesCache = []; }
+  fillSkillSelects();
+  fillLangSelects();
+  addLangRow('studentLangs');
+  addAgendaRow();
+}
+
+loadLookups();
+</script>
+</body>
+</html>
