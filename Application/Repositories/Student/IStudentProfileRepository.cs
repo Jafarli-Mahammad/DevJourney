@@ -7,5 +7,7 @@ namespace Application.Repositories
         Task<StudentProfile?> GetByIdAsync(Guid id);
         Task<StudentProfile?> GetByUserIdAsync(Guid applicationUserId);
         Task<bool> ExistsAsync(Guid applicationUserId);
+        Task<List<(StudentProfile Profile, string? Email)>> GetAllWithEmailAsync(CancellationToken cancellationToken = default);
+        Task<(StudentProfile Profile, string? Email)?> GetWithEmailByIdAsync(Guid id, CancellationToken cancellationToken = default);
     }
 }

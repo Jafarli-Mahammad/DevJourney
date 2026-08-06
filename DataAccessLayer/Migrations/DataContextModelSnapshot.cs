@@ -218,6 +218,57 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("LookupIdeaFields", "Identity");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Jury.JuryProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompetitionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JuryCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Specialization")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JuryProfiles", "Identity");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.Partner.PartnerProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -557,121 +608,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Skills", "Student");
                 });
 
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentLanguage", b =>
-                {
-                    b.Property<Guid>("StudentProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ProficiencyLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StudentProfileId", "LanguageId");
-
-                    b.HasIndex("LanguageId");
-
-                    b.ToTable("StudentLanguages", "Student");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Achievements")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("ApplicationUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Bio")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("CVUrl")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Experience")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("GitHubUrl")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("LinkedinUrl")
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PreferredWorkFormat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
-
-                    b.ToTable("StudentProfiles", "Student");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentSkill", b =>
-                {
-                    b.Property<Guid>("StudentProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SkillId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("StudentProfileId", "SkillId");
-
-                    b.HasIndex("SkillId");
-
-                    b.ToTable("StudentSkills", "Student");
-                });
-
             modelBuilder.Entity("Domain.Models.Entities.University.UniversityProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -863,6 +799,74 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", "Identity");
+                });
+
+            modelBuilder.Entity("StudentProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("CVUrl")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("GitHubUrl")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("LinkedinUrl")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ProfessionalRole")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UniversityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("StudentProfiles", "Student");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Post.B2BCoursePromoPost", b =>
@@ -1187,53 +1191,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentLanguage", b =>
-                {
-                    b.HasOne("Domain.Models.Entities.Student.Language", "Language")
-                        .WithMany("StudentLanguages")
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.Entities.Student.StudentProfile", "StudentProfile")
-                        .WithMany("StudentLanguages")
-                        .HasForeignKey("StudentProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Language");
-
-                    b.Navigation("StudentProfile");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentProfile", b =>
-                {
-                    b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.Models.Entities.Student.StudentProfile", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentSkill", b =>
-                {
-                    b.HasOne("Domain.Models.Entities.Student.Skill", "Skill")
-                        .WithMany("StudentSkills")
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.Entities.Student.StudentProfile", "StudentProfile")
-                        .WithMany("StudentSkills")
-                        .HasForeignKey("StudentProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Skill");
-
-                    b.Navigation("StudentProfile");
-                });
-
             modelBuilder.Entity("Domain.Models.Entities.University.UniversityProfile", b =>
                 {
                     b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
@@ -1290,6 +1247,15 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("StudentProfile", b =>
+                {
+                    b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("StudentProfile", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1456,23 +1422,6 @@ namespace DataAccessLayer.Migrations
                         .HasForeignKey("Domain.Models.Entities.Post.TeamSearchPost", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.Language", b =>
-                {
-                    b.Navigation("StudentLanguages");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.Skill", b =>
-                {
-                    b.Navigation("StudentSkills");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Student.StudentProfile", b =>
-                {
-                    b.Navigation("StudentLanguages");
-
-                    b.Navigation("StudentSkills");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Post.TeamMemberSearchPost", b =>

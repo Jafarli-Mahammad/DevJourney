@@ -1,7 +1,14 @@
 <Solution>
+  <Folder Name="/FrontendFrames/">
+    <File Path="..\..\..\Downloads\DevJourney Frames\frontend_screenshots.pdf" />
+  </Folder>
+  <Folder Name="/Route/">
+    <File Path="..\routes.md" />
+  </Folder>
   <Folder Name="/Tests/" />
   <Project Path="Application\Application.csproj" />
   <Project Path="DataAccessLayer\DataAccessLayer.csproj" />
+  <Project Path="DevJourney.Tests/DevJourney.Tests.csproj" />
   <Project Path="Devjourney\Devjourney.csproj" />
   <Project Path="Domain\Domain.csproj" />
 </Solution>

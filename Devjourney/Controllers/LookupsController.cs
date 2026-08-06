@@ -1,4 +1,4 @@
-﻿using Application.Modules.IdeaFields.Queries.GetAll;
+using Application.Modules.IdeaFields.Queries.GetAll;
 using Application.Modules.Languages.Queries.GetAll;
 using Application.Modules.Roles.Queries.GetAll;
 using Application.Modules.Skills.Queries.GetAll;
@@ -18,6 +18,7 @@ namespace Devjourney.Controllers
             this.mediator = mediator;
         }
 
+/*
         [HttpGet("skills")]
         public async Task<IActionResult> GetAllSkills(CancellationToken cancellationToken)
         {
@@ -45,5 +46,6 @@ namespace Devjourney.Controllers
             var result = await mediator.Send(new GetAllIdeaFieldsQuery(), cancellationToken);
             return Ok(result);
         }
+*/
     }
 }

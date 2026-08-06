@@ -5,6 +5,7 @@ using Domain.Models.Entities.Company;
 using Domain.Models.Entities.Partner;
 using Domain.Models.Entities.University;
 using Domain.Models.Entities.Student;
+using Domain.Models.Entities.Jury;
 using Domain.Models.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,7 @@ namespace DataAccessLayer.DataContexts
         public DbSet<UniversityProfile> UniversityProfiles { get; set; }
         public DbSet<PartnerProfile> PartnerProfiles { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<JuryProfile> JuryProfiles { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<TeamMemberSearchPost> TeamMemberSearchPosts { get; set; }
         public DbSet<TeamSearchPost> TeamSearchPosts { get; set; }

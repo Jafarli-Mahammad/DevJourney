@@ -1,5 +1,40 @@
 using DataAccessLayer.Configurations.Helper;
 using DataAccessLayer.IdentityEntities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+public class StudentProfileEntityTypeConfiguration : IEntityTypeConfiguration<StudentProfile>
+{
+    public void Configure(EntityTypeBuilder<StudentProfile> builder)
+    {
+        builder.Property(m => m.FirstName).HasMaxLength(250).IsRequired();
+        builder.Property(m => m.LastName).HasMaxLength(250).IsRequired();
+        builder.Property(m => m.UniversityId).IsRequired(false); // Just the ID
+        
+        // Optional fields
+        builder.Property(s => s.Bio).HasMaxLength(500).IsRequired(false);
+        builder.Property(s => s.ProfessionalRole).HasMaxLength(100).IsRequired(false);
+        builder.Property(s => s.GitHubUrl).HasColumnType("varchar(200)").IsRequired(false);
+        builder.Property(s => s.LinkedinUrl).HasColumnType("varchar(200)").IsRequired(false);
+        builder.Property(s => s.CVUrl).HasColumnType("varchar(200)").IsRequired(false);
+
+        builder.Property(s => s.ApplicationUserId).IsRequired();
+        builder.ConfigureAuditable();
+        builder.HasKey(s => s.Id);
+        builder.ToTable("StudentProfiles", "Student");
+
+        // Only one FK: to ApplicationUser
+        builder.HasOne<ApplicationUser>()
+            .WithOne()
+            .HasForeignKey<StudentProfile>(s => s.ApplicationUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+
+/*
+using DataAccessLayer.Configurations.Helper;
+using DataAccessLayer.IdentityEntities;
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,32 +47,28 @@ namespace DataAccessLayer.Configurations.Student
         {
             builder.Property(m => m.FirstName).HasMaxLength(250).IsRequired();
             builder.Property(m => m.LastName).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.Location).HasMaxLength(100).IsRequired(false);
-            builder.Property(m => m.Role).HasConversion<string>().IsRequired();
+            //builder.Property(s => s.Location).HasMaxLength(100).IsRequired(false);
+            //builder.Property(m => m.Role).HasConversion<string>().IsRequired();
             builder.Property(s => s.CVUrl).HasColumnType("varchar(200)").IsRequired(false);
             builder.Property(s => s.LinkedinUrl).HasColumnType("varchar(200)").IsRequired(false);
             builder.Property(s => s.GitHubUrl).HasColumnType("varchar(200)").IsRequired(false);
-            builder.Property(s => s.Experience).HasConversion<string>().IsRequired();
-            builder.Property(s => s.Achievements).HasMaxLength(250).IsRequired();
+            builder.Property(m => m.ProfessionalRole).HasConversion<string>().IsRequired(false);
+
+            //builder.Property(s => s.Experience).HasConversion<string>().IsRequired();
+            //builder.Property(s => s.Achievements).HasMaxLength(250).IsRequired();
             builder.Property(s => s.Bio).HasMaxLength(500).IsRequired(false);
-            builder.Property(s => s.PreferredWorkFormat).HasConversion<string>().IsRequired();
+            //builder.Property(s => s.PreferredWorkFormat).HasConversion<string>().IsRequired();
             builder.Property(s => s.ApplicationUserId).IsRequired();
 
             // Reverted the commented properties
-            builder.Property(s => s.Name).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.Surname).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.Nickname).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.Email).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.University).HasMaxLength(250).IsRequired();
-            builder.Property(s => s.Password).HasMaxLength(250).IsRequired();
-
             builder.ConfigureAuditable();
 
-            builder.Navigation(s => s.StudentSkills).HasField("_studentSkills");
-            builder.Navigation(s => s.StudentLanguages).HasField("_studentLanguages");
+            //builder.Navigation(s => s.StudentSkills).HasField("_studentSkills");
+            //builder.Navigation(s => s.StudentLanguages).HasField("_studentLanguages");
 
             builder.HasKey(s => s.Id);
             builder.ToTable("StudentProfiles", "Student");
+            
 
             builder.HasOne<ApplicationUser>()
                 .WithOne()
@@ -46,3 +77,4 @@ namespace DataAccessLayer.Configurations.Student
         }
     }
 }
+*/

@@ -26,6 +26,7 @@ namespace Devjourney.Controllers
             this.mediator = mediator;
         }
 
+/*
         // ── Team Member Search ──────────────────────────────────────────────
 
         [HttpPost("team-member-search")]
@@ -220,5 +221,6 @@ namespace Devjourney.Controllers
             if (result is null) return NotFound();
             return Ok(result);
         }
+*/
     }
 }

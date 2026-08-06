@@ -1,3 +1,4 @@
+/*
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -25,3 +26,4 @@ namespace DataAccessLayer.Configurations.Student
         }
     }
 }
+*/
