@@ -57,23 +57,30 @@ public partial class Program
 
         builder.Services.AddSwaggerGen(c =>
         {
-            var securityScheme = new Microsoft.OpenApi.OpenApiSecurityScheme
+            var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
                 Name = "Authorization",
                 Description = "Enter JWT Bearer token",
-                In = Microsoft.OpenApi.ParameterLocation.Header,
-                Type = Microsoft.OpenApi.SecuritySchemeType.Http,
+                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
                 Scheme = "bearer",
                 BearerFormat = "JWT"
             };
 
             c.AddSecurityDefinition("Bearer", securityScheme);
 
-            c.AddSecurityRequirement((doc) => new Microsoft.OpenApi.OpenApiSecurityRequirement
+            c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
             {
                 {
-                    new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer"),
-                    new List<string>()
+                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                    {
+                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                        {
+                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
                 }
             });
         });
