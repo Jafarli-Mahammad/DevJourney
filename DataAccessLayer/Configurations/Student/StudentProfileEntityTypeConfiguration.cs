@@ -13,7 +13,7 @@ namespace DataAccessLayer.Configurations.Student
             builder.Property(m => m.FirstName).HasMaxLength(250).IsRequired();
             builder.Property(m => m.LastName).HasMaxLength(250).IsRequired();
             builder.Property(s => s.Location).HasMaxLength(100).IsRequired(false);
-            //builder.Property(m => m.Role).HasConversion<string>().IsRequired();
+            builder.Property(m => m.Role).HasConversion<string>().IsRequired();
             builder.Property(s => s.CVUrl).HasColumnType("varchar(200)").IsRequired(false);
             builder.Property(s => s.LinkedinUrl).HasColumnType("varchar(200)").IsRequired(false);
             builder.Property(s => s.GitHubUrl).HasColumnType("varchar(200)").IsRequired(false);
@@ -22,6 +22,15 @@ namespace DataAccessLayer.Configurations.Student
             builder.Property(s => s.Bio).HasMaxLength(500).IsRequired(false);
             builder.Property(s => s.PreferredWorkFormat).HasConversion<string>().IsRequired();
             builder.Property(s => s.ApplicationUserId).IsRequired();
+
+            // Reverted the commented properties
+            builder.Property(s => s.Name).HasMaxLength(250).IsRequired();
+            builder.Property(s => s.Surname).HasMaxLength(250).IsRequired();
+            builder.Property(s => s.Nickname).HasMaxLength(250).IsRequired();
+            builder.Property(s => s.Email).HasMaxLength(250).IsRequired();
+            builder.Property(s => s.University).HasMaxLength(250).IsRequired();
+            builder.Property(s => s.Password).HasMaxLength(250).IsRequired();
+
             builder.ConfigureAuditable();
 
             builder.Navigation(s => s.StudentSkills).HasField("_studentSkills");
