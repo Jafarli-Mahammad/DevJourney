@@ -4,22 +4,22 @@ using MediatR;
 namespace Application.Modules.Student.Commands.Register
 {
     public record StudentRegisterRequest(
-        int Age,
         string FirstName,
         string LastName,
         string UserName,
         string Email,
         string Password,
-        string? Location,
         string? CVUrl,
         string? LinkedinUrl,
         string? GitHubUrl,
-        ExperienceLevel Experience,
-        string Achievements,
         string? Bio,
-        WorkFormat PreferredWorkFormat,
-        List<Guid> SkillIds,
-        List<StudentLanguageDto> Languages
+        //int Age,
+        //string? Location,
+        //ExperienceLevel Experience,
+        //string Achievements,
+        //WorkFormat PreferredWorkFormat,
+        //List<Guid> SkillIds,
+        //List<StudentLanguageDto> Languages,
     ) : IRequest<Guid>;
 }
 
