@@ -1,4 +1,4 @@
-﻿using Application.Modules.Company.Commands.Register;
+using Application.Modules.Company.Commands.Register;
 using Application.Modules.Student.Commands.Register;
 using Application.Modules.University.Commands.Register;
 using MediatR;
@@ -42,6 +42,33 @@ namespace Devjourney.Controllers
         {
             var userId = await mediator.Send(request, cancellationToken);
             return StatusCode(201, userId);
+        }
+
+        [HttpPost("register/jury")]
+        public async Task<IActionResult> RegisterJury(
+            [FromBody] Application.Modules.Jury.Commands.Register.JuryRegisterRequest request,
+            CancellationToken cancellationToken)
+        {
+            var profileId = await mediator.Send(request, cancellationToken);
+            return StatusCode(201, profileId);
+        }
+
+        [HttpPost("login/student")]
+        public async Task<IActionResult> LoginStudent(
+            [FromBody] Application.Modules.Student.Commands.Login.StudentLoginRequest request,
+            CancellationToken cancellationToken)
+        {
+            var token = await mediator.Send(request, cancellationToken);
+            return Ok(new { Token = token });
+        }
+
+        [HttpPost("login/jury")]
+        public async Task<IActionResult> LoginJury(
+            [FromBody] Application.Modules.Jury.Commands.Login.JuryLoginRequest request,
+            CancellationToken cancellationToken)
+        {
+            var token = await mediator.Send(request, cancellationToken);
+            return Ok(new { Token = token });
         }
     }
 }

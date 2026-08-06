@@ -4,8 +4,8 @@ namespace Domain.Models.Entities.Student
 {
     public class Language : AuditableEntity
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public ICollection<StudentLanguage> StudentLanguages { get; set; }
+        //public ICollection<StudentLanguage> StudentLanguages { get; set; }
     }
 }

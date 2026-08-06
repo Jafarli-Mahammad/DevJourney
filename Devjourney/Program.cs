@@ -30,13 +30,59 @@ public partial class Program
 
         builder.Services.AddControllers();
 
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var secretKey = builder.Configuration["Jwt:SecretKey"] ?? "DevJourneySuperSecretKey1234567890!@#$";
+            var issuer = builder.Configuration["Jwt:Issuer"] ?? "DevJourney";
+            var audience = builder.Configuration["Jwt:Audience"] ?? "DevJourneyUsers";
+
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = issuer,
+                ValidAudience = audience,
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey))
+            };
+        });
+
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            var securityScheme = new Microsoft.OpenApi.OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Description = "Enter JWT Bearer token",
+                In = Microsoft.OpenApi.ParameterLocation.Header,
+                Type = Microsoft.OpenApi.SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            };
+
+            c.AddSecurityDefinition("Bearer", securityScheme);
+
+            c.AddSecurityRequirement((doc) => new Microsoft.OpenApi.OpenApiSecurityRequirement
+            {
+                {
+                    new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer"),
+                    new List<string>()
+                }
+            });
+        });
 
         builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
+
+        app.UseMiddleware<Devjourney.Middlewares.GlobalExceptionMiddleware>();
 
         app.MapGet("/", () => "Hello World!");
 

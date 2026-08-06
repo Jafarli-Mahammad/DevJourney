@@ -1,4 +1,4 @@
-﻿using Application.Repositories;
+using Application.Repositories;
 using Application.Repositories.Post;
 using Application.Seeder;
 using Application.Services;
@@ -20,6 +20,10 @@ namespace DataAccessLayer
 
             builder.RegisterType<StudentProfileRepository>()
                 .As<IStudentProfileRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<JuryProfileRepository>()
+                .As<IJuryProfileRepository>()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<CompanyProfileRepository>()
@@ -90,6 +94,7 @@ namespace DataAccessLayer
             builder.RegisterType<LanguageSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<RoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<IdeaFieldSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
+            builder.RegisterType<UniversitySeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
 
 
             base.Load(builder);
