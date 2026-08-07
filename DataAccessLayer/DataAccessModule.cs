@@ -46,6 +46,14 @@ namespace DataAccessLayer
                 .As<ILanguageRepository>()
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<ProfessionRepository>()
+                .As<IProfessionRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<MainRoleRepository>()
+                .As<IMainRoleRepository>()
+                .InstancePerLifetimeScope();
+
             builder.RegisterType<RoleRepository>()
                 .As<IRoleRepository>()
                 .InstancePerLifetimeScope();
@@ -92,6 +100,8 @@ namespace DataAccessLayer
 
             builder.RegisterType<SkillSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<LanguageSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
+            builder.RegisterType<ProfessionSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
+            builder.RegisterType<MainRoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<RoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<IdeaFieldSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<UniversitySeeder>().As<IDataSeeder>().InstancePerLifetimeScope();

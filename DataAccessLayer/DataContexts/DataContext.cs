@@ -29,6 +29,10 @@ namespace DataAccessLayer.DataContexts
         public DbSet<TeamSearchPost> TeamSearchPosts { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Profession> Professions { get; set; }
+        public DbSet<MainRole> MainRoles { get; set; }
+        public DbSet<StudentSkill> StudentSkills { get; set; }
+        public DbSet<StudentLanguage> StudentLanguages { get; set; }
         public DbSet<Role> LookupRoles { get; set; }
         public DbSet<NetworkingEventPost> NetworkingEventPosts { get; set; }
         public DbSet<CorporateEventPost> CorporateEventPosts { get; set; }

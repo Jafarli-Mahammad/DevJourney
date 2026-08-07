@@ -1,8 +1,6 @@
-using Application.Exceptions;
+using Application.Modules.Skills;
 using Application.Repositories;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Modules.Student.Queries.GetStudentProfile
 {
@@ -23,19 +21,42 @@ namespace Application.Modules.Student.Queries.GetStudentProfile
                 return null!;
             }
 
+            var profile = data.Value.Profile;
+            var email = data.Value.Email;
+
             return new StudentProfileDto
             {
-                Id = data.Value.Profile.Id,
-                ApplicationUserId = data.Value.Profile.ApplicationUserId,
-                Email = data.Value.Email,
-                FirstName = data.Value.Profile.FirstName,
-                LastName = data.Value.Profile.LastName,
-                UniversityId = data.Value.Profile.UniversityId,
-                Bio = data.Value.Profile.Bio,
-                ProfessionalRole = data.Value.Profile.ProfessionalRole,
-                GitHubUrl = data.Value.Profile.GitHubUrl,
-                LinkedinUrl = data.Value.Profile.LinkedinUrl,
-                CVUrl = data.Value.Profile.CVUrl
+                Id = profile.Id,
+                ApplicationUserId = profile.ApplicationUserId,
+                Email = email,
+                FirstName = profile.FirstName,
+                LastName = profile.LastName,
+                UniversityId = profile.UniversityId,
+                UniversityName = profile.University?.UniversityName,
+                PhoneNumber = profile.PhoneNumber,
+                ProfessionId = profile.ProfessionId,
+                ProfessionName = profile.Profession?.Name,
+                Course = profile.Course,
+                GitHubUrl = profile.GitHubUrl,
+                LinkedinUrl = profile.LinkedinUrl,
+                PortfolioUrl = profile.PortfolioUrl,
+                CVUrl = profile.CVUrl,
+                MainRoleId = profile.MainRoleId,
+                MainRoleName = profile.MainRole?.Name,
+                ExperienceLevel = profile.ExperienceLevel,
+                Bio = profile.Bio,
+                CompletionPercentage = profile.CalculateProfileCompletionPercentage(),
+                Skills = profile.StudentSkills.Select(ss => new SkillDto
+                {
+                    Id = ss.SkillId,
+                    Name = ss.Skill?.Name ?? string.Empty
+                }).ToList(),
+                Languages = profile.StudentLanguages.Select(sl => new StudentLanguageDto
+                {
+                    LanguageId = sl.LanguageId,
+                    LanguageName = sl.Language?.Name,
+                    ProficiencyLevel = sl.ProficiencyLevel
+                }).ToList()
             };
         }
     }

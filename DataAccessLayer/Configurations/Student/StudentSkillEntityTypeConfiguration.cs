@@ -1,4 +1,3 @@
-/*
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,14 +14,13 @@ namespace DataAccessLayer.Configurations.Student
             builder.HasKey(s => new { s.StudentProfileId, s.SkillId });
             builder.ToTable("StudentSkills", "Student");
 
-            //builder.HasOne(ss => ss.StudentProfile)
-            //    .WithMany(sp => sp.StudentSkills)
-            //    .HasForeignKey(ss => ss.StudentProfileId);
+            builder.HasOne(ss => ss.StudentProfile)
+                .WithMany(sp => sp.StudentSkills)
+                .HasForeignKey(ss => ss.StudentProfileId);
 
             builder.HasOne(ss => ss.Skill)
-                .WithMany(s => s.StudentSkills)
+                .WithMany()
                 .HasForeignKey(ss => ss.SkillId);
         }
     }
 }
-*/
