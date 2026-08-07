@@ -1,4 +1,4 @@
-﻿using Application.Seeder;
+using Application.Seeder;
 using DataAccessLayer.DataContexts;
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,7 @@ namespace DataAccessLayer.Seeders
 
         public async Task SeedAsync()
         {
-            var existingNames = await dataContext.Skills
+            var existingNames = await dataContext.Languages
                 .Select(s => s.Name)
                 .ToListAsync();
 

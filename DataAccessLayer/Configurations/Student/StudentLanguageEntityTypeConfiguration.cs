@@ -1,4 +1,3 @@
-/*
 using Domain.Models.Entities.Student;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,9 +20,8 @@ namespace DataAccessLayer.Configurations.Student
                 .HasForeignKey(ss => ss.StudentProfileId);
 
             builder.HasOne(ss => ss.Language)
-                .WithMany(s => s.StudentLanguages)
+                .WithMany()
                 .HasForeignKey(ss => ss.LanguageId);
         }
     }
 }
-*/

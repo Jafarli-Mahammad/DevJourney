@@ -93,11 +93,22 @@ public partial class Program
 
         app.MapGet("/", () => "Hello World!");
 
-        using (var scope = app.Services.CreateScope())
+        try
         {
-            var seeders = scope.ServiceProvider.GetServices<IDataSeeder>();
-            foreach (var seeder in seeders)
-                await seeder.SeedAsync();
+            using (var scope = app.Services.CreateScope())
+            {
+                var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                await dataContext.Database.MigrateAsync();
+
+                var seeders = scope.ServiceProvider.GetServices<IDataSeeder>();
+                foreach (var seeder in seeders)
+                    await seeder.SeedAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred during database migration/seeding on startup.");
         }
 
         app.UseDefaultFiles();

@@ -1,10 +1,11 @@
-﻿namespace Domain.Models.Entities.Student
+namespace Domain.Models.Entities.Student
 {
     public class StudentSkill
     {
         public Guid StudentProfileId { get; set; }
-        public StudentProfile StudentProfile { get; set; }
+        public StudentProfile StudentProfile { get; set; } = null!;
+
         public Guid SkillId { get; set; }
-        public Skill Skill { get; set; }
+        public Skill Skill { get; set; } = null!;
     }
 }

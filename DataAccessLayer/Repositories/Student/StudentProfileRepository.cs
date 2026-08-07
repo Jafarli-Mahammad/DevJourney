@@ -44,18 +44,39 @@ namespace DataAccessLayer.Repositories
 
         public async Task<(StudentProfile Profile, string? Email)?> GetWithEmailByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var item = await (from sp in DataContext.StudentProfiles
-                              where sp.Id == id
-                              join u in DataContext.Users on sp.ApplicationUserId equals u.Id into usersGroup
-                              from u in usersGroup.DefaultIfEmpty()
-                              select new
-                              {
-                                  Profile = sp,
-                                  Email = u != null ? u.Email : null
-                              }).FirstOrDefaultAsync(cancellationToken);
+            var profile = await GetFullProfileByIdAsync(id, cancellationToken);
+            if (profile == null) return null;
 
-            if (item == null) return null;
-            return (item.Profile, item.Email);
+            var user = await DataContext.Users
+                .FirstOrDefaultAsync(u => u.Id == profile.ApplicationUserId, cancellationToken);
+
+            return (profile, user?.Email);
+        }
+
+        public async Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await DataContext.StudentProfiles
+                .Include(sp => sp.University)
+                .Include(sp => sp.Profession)
+                .Include(sp => sp.MainRole)
+                .Include(sp => sp.StudentSkills)
+                    .ThenInclude(ss => ss.Skill)
+                .Include(sp => sp.StudentLanguages)
+                    .ThenInclude(sl => sl.Language)
+                .FirstOrDefaultAsync(sp => sp.Id == id, cancellationToken);
+        }
+
+        public async Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, CancellationToken cancellationToken = default)
+        {
+            return await DataContext.StudentProfiles
+                .Include(sp => sp.University)
+                .Include(sp => sp.Profession)
+                .Include(sp => sp.MainRole)
+                .Include(sp => sp.StudentSkills)
+                    .ThenInclude(ss => ss.Skill)
+                .Include(sp => sp.StudentLanguages)
+                    .ThenInclude(sl => sl.Language)
+                .FirstOrDefaultAsync(sp => sp.ApplicationUserId == applicationUserId, cancellationToken);
         }
     }
 }

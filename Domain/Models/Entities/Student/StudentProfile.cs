@@ -1,53 +1,5 @@
 using Domain.Models.Concrates;
-
-public class StudentProfile : AuditableEntity
-{
-    public Guid ApplicationUserId { get; set; }
-    
-    // Registration-time fields (required)
-    public string FirstName { get; set; } = null!;
-    public string LastName { get; set; } = null!;
-    public Guid? UniversityId { get; private set; } // Just the ID, nothing else
-    
-    // Profile completion fields (optional)
-    public string? Bio { get; set; }
-    public string? ProfessionalRole { get; set; }
-    public string? GitHubUrl { get; set; }
-    public string? LinkedinUrl { get; set; }
-    public string? CVUrl { get; set; }
-
-    private StudentProfile() { } // EF
-    
-    public StudentProfile(
-        Guid applicationUserId,
-        string firstName,
-        string lastName,
-        Guid? universityId = null)
-    {
-        ApplicationUserId = applicationUserId;
-        FirstName = firstName;
-        LastName = lastName;
-        UniversityId = universityId;
-    }
-    
-    public void CompleteProfile(
-        string? bio,
-        string? professionalRole,
-        string? githubUrl,
-        string? linkedinUrl,
-        string? cvUrl)
-    {
-        Bio = bio;
-        ProfessionalRole = professionalRole;
-        GitHubUrl = githubUrl;
-        LinkedinUrl = linkedinUrl;
-        CVUrl = cvUrl;
-    }
-}
-
-
-
-/*using Domain.Models.Concrates;
+using Domain.Models.Entities.University;
 using Domain.Models.Enums;
 
 namespace Domain.Models.Entities.Student
@@ -55,18 +7,32 @@ namespace Domain.Models.Entities.Student
     public class StudentProfile : AuditableEntity
     {
         public Guid ApplicationUserId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Age { get; set; }
-        public string? Location { get; set; }
-        //public PrimaryRole Role { get; set; }
-        public string? CVUrl { get; set; }
-        public string? LinkedinUrl { get; set; }
+
+        // Basic info
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public Guid? UniversityId { get; set; }
+        public UniversityProfile? University { get; set; }
+
+        // Education & Contact
+        public string? PhoneNumber { get; set; }
+        public Guid? ProfessionId { get; set; }
+        public Profession? Profession { get; set; }
+        public string? Course { get; set; }
+
+        // Social & Portfolio links
         public string? GitHubUrl { get; set; }
-        public ExperienceLevel Experience { get; set; }
-        public string Achievements { get; set; }
+        public string? LinkedinUrl { get; set; }
+        public string? PortfolioUrl { get; set; }
+        public string? CVUrl { get; set; }
+
+        // Specialty & Skills
+        public Guid? MainRoleId { get; set; }
+        public MainRole? MainRole { get; set; }
+        public ExperienceLevel? ExperienceLevel { get; set; }
+        
+        // About / Bio
         public string? Bio { get; set; }
-        public WorkFormat PreferredWorkFormat { get; set; }
 
         private readonly List<StudentSkill> _studentSkills = new();
         private readonly List<StudentLanguage> _studentLanguages = new();
@@ -74,21 +40,99 @@ namespace Domain.Models.Entities.Student
         public IReadOnlyCollection<StudentSkill> StudentSkills => _studentSkills.AsReadOnly();
         public IReadOnlyCollection<StudentLanguage> StudentLanguages => _studentLanguages.AsReadOnly();
 
-        public void AddSkill(Guid skillId)
+        public StudentProfile() { } // EF Constructor
+
+        public StudentProfile(
+            Guid applicationUserId,
+            string firstName,
+            string lastName,
+            Guid? universityId = null)
         {
-            if (_studentSkills.Any(s => s.SkillId == skillId)) return;
-            _studentSkills.Add(new StudentSkill { SkillId = skillId, StudentProfileId = Id });
+            ApplicationUserId = applicationUserId;
+            FirstName = firstName;
+            LastName = lastName;
+            UniversityId = universityId;
         }
 
-        public void AddLanguage(Guid languageId, LanguageProficiencyLevel level)
+        public void UpdateCabinetProfile(
+            Guid? universityId,
+            string? phoneNumber,
+            Guid? professionId,
+            string? course,
+            string? githubUrl,
+            string? linkedinUrl,
+            string? portfolioUrl,
+            string? cvUrl,
+            Guid? mainRoleId,
+            ExperienceLevel? experienceLevel,
+            string? bio)
         {
-            if (_studentLanguages.Any(l => l.LanguageId == languageId)) return;
-            _studentLanguages.Add(new StudentLanguage
+            UniversityId = universityId;
+            PhoneNumber = phoneNumber;
+            ProfessionId = professionId;
+            Course = course;
+            GitHubUrl = githubUrl;
+            LinkedinUrl = linkedinUrl;
+            PortfolioUrl = portfolioUrl;
+            CVUrl = cvUrl;
+            MainRoleId = mainRoleId;
+            ExperienceLevel = experienceLevel;
+            Bio = bio;
+        }
+
+        public void SetSkills(IEnumerable<Guid>? skillIds)
+        {
+            _studentSkills.Clear();
+            if (skillIds != null)
             {
-                LanguageId = languageId,
-                StudentProfileId = Id,
-                ProficiencyLevel = level
-            });
+                foreach (var skillId in skillIds.Distinct())
+                {
+                    _studentSkills.Add(new StudentSkill
+                    {
+                        StudentProfileId = Id,
+                        SkillId = skillId
+                    });
+                }
+            }
+        }
+
+        public void SetLanguages(IEnumerable<(Guid LanguageId, LanguageProficiencyLevel ProficiencyLevel)>? languages)
+        {
+            _studentLanguages.Clear();
+            if (languages != null)
+            {
+                foreach (var (langId, level) in languages)
+                {
+                    _studentLanguages.Add(new StudentLanguage
+                    {
+                        StudentProfileId = Id,
+                        LanguageId = langId,
+                        ProficiencyLevel = level
+                    });
+                }
+            }
+        }
+
+        public int CalculateProfileCompletionPercentage()
+        {
+            var checks = new bool[]
+            {
+                UniversityId.HasValue,
+                !string.IsNullOrWhiteSpace(PhoneNumber),
+                ProfessionId.HasValue,
+                !string.IsNullOrWhiteSpace(Course),
+                !string.IsNullOrWhiteSpace(GitHubUrl),
+                !string.IsNullOrWhiteSpace(LinkedinUrl),
+                !string.IsNullOrWhiteSpace(PortfolioUrl) || !string.IsNullOrWhiteSpace(CVUrl),
+                MainRoleId.HasValue,
+                ExperienceLevel.HasValue,
+                !string.IsNullOrWhiteSpace(Bio),
+                _studentSkills.Count > 0,
+                _studentLanguages.Count > 0
+            };
+
+            int completedCount = checks.Count(c => c);
+            return (int)Math.Round((double)completedCount / checks.Length * 100);
         }
     }
-}*/
+}

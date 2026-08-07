@@ -1,9 +1,5 @@
 using Application.Repositories;
 using MediatR;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Modules.Student.Queries.GetAllStudentProfiles
 {
@@ -24,12 +20,19 @@ namespace Application.Modules.Student.Queries.GetAllStudentProfiles
             {
                 Id = item.Profile.Id,
                 ApplicationUserId = item.Profile.ApplicationUserId,
+                FirstName = item.Profile.FirstName,
+                LastName = item.Profile.LastName,
                 Email = item.Email,
                 UniversityId = item.Profile.UniversityId,
+                UniversityName = item.Profile.University?.UniversityName,
+                ProfessionId = item.Profile.ProfessionId,
+                ProfessionName = item.Profile.Profession?.Name,
+                MainRoleId = item.Profile.MainRoleId,
+                MainRoleName = item.Profile.MainRole?.Name,
                 Bio = item.Profile.Bio,
-                ProfessionalRole = item.Profile.ProfessionalRole,
                 GitHubUrl = item.Profile.GitHubUrl,
-                LinkedinUrl = item.Profile.LinkedinUrl
+                LinkedinUrl = item.Profile.LinkedinUrl,
+                CompletionPercentage = item.Profile.CalculateProfileCompletionPercentage()
             }).ToList();
         }
     }
