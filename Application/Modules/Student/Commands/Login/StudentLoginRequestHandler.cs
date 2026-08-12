@@ -22,13 +22,13 @@ namespace Application.Modules.Student.Commands.Login
             var isValid = await _authService.CheckPasswordAsync(request.Email, request.Password);
             if (!isValid)
             {
-                throw new System.Exception("Invalid email or password.");
+                throw new Application.Exceptions.BadRequestException("Invalid email or password.");
             }
 
             var user = await _authService.GetUserInfoByEmailAsync(request.Email);
             if (user == null)
             {
-                throw new System.Exception("User not found.");
+                throw new Application.Exceptions.BadRequestException("User not found.");
             }
 
             var claims = new[]

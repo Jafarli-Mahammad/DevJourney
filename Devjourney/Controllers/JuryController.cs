@@ -7,6 +7,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json", "application/problem+json")]
     public class JuryController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,6 +18,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetJuryProfile(Guid id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetJuryProfileQuery(id), cancellationToken);

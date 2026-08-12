@@ -27,6 +27,28 @@ namespace Devjourney.Middlewares
                 var result = JsonSerializer.Serialize(new { message = ex.Message });
                 await context.Response.WriteAsync(result);
             }
+            catch (FluentValidation.ValidationException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var errors = ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+                var result = JsonSerializer.Serialize(new { message = "Validation failed", errors });
+                await context.Response.WriteAsync(result);
+            }
+            catch (BadRequestException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                var result = JsonSerializer.Serialize(new { message = ex.Message, errors = ex.Errors });
+                await context.Response.WriteAsync(result);
+            }
+            catch (UnauthorizedException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                var result = JsonSerializer.Serialize(new { message = ex.Message });
+                await context.Response.WriteAsync(result);
+            }
         }
     }
 }

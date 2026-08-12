@@ -8,6 +8,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json", "application/problem+json")]
     public class AuthController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -18,6 +19,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/student")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterStudent(
         [FromBody] StudentRegisterRequest request,
         CancellationToken cancellationToken)
@@ -27,6 +30,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/company")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterCompany(
             [FromBody] CompanyRegisterRequest request,
             CancellationToken cancellationToken)
@@ -36,6 +41,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/University")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterUniversity(
             [FromBody] UniversityRegisterRequest request,
             CancellationToken cancellationToken)
@@ -45,6 +52,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/jury")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterJury(
             [FromBody] Application.Modules.Jury.Commands.Register.JuryRegisterRequest request,
             CancellationToken cancellationToken)
@@ -54,6 +63,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login/student")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginStudent(
             [FromBody] Application.Modules.Student.Commands.Login.StudentLoginRequest request,
             CancellationToken cancellationToken)
@@ -63,6 +74,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login/jury")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginJury(
             [FromBody] Application.Modules.Jury.Commands.Login.JuryLoginRequest request,
             CancellationToken cancellationToken)

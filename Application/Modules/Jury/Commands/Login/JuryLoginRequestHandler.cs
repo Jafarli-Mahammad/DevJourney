@@ -23,13 +23,13 @@ namespace Application.Modules.Jury.Commands.Login
             var isValid = await _authService.CheckPasswordByUserNameAsync(request.JuryCode, request.Password);
             if (!isValid)
             {
-                throw new System.Exception("Invalid jury code or password.");
+                throw new Application.Exceptions.BadRequestException("Invalid jury code or password.");
             }
 
             var user = await _authService.GetUserInfoByNameAsync(request.JuryCode);
             if (user == null)
             {
-                throw new System.Exception("Jury user not found.");
+                throw new Application.Exceptions.BadRequestException("Jury user not found.");
             }
 
             var claims = new[]

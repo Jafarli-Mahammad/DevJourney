@@ -1,0 +1,96 @@
+{
+  "operation": "POST /api/Auth/register/company",
+  "method": "POST",
+  "path_template": "/api/Auth/register/company",
+  "fingerprint": "22ed9ccc",
+  "case_id": "3meoRd",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"companyName\": \"0\", \"companySector\": null, \"companySize\": 0, \"email\": \"0\", \"linkedInUrl\": null, \"location\": null, \"password\": \"0\", \"representativeEmail\": \"\", \"representativeName\": null, \"userName\": \"0\", \"websiteUrl\": null}' http://localhost:5074/api/Auth/register/company",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/register/company",
+      "url_template": "http://localhost:5074/api/Auth/register/company",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "3meoRd",
+        "Content-Type": "application/json",
+        "Content-Length": "223"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Wed, 12 Aug 2026 13:33:47 GMT",
+          "server": "Kestrel",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"message\":\"Passwords must be at least 6 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 4.717800038633868e-05,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'representativeEmail' value: Valid string",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "body",
+            "companyName"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/register/company",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "companyName": "0",
+          "companySector": null,
+          "companySize": 0,
+          "email": "0",
+          "linkedInUrl": null,
+          "location": null,
+          "password": "[Filtered]",
+          "representativeEmail": "",
+          "representativeName": null,
+          "userName": "0",
+          "websiteUrl": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

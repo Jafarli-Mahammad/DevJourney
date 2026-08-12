@@ -1,0 +1,86 @@
+{
+  "operation": "GET /api/University/{id}",
+  "method": "GET",
+  "path_template": "/api/University/{id}",
+  "fingerprint": "cdd12558",
+  "case_id": "ZjTsbF",
+  "code_sample": "curl -X GET http://localhost:5074/api/University/0",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:5074/api/University/0",
+      "url_template": "http://localhost:5074/api/University/{id}",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "ZjTsbF"
+      },
+      "response": {
+        "status_code": 404,
+        "headers": {
+          "content-length": "0",
+          "date": "Wed, 12 Aug 2026 13:33:57 GMT",
+          "server": "Kestrel"
+        },
+        "body": ""
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "response_schema_conformance",
+          "status": "failure",
+          "message": "JSON deserialization error\n\nResponse must be valid JSON with 'Content-Type: application/json' header:\n\n  Expecting value: line 1 column 1 (char 0)"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00010159799967368599,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Value not matching the 'uuid' format",
+            "location": "/format",
+            "parameter": "id",
+            "parameter_location": "PATH",
+            "scenario": "invalid_format"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "path",
+            "id"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "id": "0"
+          }
+        }
+      },
+      "path": "/api/University/{id}",
+      "path_parameters": {
+        "id": "0"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": null,
+      "parent_index": null
+    }
+  ]
+}
