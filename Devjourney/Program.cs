@@ -69,20 +69,9 @@ public partial class Program
 
             c.AddSecurityDefinition("Bearer", securityScheme);
 
-            c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-            {
-                {
-                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                    {
-                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                        {
-                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
-                }
-            });
+            c.OperationFilter<Devjourney.Filters.AuthorizeCheckOperationFilter>();
+            c.OperationFilter<Devjourney.Filters.CleanMediaTypesOperationFilter>();
+            c.SupportNonNullableReferenceTypes();
         });
 
         builder.Services.AddHttpContextAccessor();

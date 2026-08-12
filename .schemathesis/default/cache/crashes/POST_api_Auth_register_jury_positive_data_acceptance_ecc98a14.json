@@ -1,0 +1,91 @@
+{
+  "operation": "POST /api/Auth/register/jury",
+  "method": "POST",
+  "path_template": "/api/Auth/register/jury",
+  "fingerprint": "ecc98a14",
+  "case_id": "gT3m7L",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"email\": \"0\", \"fullName\": \"0\", \"juryCode\": \"0\", \"password\": \"0\", \"specialization\": null}' http://localhost:5074/api/Auth/register/jury",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/register/jury",
+      "url_template": "http://localhost:5074/api/Auth/register/jury",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "gT3m7L",
+        "Content-Type": "application/json",
+        "Content-Length": "146"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Wed, 12 Aug 2026 13:33:51 GMT",
+          "server": "Kestrel",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"message\":\"Passwords must be at least 6 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00898846699965361,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'competitionId' value: Valid string",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "body",
+            "competitionId"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/register/jury",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "competitionId": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+          "email": "0",
+          "fullName": "0",
+          "juryCode": "0",
+          "password": "[Filtered]",
+          "specialization": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

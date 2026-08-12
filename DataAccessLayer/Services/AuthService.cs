@@ -52,7 +52,7 @@ namespace DataAccessLayer.Services
             var result = await userManager.CreateAsync(user, password);
 
             if (!result.Succeeded)
-                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                throw new Application.Exceptions.BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
 
             return user.Id;
         }

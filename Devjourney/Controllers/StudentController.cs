@@ -10,6 +10,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json", "application/problem+json")]
     public class StudentController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,6 +21,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(StudentProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetStudentProfile(Guid id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetStudentProfileQuery(id), cancellationToken);
@@ -40,6 +43,10 @@ namespace Devjourney.Controllers
         }
 
         [HttpPut("profile")]
+        [Authorize]
+        [ProducesResponseType(typeof(StudentProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UpdateStudentProfile([FromBody] UpdateStudentProfileCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
@@ -47,6 +54,8 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("{id:guid}/completion")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProfileCompletion(Guid id, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetStudentProfileCompletionQuery(id), cancellationToken);

@@ -1,0 +1,90 @@
+{
+  "operation": "POST /api/Auth/register/jury",
+  "method": "POST",
+  "path_template": "/api/Auth/register/jury",
+  "fingerprint": "40f94c86",
+  "case_id": "nlhcnW",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": null, \"email\": \"0\", \"fullName\": \"0\", \"juryCode\": \"0\", \"specialization\": null}' http://localhost:5074/api/Auth/register/jury",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/register/jury",
+      "url_template": "http://localhost:5074/api/Auth/register/jury",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "nlhcnW",
+        "Content-Type": "application/json",
+        "Content-Length": "95"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/problem+json; charset=utf-8",
+          "date": "Wed, 12 Aug 2026 13:27:08 GMT",
+          "server": "Kestrel",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"Password\":[\"The Password field is required.\"]},\"traceId\":\"00-baeaa3cc0cbd83e5a2c148b5e04a124e-6c1fec624eddf985-00\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "content_type_conformance",
+          "status": "failure",
+          "message": "Undocumented Content-Type\n\nReceived: application/problem+json; charset=utf-8\nDocumented: text/plain, application/json, text/json"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 9.553001291351393e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing required property: password",
+            "location": "/required",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_missing_required_property"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "body",
+            "competitionId"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/register/jury",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "competitionId": null,
+          "email": "0",
+          "fullName": "0",
+          "juryCode": "0",
+          "specialization": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

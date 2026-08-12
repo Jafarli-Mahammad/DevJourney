@@ -1,0 +1,87 @@
+{
+  "operation": "POST /api/Auth/register/University",
+  "method": "POST",
+  "path_template": "/api/Auth/register/University",
+  "fingerprint": "97e926cb",
+  "case_id": "eTI2hm",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"location\": null, \"password\": \"0\", \"representativeEmail\": null, \"representativeName\": null, \"userName\": \"0\", \"websiteUrl\": null}' http://localhost:5074/api/Auth/register/University",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/register/University",
+      "url_template": "http://localhost:5074/api/Auth/register/University",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "eTI2hm",
+        "Content-Type": "application/json",
+        "Content-Length": "143"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/problem+json; charset=utf-8",
+          "date": "Wed, 12 Aug 2026 13:27:13 GMT",
+          "server": "Kestrel",
+          "transfer-encoding": "chunked"
+        },
+        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"UniversityName\":[\"The UniversityName field is required.\"]},\"traceId\":\"00-710cb6bb0de8d014760506af731dd997-36a06ea374175ba1-00\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "content_type_conformance",
+          "status": "failure",
+          "message": "Undocumented Content-Type\n\nReceived: application/problem+json; charset=utf-8\nDocumented: text/plain, application/json, text/json"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 7.122998795239255e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing required property: universityName",
+            "location": "/required",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_missing_required_property"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/register/University",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0",
+          "location": null,
+          "password": "[Filtered]",
+          "representativeEmail": null,
+          "representativeName": null,
+          "userName": "0",
+          "websiteUrl": null
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}
