@@ -75,6 +75,7 @@ public partial class Program
             c.OperationFilter<Devjourney.Filters.AuthorizeCheckOperationFilter>();
             c.OperationFilter<Devjourney.Filters.CleanMediaTypesOperationFilter>();
             c.SupportNonNullableReferenceTypes();
+            c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
         });
 
         builder.Services.AddHttpContextAccessor();
