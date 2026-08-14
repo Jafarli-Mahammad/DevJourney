@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Domain.Models.Entities.Competition;
 
 namespace DataAccessLayer.DataContexts
 {
@@ -40,6 +41,11 @@ namespace DataAccessLayer.DataContexts
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<CourseType> CourseTypes { get; set; }
         public DbSet<IdeaField> LookupIdeaFields { get; set; }
+        public DbSet<Competition> Competitions { get; set; }
+        public DbSet<CompetitionStage> CompetitionStages { get; set; }
+        public DbSet<CompetitionParticipant> CompetitionParticipants { get; set; }
+        public DbSet<CompetitionTeamMember> CompetitionTeamMembers { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
         public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
