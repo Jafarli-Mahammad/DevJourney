@@ -1,0 +1,21 @@
+name: RaptorReview AI — Performance & Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dev-k99/raptorreview-ai@v1
+        with:
+          groq_api_key: ${{ secrets.GROQ_API_KEY }}
