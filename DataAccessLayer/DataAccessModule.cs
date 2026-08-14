@@ -105,6 +105,7 @@ namespace DataAccessLayer
             builder.RegisterType<RoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<IdeaFieldSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<UniversitySeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
+            builder.RegisterType<PartnerSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
 
 
             builder.RegisterType<DataAccessLayer.Repositories.Competitions.CompetitionRepository>()
