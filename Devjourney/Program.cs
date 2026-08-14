@@ -57,6 +57,9 @@ public partial class Program
 
         builder.Services.AddSwaggerGen(c =>
         {
+            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "DevJourney API", Version = "v1" });
+            c.SwaggerDoc("partner", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Partner API", Version = "v1" });
+
             var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -105,7 +108,11 @@ public partial class Program
 
         app.UseSwagger();
 
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevJourney API v1");
+            c.SwaggerEndpoint("/swagger/partner/swagger.json", "Partner API v1");
+        });
 
         //app.UseRouting();
 
