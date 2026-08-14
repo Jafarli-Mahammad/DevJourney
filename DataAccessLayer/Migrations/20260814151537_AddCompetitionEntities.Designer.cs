@@ -4,6 +4,7 @@ using DataAccessLayer.DataContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260814151537_AddCompetitionEntities")]
+    partial class AddCompetitionEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,52 +277,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Competitions", "Identity");
                 });
 
-            modelBuilder.Entity("Domain.Models.Entities.Competition.CompetitionParticipant", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("AppliedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("CaptainId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CompetitionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IndividualStudentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsCheckedIn")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsTeam")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ProjectDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProjectName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CompetitionParticipants", "Identity");
-                });
-
             modelBuilder.Entity("Domain.Models.Entities.Competition.CompetitionStage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -351,67 +308,6 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("CompetitionId");
 
                     b.ToTable("CompetitionStages", "Identity");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Competition.CompetitionTeamMember", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCheckedIn")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("ParticipantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Role")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("StudentProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParticipantId");
-
-                    b.ToTable("CompetitionTeamMembers", "Identity");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Competition.Evaluation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Feedback")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("InnovationScore")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("JuryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ParticipantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PitchScore")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TechnicalScore")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParticipantId");
-
-                    b.ToTable("Evaluations", "Identity");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.IdeaField", b =>
@@ -1504,28 +1400,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Competition");
                 });
 
-            modelBuilder.Entity("Domain.Models.Entities.Competition.CompetitionTeamMember", b =>
-                {
-                    b.HasOne("Domain.Models.Entities.Competition.CompetitionParticipant", "Participant")
-                        .WithMany("Members")
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Participant");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Competition.Evaluation", b =>
-                {
-                    b.HasOne("Domain.Models.Entities.Competition.CompetitionParticipant", "Participant")
-                        .WithMany("Evaluations")
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Participant");
-                });
-
             modelBuilder.Entity("Domain.Models.Entities.Partner.PartnerProfile", b =>
                 {
                     b.HasOne("DataAccessLayer.IdentityEntities.ApplicationUser", null)
@@ -1892,13 +1766,6 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("Domain.Models.Entities.Competition.Competition", b =>
                 {
                     b.Navigation("Stages");
-                });
-
-            modelBuilder.Entity("Domain.Models.Entities.Competition.CompetitionParticipant", b =>
-                {
-                    b.Navigation("Evaluations");
-
-                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Student.StudentProfile", b =>

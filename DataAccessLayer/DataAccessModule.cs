@@ -107,6 +107,22 @@ namespace DataAccessLayer
             builder.RegisterType<UniversitySeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
 
 
+            builder.RegisterType<DataAccessLayer.Repositories.Competitions.CompetitionRepository>()
+                .As<Application.Repositories.Competitions.ICompetitionRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DataAccessLayer.Repositories.Competitions.CompetitionParticipantRepository>()
+                .As<Application.Repositories.Competitions.ICompetitionParticipantRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DataAccessLayer.Repositories.Competitions.CompetitionTeamMemberRepository>()
+                .As<Application.Repositories.Competitions.ICompetitionTeamMemberRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DataAccessLayer.Repositories.Competitions.EvaluationRepository>()
+                .As<Application.Repositories.Competitions.IEvaluationRepository>()
+                .InstancePerLifetimeScope();
+
             base.Load(builder);
         }
     }
