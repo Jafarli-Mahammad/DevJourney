@@ -1,8 +1,8 @@
 {
   "format_version": 1,
   "schemathesis_version": "4.24.3",
-  "schema_location": "http://localhost:5074/swagger/v1/swagger.json",
+  "schema_location": "http://127.0.0.1:5074/swagger/partner/swagger.json",
   "base_url": "",
-  "created_at": "2026-08-12T13:08:44Z",
+  "created_at": "2026-08-14T20:06:08Z",
   "next_run_id": 4
 }

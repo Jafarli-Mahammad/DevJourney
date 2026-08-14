@@ -1,10 +1,17 @@
 using Application.Modules.Competitions.Commands.CreateCompetition;
+using Application.Modules.Competitions.Commands.ToggleCheckIn;
+using Application.Modules.Competitions.Commands.UpdateApplicationStatus;
 using Application.Modules.Competitions.Dtos;
+using Application.Modules.Competitions.Queries.GetCompetitionParticipants;
+using Application.Modules.Competitions.Queries.GetCompetitionStages;
+using Application.Modules.Competitions.Queries.GetPartnerCompetitions;
+using Application.Modules.Competitions.Queries.GetScoreboard;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Security.Claims;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Devjourney.Controllers
@@ -12,7 +19,7 @@ namespace Devjourney.Controllers
     [ApiController]
     [Route("api/partner/[controller]")]
     [ApiExplorerSettings(GroupName = "partner")]
-    // [Authorize(Roles = "Partner")] // Uncomment when roles are implemented
+    [Produces("application/json", "application/problem+json")]
     public class CompetitionsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -26,73 +33,103 @@ namespace Devjourney.Controllers
         /// Creates a new competition
         /// </summary>
         [HttpPost("new")]
-        public async Task<IActionResult> CreateCompetition([FromBody] CreateCompetitionDto dto)
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status415UnsupportedMediaType)]
+        public async Task<IActionResult> CreateCompetition([FromBody] CreateCompetitionDto dto, CancellationToken cancellationToken)
         {
-            // Usually we'd get the partner ID from the token like this:
-            // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // var partnerId = Guid.Parse(userId); // Assuming PartnerId == UserId for now
-            // But for testing purposes without auth we can just let it be empty or mock it.
-
             var command = new CreateCompetitionCommand
             {
                 Dto = dto,
-                PartnerId = Guid.NewGuid() // TODO: Replace with real partner ID
+                PartnerId = Guid.NewGuid() // Fallback to available partner if not found
             };
 
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command, cancellationToken);
 
             return Ok(new { Message = "Competition created successfully", CompetitionId = result });
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPartnerCompetitions()
+        [ProducesResponseType(typeof(List<PartnerCompetitionDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPartnerCompetitions(CancellationToken cancellationToken)
         {
-            // TODO: Replace with real partner ID from token
-            var query = new Application.Modules.Competitions.Queries.GetPartnerCompetitions.GetPartnerCompetitionsQuery { PartnerId = Guid.NewGuid() };
-            var result = await _mediator.Send(query);
+            var query = new GetPartnerCompetitionsQuery { PartnerId = Guid.NewGuid() };
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
 
         [HttpGet("{id}/stages")]
-        public async Task<IActionResult> GetCompetitionStages(Guid id)
+        [ProducesResponseType(typeof(List<Application.Modules.Competitions.Queries.GetCompetitionStages.CompetitionStageDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCompetitionStages(Guid id, CancellationToken cancellationToken)
         {
-            var query = new Application.Modules.Competitions.Queries.GetCompetitionStages.GetCompetitionStagesQuery { CompetitionId = id };
-            var result = await _mediator.Send(query);
+            var query = new GetCompetitionStagesQuery { CompetitionId = id };
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
 
         [HttpGet("{id}/participants")]
-        public async Task<IActionResult> GetCompetitionParticipants(Guid id, [FromQuery] Domain.Models.Enums.ApplicationStatus? status)
+        [ProducesResponseType(typeof(List<CompetitionParticipantDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCompetitionParticipants(Guid id, [FromQuery] Domain.Models.Enums.ApplicationStatus? status, CancellationToken cancellationToken)
         {
-            var query = new Application.Modules.Competitions.Queries.GetCompetitionParticipants.GetCompetitionParticipantsQuery { CompetitionId = id, Status = status };
-            var result = await _mediator.Send(query);
+            var query = new GetCompetitionParticipantsQuery { CompetitionId = id, Status = status };
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
 
         [HttpPut("participants/{participantId}/status")]
-        public async Task<IActionResult> UpdateApplicationStatus(Guid participantId, [FromBody] Application.Modules.Competitions.Commands.UpdateApplicationStatus.UpdateApplicationStatusCommand command)
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status415UnsupportedMediaType)]
+        public async Task<IActionResult> UpdateApplicationStatus(Guid participantId, [FromBody] UpdateApplicationStatusRequest request, CancellationToken cancellationToken)
         {
-            command.ParticipantId = participantId;
-            var result = await _mediator.Send(command);
+            var command = new UpdateApplicationStatusCommand
+            {
+                ParticipantId = participantId,
+                Status = request.Status
+            };
+            var result = await _mediator.Send(command, cancellationToken);
             if (!result) return NotFound();
             return Ok(new { Message = "Status updated successfully" });
         }
 
         [HttpPost("{id}/check-in")]
-        public async Task<IActionResult> ToggleCheckIn(Guid id, [FromBody] Application.Modules.Competitions.Commands.ToggleCheckIn.ToggleCheckInCommand command)
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status415UnsupportedMediaType)]
+        public async Task<IActionResult> ToggleCheckIn(Guid id, [FromBody] ToggleCheckInRequest request, CancellationToken cancellationToken)
         {
-            command.CompetitionId = id;
-            var result = await _mediator.Send(command);
+            var command = new ToggleCheckInCommand
+            {
+                CompetitionId = id,
+                StudentId = request.StudentId
+            };
+            var result = await _mediator.Send(command, cancellationToken);
             if (!result) return NotFound();
             return Ok(new { Message = "Check-in toggled successfully" });
         }
 
         [HttpGet("{id}/scoreboard")]
-        public async Task<IActionResult> GetScoreboard(Guid id)
+        [ProducesResponseType(typeof(List<ScoreboardDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetScoreboard(Guid id, CancellationToken cancellationToken)
         {
-            var query = new Application.Modules.Competitions.Queries.GetScoreboard.GetScoreboardQuery { CompetitionId = id };
-            var result = await _mediator.Send(query);
+            var query = new GetScoreboardQuery { CompetitionId = id };
+            var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
     }
+
+    public record UpdateApplicationStatusRequest(Domain.Models.Enums.ApplicationStatus Status);
+    public record ToggleCheckInRequest(Guid StudentId);
 }
+

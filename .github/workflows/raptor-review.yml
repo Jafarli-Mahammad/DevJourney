@@ -1,8 +1,7 @@
-name: RaptorReview AI — Performance & Code Review
+name: RaptorReview AI — Performance Review
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
 
 permissions:
   contents: read
