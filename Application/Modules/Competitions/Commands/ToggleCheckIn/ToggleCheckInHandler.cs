@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Exceptions;
 using Application.Repositories;
 using Application.Repositories.Competitions;
 using MediatR;
@@ -27,11 +29,11 @@ public class ToggleCheckInHandler : IRequestHandler<ToggleCheckInCommand, bool>
     public async Task<bool> Handle(ToggleCheckInCommand request, CancellationToken cancellationToken)
     {
         // Try individual
-        var participant = await _participantRepository.GetAsync(
+        var individualParticipants = await _participantRepository.GetAllAsync(
             p => p.CompetitionId == request.CompetitionId && p.IndividualStudentId == request.StudentId, 
-            null,
             cancellationToken);
 
+        var participant = individualParticipants.FirstOrDefault();
         if (participant != null && !participant.IsTeam)
         {
             participant.IsCheckedIn = !participant.IsCheckedIn;
@@ -42,11 +44,11 @@ public class ToggleCheckInHandler : IRequestHandler<ToggleCheckInCommand, bool>
         }
 
         // Try team member
-        var teamMember = await _teamMemberRepository.GetAsync(
+        var teamMembers = await _teamMemberRepository.GetAllAsync(
             tm => tm.StudentProfileId == request.StudentId && tm.Participant.CompetitionId == request.CompetitionId,
-            q => q.Include(t => t.Participant),
             cancellationToken);
 
+        var teamMember = teamMembers.FirstOrDefault();
         if (teamMember != null)
         {
             teamMember.IsCheckedIn = !teamMember.IsCheckedIn;
@@ -57,6 +59,7 @@ public class ToggleCheckInHandler : IRequestHandler<ToggleCheckInCommand, bool>
             return true;
         }
 
-        return false;
+        throw new NotFoundException("CompetitionParticipant", $"StudentId: {request.StudentId}, CompetitionId: {request.CompetitionId}");
     }
 }
+

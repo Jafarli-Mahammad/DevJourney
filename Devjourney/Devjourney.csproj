@@ -29,9 +29,4 @@
     <Folder Include="Areas\" />
   </ItemGroup>
 
-  <Target Name="RunDevServer" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-    <Message Importance="High" Text="Restarting Dev Server on http://localhost:5074..." />
-    <Exec Command="kill -9 $(lsof -t -i:5074) 2>/dev/null || true" />
-    <Exec Command="nohup dotnet $(TargetDir)Devjourney.dll --urls http://localhost:5074 &gt; devserver.log 2&gt;&amp;1 &amp;" />
-  </Target>
 </Project>
