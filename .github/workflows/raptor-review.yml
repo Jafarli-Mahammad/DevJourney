@@ -19,7 +19,7 @@ jobs:
         id: changed
         run: |
           git diff HEAD~1 HEAD --name-only > changed_files.txt
-          echo "files=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "files=$(cat changed_files.txt | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
           cat changed_files.txt
 
       - name: Run Groq Performance Review
@@ -27,24 +27,27 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq jq
+          
           DIFF=$(git diff HEAD~1 HEAD)
           MAX_CHARS=8000
-          if [ ${#DIFF} -gt $MAX_CHARS ]; then
-            DIFF="${DIFF:0:$MAX_CHARS}\n... (diff truncated)"
+          if [ "${#DIFF}" -gt "$MAX_CHARS" ]; then
+            DIFF="${DIFF:0:$MAX_CHARS}"
+            DIFF="${DIFF}\n... (diff truncated)"
           fi
-          DIFF_ESCAPED=$(echo "$DIFF" | jq -Rs .)
-          PROMPT=$(cat <<'PROMPT_EOF'
-  You are a senior engineer reviewing a code push. Look at the diff below and suggest performance improvements.
+          
+          # Build prompt with diff appended
+          PROMPT="You are a senior engineer reviewing a code push. Look at the diff below and suggest performance improvements.
 Focus on: slow queries, unnecessary loops, missing caching, memory waste, and blocking operations.
   Keep suggestions practical and concise.
-If there are no performance issues, say: "No performance issues found."
+If there are no performance issues, say: No performance issues found.
+
 Diff:
-  PROMPT_EOF
-  )
-  PROMPT_ESCAPED=$(echo "$PROMPT" | jq -Rs .)
-  PROMPT_CLEAN=$(echo "$PROMPT_ESCAPED" | sed 's/^"//;s/"$//')
-  DIFF_CLEAN=$(echo "$DIFF_ESCAPED" | sed 's/^"//;s/"$//')
-  FULL_PROMPT="$PROMPT_CLEAN$DIFF_CLEAN"
+  ${DIFF}"
+  
+  # Escape for JSON
+  PROMPT_JSON=$(printf '%s' "$PROMPT" | jq -Rs .)
+  
+  # Call Groq API
   RESPONSE=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
 -H "Authorization: Bearer $GROQ_API_KEY" \
 -H "Content-Type: application/json" \
@@ -52,14 +55,16 @@ Diff:
 \"model\": \"llama-3.3-70b-versatile\",
 \"messages\": [
   {\"role\": \"system\", \"content\": \"You are a code performance reviewer. Be concise.\"},
-  {\"role\": \"user\", \"content\": \"$FULL_PROMPT\"}
+  {\"role\": \"user\", \"content\": $PROMPT_JSON}
 ],
 \"temperature\": 0.2,
 \"max_tokens\": 2048
 }")
+          
           echo "=== GROQ RESPONSE ==="
   echo "$RESPONSE" | jq -r '.choices[0].message.content' 2>/dev/null || echo "$RESPONSE"
   echo "====================="
+  
   echo "$RESPONSE" | jq -r '.choices[0].message.content' 2>/dev/null > review_output.txt
 
 - name: Post review as commit comment
@@ -68,11 +73,12 @@ Diff:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   run: |
     REVIEW=$(cat review_output.txt)
-    REVIEW_ESCAPED=$(echo "$REVIEW" | jq -Rs .)
+    REVIEW_JSON=$(printf '%s' "$REVIEW" | jq -Rs .)
+    
     curl -s -X POST \
       -H "Authorization: token $GITHUB_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments" \
       -d "{
-        \"body\": \"🤖 **Groq AI Performance Review**\n\n$REVIEW_ESCAPED\"
+        \"body\": \"🤖 **Groq AI Performance Review**\\n\\n\" + $REVIEW_JSON
       }" | jq -r '.html_url // .message'
