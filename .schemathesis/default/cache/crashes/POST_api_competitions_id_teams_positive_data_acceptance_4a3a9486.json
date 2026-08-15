@@ -1,0 +1,91 @@
+{
+  "operation": "POST /api/competitions/{id}/teams",
+  "method": "POST",
+  "path_template": "/api/competitions/{id}/teams",
+  "fingerprint": "4a3a9486",
+  "case_id": "suzXMo",
+  "code_sample": "curl -X POST http://localhost:5074/api/competitions/94b8d841-f180-10e8-ae18-cd74311fe135/teams",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/competitions/94b8d841-f180-10e8-ae18-cd74311fe135/teams",
+      "url_template": "http://localhost:5074/api/competitions/{id}/teams",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "suzXMo",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 415,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:14:00 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.16\",\"title\":\"Unsupported Media Type\",\"status\":415,\"traceId\":\"00-1c26dd188bae009ea0cf5690264e875f-2f7fcacb041ef39a-00\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.005486643998665386,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "id",
+            "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
+            "resource_field": "id",
+            "source_operation": "GET /api/partner/Competitions/{id}/participants",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/competitions/{id}/teams",
+      "path_parameters": {
+        "id": "94b8d841-f180-10e8-ae18-cd74311fe135"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

@@ -14,6 +14,9 @@ public class CompetitionParticipantConfiguration : IEntityTypeConfiguration<Comp
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Ignore(cp => cp.GithubUrl);
+        builder.Ignore(cp => cp.PitchDeckAssetId);
+
         builder.HasMany(cp => cp.Members)
             .WithOne(m => m.Participant)
             .HasForeignKey(m => m.ParticipantId)

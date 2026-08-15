@@ -49,6 +49,30 @@ namespace Devjourney.Middlewares
                 var result = JsonSerializer.Serialize(new { message = ex.Message });
                 await context.Response.WriteAsync(result);
             }
+            catch (ForbiddenAccessException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                var result = JsonSerializer.Serialize(new { message = ex.Message });
+                await context.Response.WriteAsync(result);
+            }
+
+            if (!context.Response.HasStarted && context.Response.StatusCode >= 400 && (string.IsNullOrEmpty(context.Response.ContentType) || context.Response.ContentLength == 0))
+            {
+                context.Response.ContentType = "application/json";
+                var status = context.Response.StatusCode;
+                var title = status switch
+                {
+                    400 => "Bad Request",
+                    401 => "Unauthorized",
+                    403 => "Forbidden",
+                    404 => "Not Found",
+                    415 => "Unsupported Media Type",
+                    _ => "An error occurred"
+                };
+                var payload = JsonSerializer.Serialize(new { success = false, error = new { code = title.ToUpper().Replace(" ", "_"), message = title } });
+                await context.Response.WriteAsync(payload);
+            }
         }
     }
 }

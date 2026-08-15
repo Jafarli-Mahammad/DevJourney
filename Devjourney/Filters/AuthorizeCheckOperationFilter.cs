@@ -31,6 +31,11 @@ namespace Devjourney.Filters
                         ] = new string[] {}
                     }
                 };
+
+                if (!operation.Responses.ContainsKey("401"))
+                    operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized access" });
+                if (!operation.Responses.ContainsKey("403"))
+                    operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden access" });
             }
         }
     }

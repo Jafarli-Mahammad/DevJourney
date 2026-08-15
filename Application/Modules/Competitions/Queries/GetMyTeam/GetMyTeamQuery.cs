@@ -6,7 +6,7 @@ namespace Application.Modules.Competitions.Queries.GetMyTeam;
 
 public class GetMyTeamQuery : IRequest<object>
 {
-    public int CompetitionId { get; set; }
+    public Guid CompetitionId { get; set; }
 }
 
 public class GetMyTeamQueryHandler : IRequestHandler<GetMyTeamQuery, object>

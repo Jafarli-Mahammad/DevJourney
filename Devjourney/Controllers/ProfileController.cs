@@ -25,7 +25,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("me")]
-        // [Authorize] // Commented for MVP/testing purposes unless strictly required
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
         {
@@ -34,7 +34,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("me/profile")]
-        // [Authorize]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMyProfile(CancellationToken cancellationToken)
         {
@@ -43,7 +43,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPut("me/profile")]
-        // [Authorize]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateMyProfile(
             [FromBody] UpdateProfileCommand command,
@@ -54,7 +54,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("uploads/cv")]
-        // [Authorize]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> UploadCv(
             [FromForm] UploadCvCommand command,

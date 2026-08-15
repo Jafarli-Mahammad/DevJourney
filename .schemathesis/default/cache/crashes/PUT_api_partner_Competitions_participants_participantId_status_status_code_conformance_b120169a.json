@@ -1,0 +1,94 @@
+{
+  "operation": "PUT /api/partner/Competitions/participants/{participantId}/status",
+  "method": "PUT",
+  "path_template": "/api/partner/Competitions/participants/{participantId}/status",
+  "fingerprint": "b120169a",
+  "case_id": "VdyCfj",
+  "code_sample": "curl -X PUT -H 'Content-Type: application/json' -d '{\"status\": 1, \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/partner/Competitions/participants/e3e70682-c209-1cac-a29f-6fbed82c07cd/status",
+  "sequence": [
+    {
+      "method": "PUT",
+      "url": "http://localhost:5074/api/partner/Competitions/participants/e3e70682-c209-1cac-a29f-6fbed82c07cd/status",
+      "url_template": "http://localhost:5074/api/partner/Competitions/participants/{participantId}/status",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "VdyCfj",
+        "Content-Type": "application/json",
+        "Content-Length": "52"
+      },
+      "response": {
+        "status_code": 500,
+        "headers": {
+          "content-type": "text/plain; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:10:14 GMT",
+          "server": "Kestrel",
+          "transfer-encoding": "chunked"
+        },
+        "body": "Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'GithubUrl'.\nInvalid column name 'PitchDeckAssetId'.\n   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()\n   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)\n--- End of stack trace from previous location ---\n   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)\n   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)\n--- End of stack trace from previous location ---\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)\n   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()\n   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)\n   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)\n   at DataAccessLayer.Repositories.AsyncRepository`1.GetAsync(Expression`1 expression, Func`2 include, CancellationToken cancellationToken) in /home/mahammadjafarli/source/repos/DevJourney/DataAccessLayer/Repositories/Core/AsyncRepository.cs:line 44\n   at Application.Modules.Competitions.Commands.UpdateApplicationStatus.UpdateApplicationStatusHandler.Handle(UpdateApplicationStatusCommand request, CancellationToken cancellationToken) in /home/mahammadjafarli/source/repos/DevJourney/Application/Modules/Competitions/Commands/UpdateApplicationStatus/UpdateApplicationStatusHandler.cs:line 22\n   at Application.Behaviors.ValidationBehavior`2.Handle(TRequest request, RequestHandlerDelegate`1 next, CancellationToken cancellationToken) in /home/mahammadjafarli/source/repos/DevJourney/Application/Behaviors/ValidationBehavior.cs:line 32\n   at Devjourney.Controllers.CompetitionsController.UpdateApplicationStatus(Guid participantId, UpdateApplicationStatusRequest request, CancellationToken cancellationToken) in /home/mahammadjafarli/source/repos/DevJourney/Devjourney/Controllers/CompetitionsController.cs:line 97\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)\n   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)\n   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)\n   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)\n   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)\n   at Devjourney.Middlewares.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in /home/mahammadjafarli/source/repos/DevJourney/Devjourney/Middlewares/GlobalExceptionMiddleware.cs:line 21\n   at Microsoft.AspNetCore.ResponseCompression.ResponseCompressionMiddleware.InvokeCore(HttpContext context)\n   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)\nClientConnectionId:e116085b-1e3a-4f71-8631-50709279ea3b\nError Number:207,State:1,Class:16\n\nHEADERS\n=======\nAccept: */*\nConnection: keep-alive\nHost: localhost:5074\nUser-Agent: schemathesis/4.24.3\nAccept-Encoding: gzip, deflate, zstd\nContent-Type: application/json\nContent-Length: 52\nX-Schemathesis-TestCaseId: VdyCfj\n"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "status_code_conformance",
+          "status": "failure",
+          "message": "Undocumented HTTP status code\n\nReceived: 500\nDocumented: 200, 400, 404, 415"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 3.957399894716218e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with unexpected properties",
+            "location": "/additionalProperties",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_unexpected_properties"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "path",
+            "participantId"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "participantId": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          }
+        }
+      },
+      "path": "/api/partner/Competitions/participants/{participantId}/status",
+      "path_parameters": {
+        "participantId": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "status": 1,
+          "x-schemathesis-unknown-property": 42
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

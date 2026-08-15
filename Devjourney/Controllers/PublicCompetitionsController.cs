@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 using Application.Modules.Competitions.Queries.GetAvailableCompetitions;
 using Application.Modules.Competitions.Queries.GetCompetitionDetails;
@@ -12,6 +14,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json", "application/problem+json")]
     public class PublicCompetitionsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -22,42 +25,59 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("/api/competitions")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAvailableCompetitions()
         {
-            return Ok(await _mediator.Send(new GetAvailableCompetitionsQuery()));
+            var result = await _mediator.Send(new GetAvailableCompetitionsQuery());
+            return Ok(new { success = true, data = result });
         }
 
-        [HttpGet("/api/competitions/{id}")]
-        public async Task<IActionResult> GetCompetitionDetails(int id)
+        [HttpGet("/api/competitions/{id:guid}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCompetitionDetails(Guid id)
         {
-            return Ok(await _mediator.Send(new GetCompetitionDetailsQuery { Id = id }));
+            var result = await _mediator.Send(new GetCompetitionDetailsQuery { Id = id });
+            return Ok(new { success = true, data = result });
         }
 
-        [HttpGet("/api/competitions/{id}/team")]
-        public async Task<IActionResult> GetMyTeam(int id)
+        [HttpGet("/api/competitions/{id:guid}/team")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMyTeam(Guid id)
         {
-            return Ok(await _mediator.Send(new GetMyTeamQuery { CompetitionId = id }));
+            var result = await _mediator.Send(new GetMyTeamQuery { CompetitionId = id });
+            return Ok(new { success = true, data = result });
         }
 
-        [HttpPost("/api/competitions/{id}/teams")]
-        public async Task<IActionResult> CreateTeam(int id, [FromBody] CreateTeamCommand command)
-        {
-            command.CompetitionId = id;
-            return Ok(await _mediator.Send(command));
-        }
-
-        [HttpPost("/api/competitions/{id}/teams/join")]
-        public async Task<IActionResult> JoinTeam(int id, [FromBody] JoinTeamCommand command)
-        {
-            command.CompetitionId = id;
-            return Ok(await _mediator.Send(command));
-        }
-
-        [HttpPut("/api/competitions/{id}/submission")]
-        public async Task<IActionResult> UpdateSubmission(int id, [FromBody] UpdateSubmissionCommand command)
+        [HttpPost("/api/competitions/{id:guid}/teams")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateTeam(Guid id, [FromBody] CreateTeamCommand command)
         {
             command.CompetitionId = id;
-            return Ok(await _mediator.Send(command));
+            var result = await _mediator.Send(command);
+            return Ok(new { success = true, data = result });
+        }
+
+        [HttpPost("/api/competitions/{id:guid}/teams/join")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> JoinTeam(Guid id, [FromBody] JoinTeamCommand command)
+        {
+            command.CompetitionId = id;
+            var result = await _mediator.Send(command);
+            return Ok(new { success = true, data = result });
+        }
+
+        [HttpPut("/api/competitions/{id:guid}/submission")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateSubmission(Guid id, [FromBody] UpdateSubmissionCommand command)
+        {
+            command.CompetitionId = id;
+            var result = await _mediator.Send(command);
+            return Ok(new { success = true, data = result });
         }
     }
 }

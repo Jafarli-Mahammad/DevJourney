@@ -6,7 +6,7 @@ namespace Application.Modules.Competitions.Commands.JoinTeam;
 
 public class JoinTeamCommand : IRequest<object>
 {
-    public int CompetitionId { get; set; }
+    public Guid CompetitionId { get; set; }
     public string InviteCode { get; set; } = string.Empty;
 }
 

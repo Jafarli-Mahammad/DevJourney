@@ -1,0 +1,82 @@
+{
+  "operation": "PUT /api/partner/Competitions/participants/{participantId}/status",
+  "method": "PUT",
+  "path_template": "/api/partner/Competitions/participants/{participantId}/status",
+  "fingerprint": "e9802ff9",
+  "case_id": "aQ4hI9",
+  "code_sample": "curl -X PUT http://localhost:5074/api/partner/Competitions/participants/cd613e30-d8f1-2adf-91b7-584a2265b1f5/status",
+  "sequence": [
+    {
+      "method": "PUT",
+      "url": "http://localhost:5074/api/partner/Competitions/participants/cd613e30-d8f1-2adf-91b7-584a2265b1f5/status",
+      "url_template": "http://localhost:5074/api/partner/Competitions/participants/{participantId}/status",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "aQ4hI9",
+        "Content-Length": "0"
+      },
+      "response": {
+        "status_code": 415,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:14:00 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.16\",\"title\":\"Unsupported Media Type\",\"status\":415,\"traceId\":\"00-5c9f5d85df9b4c87a0f763468e0c940a-62d0d34b3328203c-00\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.005546833999687806,
+          "mode": "positive"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "fuzzing",
+          "data": {
+            "type": "FuzzingPhaseData",
+            "description": "Positive test case",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "mutations": []
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/partner/Competitions/participants/{participantId}/status",
+      "path_parameters": {
+        "participantId": "cd613e30-d8f1-2adf-91b7-584a2265b1f5"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "none"
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

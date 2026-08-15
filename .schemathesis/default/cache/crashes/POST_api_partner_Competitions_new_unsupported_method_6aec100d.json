@@ -1,0 +1,103 @@
+{
+  "operation": "POST /api/partner/Competitions/new",
+  "method": "GET",
+  "path_template": "/api/partner/Competitions/new",
+  "fingerprint": "6aec100d",
+  "case_id": "dxTo9a",
+  "code_sample": "curl -X GET -H 'Content-Type: application/json' -d '{\"contactEmail\": null, \"contactPhone\": null, \"contactSocialLink\": null, \"coverImageUrl\": null, \"description\": \"\", \"endDate\": \"2000-01-01T00:00:00Z\", \"evaluationCriteria\": null, \"gitHubRepositoryRequirement\": 1, \"liveDeploymentRequirement\": 1, \"location\": null, \"locationMapLink\": null, \"maxTeamSize\": 0, \"participationFormat\": 1, \"pitchDeckFormat\": 1, \"registrationDeadline\": \"2000-01-01T00:00:00Z\", \"shortSummary\": null, \"stages\": null, \"startDate\": \"2000-01-01T00:00:00Z\", \"submissionDeadline\": \"2000-01-01T00:00:00Z\", \"tags\": null, \"title\": \"\"}' http://localhost:5074/api/partner/Competitions/new",
+  "sequence": [
+    {
+      "method": "GET",
+      "url": "http://localhost:5074/api/partner/Competitions/new",
+      "url_template": "http://localhost:5074/api/partner/Competitions/new",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "dxTo9a",
+        "Content-Type": "application/json",
+        "Content-Length": "547"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:12:46 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"id\":[\"The value 'new' is not valid.\"]},\"traceId\":\"00-f92324b048604016fc6335a95fd1fdfa-8ad89b2f7bdeb20f-00\"}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "unsupported_method",
+          "status": "failure",
+          "message": "Unsupported methods\n\nUnsupported method GET returned 400, expected 405 Method Not Allowed\n\nReturn 405 for methods not listed in the OpenAPI spec"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 5.9820013120770454e-06,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Unspecified HTTP method: GET",
+            "location": null,
+            "parameter": null,
+            "parameter_location": null,
+            "scenario": "unspecified_http_method"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/partner/Competitions/new",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "contactEmail": null,
+          "contactPhone": null,
+          "contactSocialLink": null,
+          "coverImageUrl": null,
+          "description": "",
+          "endDate": "2000-01-01T00:00:00Z",
+          "evaluationCriteria": null,
+          "gitHubRepositoryRequirement": 1,
+          "liveDeploymentRequirement": 1,
+          "location": null,
+          "locationMapLink": null,
+          "maxTeamSize": 0,
+          "participationFormat": 1,
+          "pitchDeckFormat": 1,
+          "registrationDeadline": "2000-01-01T00:00:00Z",
+          "shortSummary": null,
+          "stages": null,
+          "startDate": "2000-01-01T00:00:00Z",
+          "submissionDeadline": "2000-01-01T00:00:00Z",
+          "tags": null,
+          "title": ""
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

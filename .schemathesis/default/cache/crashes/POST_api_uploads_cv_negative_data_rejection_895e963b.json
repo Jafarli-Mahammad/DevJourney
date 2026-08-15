@@ -1,0 +1,85 @@
+{
+  "operation": "POST /api/uploads/cv",
+  "method": "POST",
+  "path_template": "/api/uploads/cv",
+  "fingerprint": "895e963b",
+  "case_id": "qp5PAu",
+  "code_sample": "curl -X POST -H 'Content-Type: multipart/form-data; boundary=8eb348789a0461fcc679e8aa89272013' -d $'--c34dd0e1899b8840f7d9b37281126c20\\r\\nContent-Disposition: form-data; name=\"File\"; filename=\"File\"\\r\\n\\r\\n\\r\\n--c34dd0e1899b8840f7d9b37281126c20--\\r\\n' http://localhost:5074/api/uploads/cv",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/uploads/cv",
+      "url_template": "http://localhost:5074/api/uploads/cv",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "qp5PAu",
+        "Content-Length": "140",
+        "Content-Type": "multipart/form-data; boundary=8eb348789a0461fcc679e8aa89272013"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:12:47 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"success\":true,\"data\":{\"assetId\":\"e540c0f2-83e2-4935-bca4-600ca8da86f6\",\"url\":\"https://mock.storage.com/cv.pdf\"}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "negative_data_rejection",
+          "status": "failure",
+          "message": "API accepted schema-violating request\n\nInvalid data should have been rejected\nExpected: 400, 401, 403, 404, 405, 406, 409, 422, 428, 5xx\nInvalid component: Missing required property: file"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 2.9368000468821265e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing required property: file",
+            "location": "/required",
+            "parameter": "multipart/form-data",
+            "parameter_location": "BODY",
+            "scenario": "object_missing_required_property"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/uploads/cv",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "File": {
+            "__schemathesis_bytes__": ""
+          }
+        }
+      },
+      "media_type": "multipart/form-data",
+      "parent_index": null
+    }
+  ]
+}
