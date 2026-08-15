@@ -25,7 +25,7 @@ public class GetCompetitionStagesHandler : IRequestHandler<GetCompetitionStagesQ
             cancellationToken);
 
         if (competition == null)
-            return new List<CompetitionStageDto>();
+            throw new Application.Exceptions.NotFoundException("Competition", request.CompetitionId);
 
         return competition.Stages.Select(s => new CompetitionStageDto
         {

@@ -1,4 +1,4 @@
-﻿namespace Application.Exceptions
+namespace Application.Exceptions
 {
     public class BadRequestException : Exception
     {
@@ -13,6 +13,6 @@
             this.Errors = errors;
         }
 
-        public Dictionary<string, IEnumerable<string>> Errors { get; private set; }
+        public Dictionary<string, IEnumerable<string>>? Errors { get; private set; }
     }
 }

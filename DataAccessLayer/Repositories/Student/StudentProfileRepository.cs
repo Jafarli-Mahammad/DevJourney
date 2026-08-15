@@ -39,7 +39,7 @@ namespace DataAccessLayer.Repositories
                                   Email = u != null ? u.Email : null
                               }).ToListAsync(cancellationToken);
 
-            return list.ConvertAll(x => (x.Profile, x.Email));
+            return list.ConvertAll(x => (x.Profile, (string?)x.Email));
         }
 
         public async Task<(StudentProfile Profile, string? Email)?> GetWithEmailByIdAsync(Guid id, CancellationToken cancellationToken = default)

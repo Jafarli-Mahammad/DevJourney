@@ -32,9 +32,9 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
             var partners = await _partnerProfileRepository.GetAllAsync(cancellationToken: cancellationToken);
             
             var existingPartner = partners.FirstOrDefault(p => p.Id == partnerId);
-            if (existingPartner == null && partners.Any())
+            if (existingPartner == null)
             {
-                partnerId = partners.First().Id;
+                throw new Application.Exceptions.NotFoundException("PartnerProfile", partnerId);
             }
 
             var competition = new Competition
