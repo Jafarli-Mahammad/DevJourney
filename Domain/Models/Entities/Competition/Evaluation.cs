@@ -7,10 +7,9 @@ public class Evaluation : BaseEntity
 {
     public Guid ParticipantId { get; set; }
     public Guid JuryId { get; set; }
-    public int InnovationScore { get; set; }
-    public int TechnicalScore { get; set; }
-    public int PitchScore { get; set; }
-    public string? Feedback { get; set; }
+    public Guid CriterionId { get; set; }
+    public int Score { get; set; }
+    public string? Comments { get; set; }
 
     public virtual CompetitionParticipant Participant { get; set; } = null!;
 }

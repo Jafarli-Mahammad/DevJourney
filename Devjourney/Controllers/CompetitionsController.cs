@@ -127,6 +127,23 @@ namespace Devjourney.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }
+        [HttpGet("{id}/attendance")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCompetitionAttendance(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new Application.Modules.Competitions.Queries.GetCompetitionAttendance.GetCompetitionAttendanceQuery { CompetitionId = id };
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCompetitionById(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new Application.Modules.Competitions.Queries.GetCompetitionById.GetCompetitionByIdQuery { CompetitionId = id };
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(result);
+        }
     }
 
     public record UpdateApplicationStatusRequest(Domain.Models.Enums.ApplicationStatus Status);

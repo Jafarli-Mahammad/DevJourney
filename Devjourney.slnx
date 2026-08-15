@@ -3,6 +3,7 @@
     <File Path="..\..\..\Downloads\DevJourney Frames\frontend_screenshots.pdf" />
   </Folder>
   <Folder Name="/Route/">
+    <File Path="..\DevJourneyFront\devjourney\Route.md" />
     <File Path="..\routes.md" />
   </Folder>
   <Folder Name="/Tests/" />

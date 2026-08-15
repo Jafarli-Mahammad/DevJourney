@@ -1,8 +1,17 @@
 using Application.Modules.Company.Commands.Register;
 using Application.Modules.Student.Commands.Register;
 using Application.Modules.University.Commands.Register;
+using Application.Modules.Student.Commands.Login;
+using Application.Modules.Jury.Commands.Login;
+using Application.Modules.Auth.Commands.Login;
+using Application.Modules.Auth.Commands.Logout;
+using Application.Modules.Auth.Commands.PasswordReset;
+using Application.Modules.Auth.Commands.PasswordResetConfirm;
 using MediatR;
-    using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Devjourney.Controllers
 {
@@ -62,26 +71,79 @@ namespace Devjourney.Controllers
             return StatusCode(201, profileId);
         }
 
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login(
+            [FromBody] StudentLoginRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result });
+        }
+
         [HttpPost("login/student")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginStudent(
-            [FromBody] Application.Modules.Student.Commands.Login.StudentLoginRequest request,
+            [FromBody] StudentLoginRequest request,
             CancellationToken cancellationToken)
         {
-            var token = await mediator.Send(request, cancellationToken);
-            return Ok(new { Token = token });
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result });
+        }
+
+        [HttpPost("login/company")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> LoginCompany(
+            [FromBody] CompanyLoginRequest request,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result });
         }
 
         [HttpPost("login/jury")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginJury(
-            [FromBody] Application.Modules.Jury.Commands.Login.JuryLoginRequest request,
+            [FromBody] JuryLoginRequest request,
             CancellationToken cancellationToken)
         {
-            var token = await mediator.Send(request, cancellationToken);
-            return Ok(new { Token = token });
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result });
+        }
+
+        [HttpPost("logout")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Logout(
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new LogoutCommand(), cancellationToken);
+            return Ok(new { success = result });
+        }
+
+        [HttpPost("password-reset")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PasswordReset(
+            [FromBody] PasswordResetCommand request,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = result });
+        }
+
+        [HttpPost("password-reset/confirm")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PasswordResetConfirm(
+            [FromBody] PasswordResetConfirmCommand request,
+            CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(request, cancellationToken);
+            return Ok(new { success = result });
         }
     }
 }

@@ -38,5 +38,22 @@ namespace Devjourney.Controllers
             var result = await _mediator.Send(new GetAllJuryProfilesQuery(), cancellationToken);
             return Ok(result);
         }
+        [HttpGet("competitions/{id:guid}/workspace")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetWorkspace(Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new Application.Modules.Jury.Queries.GetJuryWorkspace.GetJuryWorkspaceQuery { CompetitionId = id }, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpPut("competitions/{id:guid}/teams/{teamId:guid}/evaluation")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> EvaluateTeam(Guid id, Guid teamId, [FromBody] Application.Modules.Jury.Commands.EvaluateTeam.EvaluateTeamCommand command, CancellationToken cancellationToken)
+        {
+            command.CompetitionId = id;
+            command.TeamId = teamId;
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(new { success = result });
+        }
     }
 }
