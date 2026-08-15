@@ -1,12 +1,14 @@
+using Application.Modules.Auth.Models;
 using Application.Services;
 using MediatR;
+using System;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Modules.Jury.Commands.Login
 {
-    public class JuryLoginRequestHandler : IRequestHandler<JuryLoginRequest, string>
+    public class JuryLoginRequestHandler : IRequestHandler<JuryLoginRequest, LoginResponseDto>
     {
         private readonly IAuthService _authService;
         private readonly IJwtService _jwtService;
@@ -17,9 +19,8 @@ namespace Application.Modules.Jury.Commands.Login
             _jwtService = jwtService;
         }
 
-        public async Task<string> Handle(JuryLoginRequest request, CancellationToken cancellationToken)
+        public async Task<LoginResponseDto> Handle(JuryLoginRequest request, CancellationToken cancellationToken)
         {
-            // Jury members login with their JuryCode (UserName) and password
             var isValid = await _authService.CheckPasswordByUserNameAsync(request.JuryCode, request.Password);
             if (!isValid)
             {
@@ -38,7 +39,20 @@ namespace Application.Modules.Jury.Commands.Login
             };
 
             var token = _jwtService.GenerateAccessToken(user.Value.UserId, user.Value.UserName, user.Value.Email, claims);
-            return token;
+            
+            return new LoginResponseDto
+            {
+                AccessToken = token,
+                ExpiresAt = DateTime.UtcNow.AddHours(24),
+                User = new UserDto
+                {
+                    Id = user.Value.UserId,
+                    Email = user.Value.Email,
+                    FullName = user.Value.UserName,
+                    Role = "Jury",
+                    IsVerified = true
+                }
+            };
         }
     }
 }

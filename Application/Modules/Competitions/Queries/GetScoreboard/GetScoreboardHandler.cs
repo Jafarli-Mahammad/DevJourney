@@ -30,18 +30,13 @@ public class GetScoreboardHandler : IRequestHandler<GetScoreboardQuery, List<Sco
         var scoreboard = participants.Select(p =>
         {
             var evaluations = evaluationsByParticipant[p.Id];
-            var innovation = evaluations.Sum(e => e.InnovationScore);
-            var technical = evaluations.Sum(e => e.TechnicalScore);
-            var pitch = evaluations.Sum(e => e.PitchScore);
+            var total = evaluations.Sum(e => e.Score);
 
             return new ScoreboardDto
             {
                 ParticipantId = p.Id,
                 Name = p.Name,
-                InnovationScore = innovation,
-                TechnicalScore = technical,
-                PitchScore = pitch,
-                TotalScore = innovation + technical + pitch
+                TotalScore = total
             };
         })
         .OrderByDescending(s => s.TotalScore)

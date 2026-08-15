@@ -10,7 +10,7 @@ public class EvaluationConfiguration : IEntityTypeConfiguration<Evaluation>
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Feedback)
+        builder.Property(e => e.Comments)
             .HasMaxLength(1000);
     }
 }

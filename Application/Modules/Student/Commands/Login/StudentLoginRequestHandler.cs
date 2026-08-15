@@ -1,12 +1,14 @@
+using Application.Modules.Auth.Models;
 using Application.Services;
 using MediatR;
+using System;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Modules.Student.Commands.Login
 {
-    public class StudentLoginRequestHandler : IRequestHandler<StudentLoginRequest, string>
+    public class StudentLoginRequestHandler : IRequestHandler<StudentLoginRequest, LoginResponseDto>
     {
         private readonly IAuthService _authService;
         private readonly IJwtService _jwtService;
@@ -17,7 +19,7 @@ namespace Application.Modules.Student.Commands.Login
             _jwtService = jwtService;
         }
 
-        public async Task<string> Handle(StudentLoginRequest request, CancellationToken cancellationToken)
+        public async Task<LoginResponseDto> Handle(StudentLoginRequest request, CancellationToken cancellationToken)
         {
             var isValid = await _authService.CheckPasswordAsync(request.Email, request.Password);
             if (!isValid)
@@ -37,7 +39,22 @@ namespace Application.Modules.Student.Commands.Login
             };
 
             var token = _jwtService.GenerateAccessToken(user.Value.UserId, user.Value.UserName, user.Value.Email, claims);
-            return token;
+            
+            return new LoginResponseDto
+            {
+                AccessToken = token,
+                ExpiresAt = DateTime.UtcNow.AddHours(24), // Assuming 24 hours expiry for now
+                User = new UserDto
+                {
+                    Id = user.Value.UserId,
+                    Email = user.Value.Email,
+                    FullName = user.Value.UserName, // Or full name if available
+                    Role = "Student",
+                    IsVerified = true,
+                    // AvatarUrl = ...,
+                    // UniversityId = ...
+                }
+            };
         }
     }
 }
