@@ -1,0 +1,116 @@
+{
+  "operation": "PUT /api/Jury/competitions/{id}/teams/{teamId}/evaluation",
+  "method": "PUT",
+  "path_template": "/api/Jury/competitions/{id}/teams/{teamId}/evaluation",
+  "fingerprint": "add58c45",
+  "case_id": "QZjgBW",
+  "code_sample": "curl -X PUT -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"scores\": [], \"teamId\": \"f728b4fa-4248-1e3a-8a5d-2f346baa9455\"}' http://localhost:5074/api/Jury/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams/e3e70682-c209-1cac-a29f-6fbed82c07cd/evaluation",
+  "sequence": [
+    {
+      "method": "PUT",
+      "url": "http://localhost:5074/api/Jury/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams/e3e70682-c209-1cac-a29f-6fbed82c07cd/evaluation",
+      "url_template": "http://localhost:5074/api/Jury/competitions/{id}/teams/{teamId}/evaluation",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "QZjgBW",
+        "Content-Type": "application/json",
+        "Content-Length": "121"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:13:01 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"success\":true}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "negative_data_rejection",
+          "status": "failure",
+          "message": "API accepted schema-violating request\n\nInvalid data should have been rejected\nExpected: 400, 401, 403, 404, 405, 406, 409, 422, 428, 5xx\nInvalid component: Missing required property: command"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 3.5024999306187965e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Missing required property: command",
+            "location": "/required",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_missing_required_property"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "id",
+            "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
+            "resource_field": "id",
+            "source_operation": "GET /api/Jury/competitions/{id}/workspace",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [
+          [
+            "path",
+            "teamId"
+          ],
+          [
+            "body",
+            "competitionId"
+          ],
+          [
+            "body",
+            "teamId"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+            "teamId": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          }
+        }
+      },
+      "path": "/api/Jury/competitions/{id}/teams/{teamId}/evaluation",
+      "path_parameters": {
+        "id": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+        "teamId": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "competitionId": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+          "scores": [],
+          "teamId": "f728b4fa-4248-1e3a-8a5d-2f346baa9455"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

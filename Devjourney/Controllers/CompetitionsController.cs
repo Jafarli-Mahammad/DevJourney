@@ -1,5 +1,6 @@
 using Application.Modules.Competitions.Commands.CreateCompetition;
 using Application.Modules.Competitions.Commands.ToggleCheckIn;
+using Microsoft.AspNetCore.Authorization;
 using Application.Modules.Competitions.Commands.UpdateApplicationStatus;
 using Application.Modules.Competitions.Dtos;
 using Application.Modules.Competitions.Queries.GetCompetitionParticipants;
@@ -19,6 +20,7 @@ namespace Devjourney.Controllers
     [ApiController]
     [Route("api/partner/[controller]")]
     [ApiExplorerSettings(GroupName = "partner")]
+    [Authorize]
     [Produces("application/json", "application/problem+json")]
     public class CompetitionsController : ControllerBase
     {
@@ -95,7 +97,7 @@ namespace Devjourney.Controllers
                 Status = request.Status
             };
             var result = await _mediator.Send(command, cancellationToken);
-            if (!result) return NotFound();
+            if (!result) return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Participant not found" } });
             return Ok(new { Message = "Status updated successfully" });
         }
 
@@ -113,7 +115,7 @@ namespace Devjourney.Controllers
                 StudentId = request.StudentId
             };
             var result = await _mediator.Send(command, cancellationToken);
-            if (!result) return NotFound();
+            if (!result) return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Participant or team member not found" } });
             return Ok(new { Message = "Check-in toggled successfully" });
         }
 

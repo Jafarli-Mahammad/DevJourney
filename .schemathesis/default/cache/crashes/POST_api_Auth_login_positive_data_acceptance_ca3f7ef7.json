@@ -1,0 +1,84 @@
+{
+  "operation": "POST /api/Auth/login",
+  "method": "POST",
+  "path_template": "/api/Auth/login",
+  "fingerprint": "ca3f7ef7",
+  "case_id": "hlFPq3",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"password\": \"00\"}' http://localhost:5074/api/Auth/login",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/login",
+      "url_template": "http://localhost:5074/api/Auth/login",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "hlFPq3",
+        "Content-Type": "application/json",
+        "Content-Length": "32"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Sat, 15 Aug 2026 15:12:43 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"message\":\"Invalid email or password.\",\"errors\":null}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00012753099872497842,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'password' value: Near-boundary length string",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/login",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0",
+          "password": "[Filtered]"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

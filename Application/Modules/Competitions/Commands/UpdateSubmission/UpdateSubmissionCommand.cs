@@ -6,7 +6,7 @@ namespace Application.Modules.Competitions.Commands.UpdateSubmission;
 
 public class UpdateSubmissionCommand : IRequest<object>
 {
-    public int CompetitionId { get; set; }
+    public Guid CompetitionId { get; set; }
     public string? GithubUrl { get; set; }
     public string? PitchDeckAssetId { get; set; }
 }

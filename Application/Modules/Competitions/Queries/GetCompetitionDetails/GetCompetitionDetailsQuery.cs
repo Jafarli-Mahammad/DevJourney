@@ -6,7 +6,7 @@ namespace Application.Modules.Competitions.Queries.GetCompetitionDetails;
 
 public class GetCompetitionDetailsQuery : IRequest<object>
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }
 
 public class GetCompetitionDetailsQueryHandler : IRequestHandler<GetCompetitionDetailsQuery, object>

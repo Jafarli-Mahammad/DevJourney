@@ -1,0 +1,85 @@
+{
+  "operation": "PUT /api/me/profile",
+  "method": "PUT",
+  "path_template": "/api/me/profile",
+  "fingerprint": "8723e079",
+  "case_id": "NuilRw",
+  "code_sample": "curl -X PUT -H 'Content-Type: application/json' -d '{\"bio\": null, \"fullName\": \"0\", \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/me/profile",
+  "sequence": [
+    {
+      "method": "PUT",
+      "url": "http://localhost:5074/api/me/profile",
+      "url_template": "http://localhost:5074/api/me/profile",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "NuilRw",
+        "Content-Type": "application/json",
+        "Content-Length": "69"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:12:47 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"success\":true,\"data\":{\"id\":\"3c116500-39ef-4e17-861d-324ce9d8ab6b\",\"fullName\":\"0\",\"bio\":null,\"avatarUrl\":null}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "negative_data_rejection",
+          "status": "failure",
+          "message": "API accepted schema-violating request\n\nInvalid data should have been rejected\nExpected: 400, 401, 403, 404, 405, 406, 409, 422, 428, 5xx\nInvalid component: in body - object with unexpected properties"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 8.548999903723598e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with unexpected properties",
+            "location": "/additionalProperties",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_unexpected_properties"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/me/profile",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "bio": null,
+          "fullName": "0",
+          "x-schemathesis-unknown-property": 42
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

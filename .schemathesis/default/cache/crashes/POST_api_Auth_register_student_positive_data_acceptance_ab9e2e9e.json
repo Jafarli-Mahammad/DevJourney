@@ -1,0 +1,92 @@
+{
+  "operation": "POST /api/Auth/register/student",
+  "method": "POST",
+  "path_template": "/api/Auth/register/student",
+  "fingerprint": "ab9e2e9e",
+  "case_id": "8av1zp",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"firstName\": \"0\", \"lastName\": \"0\", \"password\": \"0\", \"universityId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\"}' http://localhost:5074/api/Auth/register/student",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/Auth/register/student",
+      "url_template": "http://localhost:5074/api/Auth/register/student",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "8av1zp",
+        "Content-Type": "application/json",
+        "Content-Length": "122"
+      },
+      "response": {
+        "status_code": 400,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Sat, 15 Aug 2026 15:12:59 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"message\":\"Validation failed\",\"errors\":[{\"PropertyName\":\"Email\",\"ErrorMessage\":\"Invalid email format.\"},{\"PropertyName\":\"Password\",\"ErrorMessage\":\"Password must be at least 8 characters.\"},{\"PropertyName\":\"Password\",\"ErrorMessage\":\"Password must contain at least one uppercase letter.\"}]}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "positive_data_acceptance",
+          "status": "failure",
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 0.00015280899970093742,
+          "mode": "positive"
+        },
+        "components": {
+          "BODY": "positive"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with valid 'universityId' value: Valid string",
+            "location": null,
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "valid_object"
+          }
+        },
+        "pool_draws": [],
+        "pool_misses": [
+          [
+            "body",
+            "universityId"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {}
+      },
+      "path": "/api/Auth/register/student",
+      "path_parameters": {},
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "email": "0",
+          "firstName": "0",
+          "lastName": "0",
+          "password": "[Filtered]",
+          "universityId": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}

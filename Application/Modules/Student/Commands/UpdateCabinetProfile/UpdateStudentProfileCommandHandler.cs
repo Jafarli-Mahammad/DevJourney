@@ -42,6 +42,11 @@ namespace Application.Modules.Student.Commands.UpdateCabinetProfile
                 throw new NotFoundException("StudentProfile", request.StudentProfileId ?? _currentUserService.UserId);
             }
 
+            if (profile.ApplicationUserId != _currentUserService.UserId)
+            {
+                throw new ForbiddenAccessException();
+            }
+
             profile.UpdateCabinetProfile(
                 request.UniversityId,
                 request.PhoneNumber,

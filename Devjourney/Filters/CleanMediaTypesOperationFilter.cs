@@ -10,7 +10,7 @@ namespace Devjourney.Filters
             if (operation.RequestBody?.Content != null)
             {
                 var keysToRemove = operation.RequestBody.Content.Keys
-                    .Where(k => k != "application/json")
+                    .Where(k => k != "application/json" && k != "multipart/form-data" && k != "application/x-www-form-urlencoded")
                     .ToList();
 
                 foreach (var key in keysToRemove)

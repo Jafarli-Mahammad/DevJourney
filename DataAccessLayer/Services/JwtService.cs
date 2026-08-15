@@ -31,7 +31,11 @@ namespace DataAccessLayer.Services
                 claims.AddRange(extraClaims);
             }
 
-            var secretKey = _configuration["Jwt:SecretKey"] ?? "DevJourneySuperSecretKey1234567890!@#$";
+            var secretKey = _configuration["Jwt:SecretKey"];
+            if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+            {
+                throw new InvalidOperationException("A secure Jwt:SecretKey of at least 32 characters must be provided in configuration.");
+            }
             var issuer = _configuration["Jwt:Issuer"] ?? "DevJourney";
             var audience = _configuration["Jwt:Audience"] ?? "DevJourneyUsers";
 
@@ -42,7 +46,7 @@ namespace DataAccessLayer.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(7),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
 
@@ -56,7 +60,11 @@ namespace DataAccessLayer.Services
 
         public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
-            var secretKey = _configuration["Jwt:SecretKey"] ?? "DevJourneySuperSecretKey1234567890!@#$";
+            var secretKey = _configuration["Jwt:SecretKey"];
+            if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+            {
+                throw new InvalidOperationException("A secure Jwt:SecretKey of at least 32 characters must be provided in configuration.");
+            }
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false,

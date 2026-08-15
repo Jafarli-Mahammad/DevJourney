@@ -1,12 +1,14 @@
 using Application.Modules.Jury.Queries.GetAllJuryProfiles;
 using Application.Modules.Jury.Queries.GetJuryProfile;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     [Produces("application/json", "application/problem+json")]
     public class JuryController : ControllerBase
     {
@@ -26,7 +28,7 @@ namespace Devjourney.Controllers
             
             if (result == null)
             {
-                return NotFound();
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Jury profile not found" } });
             }
 
             return Ok(result);
@@ -48,6 +50,8 @@ namespace Devjourney.Controllers
 
         [HttpPut("competitions/{id:guid}/teams/{teamId:guid}/evaluation")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> EvaluateTeam(Guid id, Guid teamId, [FromBody] Application.Modules.Jury.Commands.EvaluateTeam.EvaluateTeamCommand command, CancellationToken cancellationToken)
         {
             command.CompetitionId = id;

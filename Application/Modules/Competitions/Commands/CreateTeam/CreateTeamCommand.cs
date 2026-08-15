@@ -6,7 +6,7 @@ namespace Application.Modules.Competitions.Commands.CreateTeam;
 
 public class CreateTeamCommand : IRequest<object>
 {
-    public int CompetitionId { get; set; }
+    public Guid CompetitionId { get; set; }
     public string TeamName { get; set; } = string.Empty;
 }
 

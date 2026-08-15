@@ -29,7 +29,7 @@ namespace Devjourney.Controllers
             
             if (result == null)
             {
-                return NotFound();
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Student profile not found" } });
             }
 
             return Ok(result);
@@ -62,7 +62,7 @@ namespace Devjourney.Controllers
 
             if (result == null)
             {
-                return NotFound();
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Student profile completion not found" } });
             }
 
             return Ok(result);

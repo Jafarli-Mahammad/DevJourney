@@ -1,0 +1,110 @@
+{
+  "operation": "POST /api/competitions/{id}/teams",
+  "method": "POST",
+  "path_template": "/api/competitions/{id}/teams",
+  "fingerprint": "cd056674",
+  "case_id": "reLALA",
+  "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"teamName\": \"\", \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams",
+  "sequence": [
+    {
+      "method": "POST",
+      "url": "http://localhost:5074/api/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams",
+      "url_template": "http://localhost:5074/api/competitions/{id}/teams",
+      "headers": {
+        "User-Agent": "schemathesis/4.24.3",
+        "Accept-Encoding": "gzip, deflate, zstd",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Schemathesis-TestCaseId": "reLALA",
+        "Content-Type": "application/json",
+        "Content-Length": "112"
+      },
+      "response": {
+        "status_code": 200,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "date": "Sat, 15 Aug 2026 15:12:59 GMT",
+          "server": "Kestrel",
+          "content-encoding": "gzip",
+          "transfer-encoding": "chunked",
+          "vary": "Accept-Encoding"
+        },
+        "body": "{\"success\":true,\"data\":{\"success\":true,\"data\":{\"teamId\":1,\"teamName\":\"\"}}}"
+      },
+      "link": null,
+      "checks": [
+        {
+          "name": "negative_data_rejection",
+          "status": "failure",
+          "message": "API accepted schema-violating request\n\nInvalid data should have been rejected\nExpected: 400, 401, 403, 404, 405, 406, 409, 422, 428, 5xx\nInvalid component: in body - object with unexpected properties"
+        }
+      ],
+      "meta": {
+        "generation": {
+          "time": 4.23380006395746e-05,
+          "mode": "negative"
+        },
+        "components": {
+          "PATH": "positive",
+          "BODY": "negative"
+        },
+        "phase": {
+          "name": "coverage",
+          "data": {
+            "type": "CoveragePhaseData",
+            "description": "Object with unexpected properties",
+            "location": "/additionalProperties",
+            "parameter": "application/json",
+            "parameter_location": "BODY",
+            "scenario": "object_unexpected_properties"
+          }
+        },
+        "pool_draws": [
+          {
+            "location": "path",
+            "parameter_name": "id",
+            "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
+            "resource_field": "id",
+            "source_operation": "GET /api/Jury/competitions/{id}/workspace",
+            "source_status": 200
+          }
+        ],
+        "pool_misses": [
+          [
+            "body",
+            "competitionId"
+          ],
+          [
+            "body",
+            "teamName"
+          ]
+        ],
+        "semantic_draws": [],
+        "dictionary_draws": [],
+        "constants_draws": [],
+        "raw_containers": {
+          "PATH": {
+            "id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+          }
+        }
+      },
+      "path": "/api/competitions/{id}/teams",
+      "path_parameters": {
+        "id": "e3e70682-c209-1cac-a29f-6fbed82c07cd"
+      },
+      "query": {},
+      "case_headers": {},
+      "cookies": {},
+      "case_body": {
+        "encoding": "json",
+        "value": {
+          "competitionId": "e3e70682-c209-1cac-a29f-6fbed82c07cd",
+          "teamName": "",
+          "x-schemathesis-unknown-property": 42
+        }
+      },
+      "media_type": "application/json",
+      "parent_index": null
+    }
+  ]
+}
