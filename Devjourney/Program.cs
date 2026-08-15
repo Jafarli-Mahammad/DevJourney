@@ -25,6 +25,9 @@ public partial class Program
 
         builder.Services.AddHttpContextAccessor();
 
+        builder.Services.AddMemoryCache();
+        builder.Services.AddResponseCompression();
+
         builder.Services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(IApplicationReferance).Assembly));
 
@@ -78,9 +81,9 @@ public partial class Program
             c.CustomSchemaIds(type => type.FullName?.Replace("+", "."));
         });
 
-        builder.Services.AddHttpContextAccessor();
-
         var app = builder.Build();
+
+        app.UseResponseCompression();
 
         app.UseMiddleware<Devjourney.Middlewares.GlobalExceptionMiddleware>();
 

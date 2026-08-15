@@ -28,38 +28,50 @@ public class ToggleCheckInHandler : IRequestHandler<ToggleCheckInCommand, bool>
 
     public async Task<bool> Handle(ToggleCheckInCommand request, CancellationToken cancellationToken)
     {
-        // Try individual
-        var individualParticipants = await _participantRepository.GetAllAsync(
-            p => p.CompetitionId == request.CompetitionId && p.IndividualStudentId == request.StudentId, 
-            cancellationToken);
+        using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-        var participant = individualParticipants.FirstOrDefault();
-        if (participant != null && !participant.IsTeam)
+        try
         {
-            participant.IsCheckedIn = !participant.IsCheckedIn;
-            participant.CheckInTime = participant.IsCheckedIn ? DateTime.UtcNow : null;
-            await _participantRepository.EditAsync(participant);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return true;
+            // Try individual
+            var individualParticipants = await _participantRepository.GetAllAsync(
+                p => p.CompetitionId == request.CompetitionId && p.IndividualStudentId == request.StudentId, 
+                cancellationToken);
+
+            var participant = individualParticipants.FirstOrDefault();
+            if (participant != null && !participant.IsTeam)
+            {
+                participant.IsCheckedIn = !participant.IsCheckedIn;
+                participant.CheckInTime = participant.IsCheckedIn ? DateTime.UtcNow : null;
+                await _participantRepository.EditAsync(participant);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return true;
+            }
+
+            // Try team member
+            var teamMembers = await _teamMemberRepository.GetAllAsync(
+                tm => tm.StudentProfileId == request.StudentId && tm.Participant.CompetitionId == request.CompetitionId,
+                cancellationToken);
+
+            var teamMember = teamMembers.FirstOrDefault();
+            if (teamMember != null)
+            {
+                teamMember.IsCheckedIn = !teamMember.IsCheckedIn;
+                teamMember.CheckInTime = teamMember.IsCheckedIn ? DateTime.UtcNow : null;
+                
+                await _teamMemberRepository.EditAsync(teamMember);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return true;
+            }
+
+            throw new NotFoundException("CompetitionParticipant", $"StudentId: {request.StudentId}, CompetitionId: {request.CompetitionId}");
         }
-
-        // Try team member
-        var teamMembers = await _teamMemberRepository.GetAllAsync(
-            tm => tm.StudentProfileId == request.StudentId && tm.Participant.CompetitionId == request.CompetitionId,
-            cancellationToken);
-
-        var teamMember = teamMembers.FirstOrDefault();
-        if (teamMember != null)
+        catch
         {
-            teamMember.IsCheckedIn = !teamMember.IsCheckedIn;
-            teamMember.CheckInTime = teamMember.IsCheckedIn ? DateTime.UtcNow : null;
-            
-            await _teamMemberRepository.EditAsync(teamMember);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return true;
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
-
-        throw new NotFoundException("CompetitionParticipant", $"StudentId: {request.StudentId}, CompetitionId: {request.CompetitionId}");
     }
 }
 
