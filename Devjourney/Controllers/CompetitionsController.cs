@@ -25,10 +25,14 @@ namespace Devjourney.Controllers
     public class CompetitionsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly Application.Services.ICurrentUserService _currentUserService;
+        private readonly Application.Repositories.IPartnerProfileRepository _partnerProfileRepository;
 
-        public CompetitionsController(IMediator mediator)
+        public CompetitionsController(IMediator mediator, Application.Services.ICurrentUserService currentUserService, Application.Repositories.IPartnerProfileRepository partnerProfileRepository)
         {
             _mediator = mediator;
+            _currentUserService = currentUserService;
+            _partnerProfileRepository = partnerProfileRepository;
         }
 
         /// <summary>
@@ -41,10 +45,18 @@ namespace Devjourney.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status415UnsupportedMediaType)]
         public async Task<IActionResult> CreateCompetition([FromBody] CreateCompetitionDto dto, CancellationToken cancellationToken)
         {
+            var partners = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+            var partner = System.Linq.Enumerable.FirstOrDefault(partners);
+            
+            if (partner == null)
+            {
+                return Unauthorized(new { Message = "Partner profile not found." });
+            }
+
             var command = new CreateCompetitionCommand
             {
                 Dto = dto,
-                PartnerId = Guid.NewGuid() // Fallback to available partner if not found
+                PartnerId = partner.Id
             };
 
             var result = await _mediator.Send(command, cancellationToken);
@@ -56,7 +68,15 @@ namespace Devjourney.Controllers
         [ProducesResponseType(typeof(List<PartnerCompetitionDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPartnerCompetitions(CancellationToken cancellationToken)
         {
-            var query = new GetPartnerCompetitionsQuery { PartnerId = Guid.NewGuid() };
+            var partners = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+            var partner = System.Linq.Enumerable.FirstOrDefault(partners);
+            
+            if (partner == null)
+            {
+                return Unauthorized(new { Message = "Partner profile not found." });
+            }
+
+            var query = new GetPartnerCompetitionsQuery { PartnerId = partner.Id };
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(result);
         }

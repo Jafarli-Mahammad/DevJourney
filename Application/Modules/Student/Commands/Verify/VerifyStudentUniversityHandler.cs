@@ -7,6 +7,12 @@ public class VerifyStudentUniversityHandler
     private readonly IStudentProfileRepository studentProfileRepository;
     private readonly IUniversityProfileRepository universityProfileRepository;
 
+    public VerifyStudentUniversityHandler(IStudentProfileRepository studentProfileRepository, IUniversityProfileRepository universityProfileRepository)
+    {
+        this.studentProfileRepository = studentProfileRepository;
+        this.universityProfileRepository = universityProfileRepository;
+    }
+
     public async Task<bool> Handle(VerifyStudentUniversityRequest request, CancellationToken cancellationToken)
     {
         var student = await studentProfileRepository.GetByIdAsync(request.StudentProfileId);

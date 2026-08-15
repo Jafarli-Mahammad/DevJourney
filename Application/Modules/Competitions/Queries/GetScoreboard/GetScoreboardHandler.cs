@@ -12,15 +12,21 @@ public class GetScoreboardHandler : IRequestHandler<GetScoreboardQuery, List<Sco
 {
     private readonly ICompetitionParticipantRepository _repository;
     private readonly IEvaluationRepository _evaluationRepository;
+    private readonly ICompetitionRepository _competitionRepository;
 
-    public GetScoreboardHandler(ICompetitionParticipantRepository repository, IEvaluationRepository evaluationRepository)
+    public GetScoreboardHandler(ICompetitionParticipantRepository repository, IEvaluationRepository evaluationRepository, ICompetitionRepository competitionRepository)
     {
         _repository = repository;
         _evaluationRepository = evaluationRepository;
+        _competitionRepository = competitionRepository;
     }
 
     public async Task<List<ScoreboardDto>> Handle(GetScoreboardQuery request, CancellationToken cancellationToken)
     {
+        var competition = await _competitionRepository.GetAsync(c => c.Id == request.CompetitionId, null, cancellationToken);
+        if (competition == null)
+            throw new Application.Exceptions.NotFoundException("Competition", request.CompetitionId);
+
         var participants = await _repository.GetAllAsync(p => p.CompetitionId == request.CompetitionId, cancellationToken);
         var participantIds = participants.Select(p => p.Id).ToList();
         
