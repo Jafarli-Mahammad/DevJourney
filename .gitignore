@@ -476,8 +476,16 @@ $RECYCLE.BIN/
 *.msp
 
 # Windows shortcuts
-*.lnk
-
-# Vim temporary swap files
 *.swp
 .aider*
+
+# Sensitive configuration files and keys
+[Aa]pp[Ss]ettings.Development.json
+[Aa]pp[Ss]ettings.Production.json
+[Aa]pp[Ss]ettings.local.json
+secrets.json
+*.pem
+*.key
+*.pfx
+*.cer
+*.crt
