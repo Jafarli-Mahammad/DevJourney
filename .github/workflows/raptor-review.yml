@@ -1,75 +1,75 @@
-name: Groq AI — Performance Review on Push
-
-on:
-  push:
-
-permissions:
-  contents: read
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Run Groq Performance Review
-        env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: |
-          pip install requests -q
-          python3 << 'PYEOF'
-          import os, subprocess, requests, json
-
-          diff = subprocess.run(["git", "diff", "HEAD~1", "HEAD"], capture_output=True, text=True).stdout
-          if len(diff) > 8000:
-              diff = diff[:8000] + "\n... (diff truncated)"
-
-          prompt = f"""You are a senior engineer reviewing a code push. Look at the diff below and suggest performance improvements.
-Focus on: slow queries, unnecessary loops, missing caching, memory waste, and blocking operations.
-  Keep suggestions practical and concise.
-If there are no performance issues, say: No performance issues found.
-
-Diff:
-  {diff}"""
-
-          response = requests.post(
-              "https://api.groq.com/openai/v1/chat/completions",
-headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}", "Content-Type": "application/json"},
-  json={
-"model": "llama-3.3-70b-versatile",
-"messages": [
-  {"role": "system", "content": "You are a code performance reviewer. Be concise."},
-  {"role": "user", "content": prompt}
-],
-"temperature": 0.2,
-"max_tokens": 2048
-}
-  )
-  response.raise_for_status()
-  content = response.json()["choices"][0]["message"]["content"]
-  print("=== GROQ RESPONSE ===")
-  print(content)
-  print("=====================")
-
-with open("review_output.txt", "w") as f:
-  f.write(content)
-  PYEOF
-
-- name: Post review as commit comment
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  run: |
-    python3 << 'PYEOF'
-    import os, requests, json
-    
-    with open("review_output.txt") as f:
-        review = f.read()
-    
-    requests.post(
-        f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/commits/{os.environ['GITHUB_SHA']}/comments",
-        headers={"Authorization": f"token {os.environ['GITHUB_TOKEN']}", "Accept": "application/vnd.github.v3+json"},
-        json={"body": f"🤖 **Groq AI Performance Review**\\n\\n{review}"}
-    )
-    PYEOFss
+# name: Groq AI — Performance Review on Push
+# 
+# on:
+#   push:
+# 
+# permissions:
+#   contents: read
+# 
+# jobs:
+#   review:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 2
+# 
+#       - name: Run Groq Performance Review
+#         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#         run: |
+#           pip install requests -q
+#           python3 << 'PYEOF'
+#           import os, subprocess, requests, json
+# 
+#           diff = subprocess.run(["git", "diff", "HEAD~1", "HEAD"], capture_output=True, text=True).stdout
+#           if len(diff) > 8000:
+#               diff = diff[:8000] + "\n... (diff truncated)"
+# 
+#           prompt = f"""You are a senior engineer reviewing a code push. Look at the diff below and suggest performance improvements.
+# Focus on: slow queries, unnecessary loops, missing caching, memory waste, and blocking operations.
+#   Keep suggestions practical and concise.
+# If there are no performance issues, say: No performance issues found.
+# 
+# Diff:
+#   {diff}"""
+# 
+#           response = requests.post(
+#               "https://api.groq.com/openai/v1/chat/completions",
+# headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}", "Content-Type": "application/json"},
+#   json={
+# "model": "llama-3.3-70b-versatile",
+# "messages": [
+#   {"role": "system", "content": "You are a code performance reviewer. Be concise."},
+#   {"role": "user", "content": prompt}
+# ],
+# "temperature": 0.2,
+# "max_tokens": 2048
+# }
+#   )
+#   response.raise_for_status()
+#   content = response.json()["choices"][0]["message"]["content"]
+#   print("=== GROQ RESPONSE ===")
+#   print(content)
+#   print("=====================")
+# 
+# with open("review_output.txt", "w") as f:
+#   f.write(content)
+#   PYEOF
+# 
+# - name: Post review as commit comment
+#   env:
+#     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#   run: |
+#     python3 << 'PYEOF'
+#     import os, requests, json
+#     
+#     with open("review_output.txt") as f:
+#         review = f.read()
+#     
+#     requests.post(
+#         f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/commits/{os.environ['GITHUB_SHA']}/comments",
+#         headers={"Authorization": f"token {os.environ['GITHUB_TOKEN']}", "Accept": "application/vnd.github.v3+json"},
+#         json={"body": f"🤖 **Groq AI Performance Review**\\n\\n{review}"}
+#     )
+#     PYEOFss
