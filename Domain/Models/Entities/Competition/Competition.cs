@@ -9,11 +9,11 @@ namespace Domain.Models.Entities.Competition
     public class Competition : BaseEntity
     {
         public Guid PartnerId { get; set; }
-        public PartnerProfile Partner { get; set; }
+        public PartnerProfile Partner { get; set; } = null!;
 
-        public string Title { get; set; }
-        public string ShortSummary { get; set; }
-        public string Description { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string ShortSummary { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public ParticipationFormat ParticipationFormat { get; set; }
         public int MaxTeamSize { get; set; }
 
@@ -21,16 +21,16 @@ namespace Domain.Models.Entities.Competition
         public DateTime EndDate { get; set; }
         public DateTime RegistrationDeadline { get; set; }
 
-        public string Location { get; set; }
-        public string LocationMapLink { get; set; }
+        public string Location { get; set; } = string.Empty;
+        public string LocationMapLink { get; set; } = string.Empty;
         
-        public string Tags { get; set; } // Can be serialized JSON or comma separated
-        public string EvaluationCriteria { get; set; }
+        public string Tags { get; set; } = string.Empty; // Can be serialized JSON or comma separated
+        public string EvaluationCriteria { get; set; } = string.Empty;
 
-        public string CoverImageUrl { get; set; }
-        public string ContactEmail { get; set; }
-        public string ContactPhone { get; set; }
-        public string ContactSocialLink { get; set; }
+        public string CoverImageUrl { get; set; } = string.Empty;
+        public string ContactEmail { get; set; } = string.Empty;
+        public string ContactPhone { get; set; } = string.Empty;
+        public string ContactSocialLink { get; set; } = string.Empty;
 
         // Rules
         public DateTime SubmissionDeadline { get; set; }
