@@ -23,21 +23,32 @@ public class GetPartnerCompetitionsHandler : IRequestHandler<GetPartnerCompetiti
     public async Task<List<PartnerCompetitionDto>> Handle(GetPartnerCompetitionsQuery request, CancellationToken cancellationToken)
     {
         var competitions = await _competitionRepository.GetAllAsync(c => c.PartnerId == request.PartnerId, cancellationToken);
+        if (competitions.Count == 0)
+        {
+            return new List<PartnerCompetitionDto>();
+        }
+
+        var competitionIds = competitions.Select(c => c.Id).ToList();
+        var allParticipants = await _participantRepository.GetAllAsync(p => competitionIds.Contains(p.CompetitionId), cancellationToken);
+        var participantsByCompetition = allParticipants
+            .GroupBy(p => p.CompetitionId)
+            .ToDictionary(g => g.Key, g => g.ToList());
 
         var result = new List<PartnerCompetitionDto>();
 
         foreach (var competition in competitions)
         {
-            var participants = await _participantRepository.GetAllAsync(p => p.CompetitionId == competition.Id, cancellationToken);
+            participantsByCompetition.TryGetValue(competition.Id, out var participants);
+            var participantList = participants ?? [];
 
             result.Add(new PartnerCompetitionDto
             {
                 Id = competition.Id,
                 Title = competition.Title,
-                ApplicantCount = participants.Count,
-                ApprovedCount = participants.Count(p => p.Status == ApplicationStatus.Approved),
-                CheckInCount = participants.Count(p => p.IsCheckedIn),
-                TeamCount = participants.Count(p => p.IsTeam)
+                ApplicantCount = participantList.Count,
+                ApprovedCount = participantList.Count(p => p.Status == ApplicationStatus.Approved),
+                CheckInCount = participantList.Count(p => p.IsCheckedIn),
+                TeamCount = participantList.Count(p => p.IsTeam)
             });
         }
 

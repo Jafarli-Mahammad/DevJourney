@@ -39,7 +39,7 @@ namespace DataAccessLayer.Repositories
                                   Email = u != null ? u.Email : null
                               }).ToListAsync(cancellationToken);
 
-            return list.Select(x => (x.Profile, x.Email)).ToList();
+            return list.ConvertAll(x => (x.Profile, x.Email));
         }
 
         public async Task<(StudentProfile Profile, string? Email)?> GetWithEmailByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -63,6 +63,7 @@ namespace DataAccessLayer.Repositories
                     .ThenInclude(ss => ss.Skill)
                 .Include(sp => sp.StudentLanguages)
                     .ThenInclude(sl => sl.Language)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(sp => sp.Id == id, cancellationToken);
         }
 
@@ -76,6 +77,7 @@ namespace DataAccessLayer.Repositories
                     .ThenInclude(ss => ss.Skill)
                 .Include(sp => sp.StudentLanguages)
                     .ThenInclude(sl => sl.Language)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(sp => sp.ApplicationUserId == applicationUserId, cancellationToken);
         }
     }

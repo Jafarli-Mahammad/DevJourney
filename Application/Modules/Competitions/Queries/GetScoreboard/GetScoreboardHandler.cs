@@ -25,10 +25,11 @@ public class GetScoreboardHandler : IRequestHandler<GetScoreboardQuery, List<Sco
         var participantIds = participants.Select(p => p.Id).ToList();
         
         var allEvaluations = await _evaluationRepository.GetAllAsync(e => participantIds.Contains(e.ParticipantId), cancellationToken);
+        var evaluationsByParticipant = allEvaluations.ToLookup(e => e.ParticipantId);
 
         var scoreboard = participants.Select(p =>
         {
-            var evaluations = allEvaluations.Where(e => e.ParticipantId == p.Id).ToList();
+            var evaluations = evaluationsByParticipant[p.Id];
             var innovation = evaluations.Sum(e => e.InnovationScore);
             var technical = evaluations.Sum(e => e.TechnicalScore);
             var pitch = evaluations.Sum(e => e.PitchScore);

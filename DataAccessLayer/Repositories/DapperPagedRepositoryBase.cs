@@ -59,9 +59,11 @@ namespace DataAccessLayer.Repositories
             {
                 var totalCount = await connection.ExecuteScalarAsync<int>(new CommandDefinition(countSql, parameters, cancellationToken: ct));
 
-                var rows = await connection.QueryAsync<TRow>(new CommandDefinition(dataSql, parameters, cancellationToken: ct));
+                var rows = (await connection.QueryAsync<TRow>(new CommandDefinition(dataSql, parameters, cancellationToken: ct))).AsList();
 
-                var items = rows.Select(mapRow).ToList();
+                var items = new List<TItemDto>(rows.Count);
+                foreach (var row in rows)
+                    items.Add(mapRow(row));
 
                 return new PagedResult<TItemDto>(items, totalCount, actualPage, actualPageSize);
             }
