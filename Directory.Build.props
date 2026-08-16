@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enforce NuGet package vulnerability auditing during build -->
+    <NuGetAudit>true</NuGetAudit>
+    <!-- Specify severity level for audit: low, moderate, high, critical -->
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

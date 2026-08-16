@@ -19,10 +19,8 @@ namespace Application.Modules.Student.Queries.GetAllStudentProfiles
             return data.Select(item => new StudentProfileListDto
             {
                 Id = item.Profile.Id,
-                ApplicationUserId = item.Profile.ApplicationUserId,
                 FirstName = item.Profile.FirstName,
                 LastName = item.Profile.LastName,
-                Email = item.Email,
                 UniversityId = item.Profile.UniversityId,
                 UniversityName = item.Profile.University?.UniversityName,
                 ProfessionId = item.Profile.ProfessionId,
