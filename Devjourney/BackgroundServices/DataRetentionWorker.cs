@@ -36,30 +36,72 @@ namespace Devjourney.BackgroundServices
 
         private async Task PurgeOldSoftDeletedRecordsAsync(CancellationToken stoppingToken)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-
             var thresholdDate = DateTime.UtcNow.AddDays(-30);
 
-            // Using ExecuteDeleteAsync for efficient bulk deletion on SQL Server
-            var deletedPostsCount = await dbContext.Posts
-                .IgnoreQueryFilters()
-                .Where(p => p.DeletedAt != null && p.DeletedAt <= thresholdDate)
-                .ExecuteDeleteAsync(stoppingToken);
-
-            if (deletedPostsCount > 0)
+            // Purge Posts
+            try
             {
-                _logger.LogInformation("Purged {Count} old soft-deleted posts.", deletedPostsCount);
+                int totalDeletedPosts = 0;
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                    var posts = await dbContext.Posts
+                        .IgnoreQueryFilters()
+                        .Where(p => p.DeletedAt != null && p.DeletedAt <= thresholdDate)
+                        .Take(100)
+                        .ToListAsync(stoppingToken);
+
+                    if (posts.Count == 0)
+                        break;
+
+                    dbContext.Posts.RemoveRange(posts);
+                    await dbContext.SaveChangesAsync(stoppingToken);
+                    totalDeletedPosts += posts.Count;
+                }
+
+                if (totalDeletedPosts > 0)
+                {
+                    _logger.LogInformation("Purged {Count} old soft-deleted posts.", totalDeletedPosts);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while purging soft-deleted posts.");
             }
 
-            var deletedUsersCount = await dbContext.Users
-                .IgnoreQueryFilters()
-                .Where(u => u.DeletedAt != null && u.DeletedAt <= thresholdDate)
-                .ExecuteDeleteAsync(stoppingToken);
-
-            if (deletedUsersCount > 0)
+            // Purge Users
+            try
             {
-                _logger.LogInformation("Purged {Count} old soft-deleted users.", deletedUsersCount);
+                int totalDeletedUsers = 0;
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                    var users = await dbContext.Users
+                        .IgnoreQueryFilters()
+                        .Where(u => u.DeletedAt != null && u.DeletedAt <= thresholdDate)
+                        .Take(100)
+                        .ToListAsync(stoppingToken);
+
+                    if (users.Count == 0)
+                        break;
+
+                    dbContext.Users.RemoveRange(users);
+                    await dbContext.SaveChangesAsync(stoppingToken);
+                    totalDeletedUsers += users.Count;
+                }
+
+                if (totalDeletedUsers > 0)
+                {
+                    _logger.LogInformation("Purged {Count} old soft-deleted users.", totalDeletedUsers);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while purging soft-deleted users.");
             }
             
             // Add more entities as necessary
