@@ -17,14 +17,38 @@ namespace DataAccessLayer.Services
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user == null) return false;
-            return await userManager.CheckPasswordAsync(user, password);
+
+            if (await userManager.IsLockedOutAsync(user))
+                throw new Application.Exceptions.ForbiddenAccessException("Account is locked out.");
+
+            var isValid = await userManager.CheckPasswordAsync(user, password);
+            if (!isValid)
+            {
+                await userManager.AccessFailedAsync(user);
+                return false;
+            }
+
+            await userManager.ResetAccessFailedCountAsync(user);
+            return true;
         }
 
         public async Task<bool> CheckPasswordByUserNameAsync(string userName, string password)
         {
             var user = await userManager.FindByNameAsync(userName);
             if (user == null) return false;
-            return await userManager.CheckPasswordAsync(user, password);
+
+            if (await userManager.IsLockedOutAsync(user))
+                throw new Application.Exceptions.ForbiddenAccessException("Account is locked out.");
+
+            var isValid = await userManager.CheckPasswordAsync(user, password);
+            if (!isValid)
+            {
+                await userManager.AccessFailedAsync(user);
+                return false;
+            }
+
+            await userManager.ResetAccessFailedCountAsync(user);
+            return true;
         }
 
         public async Task<(Guid UserId, string UserName, string Email)?> GetUserInfoByEmailAsync(string email)
@@ -55,6 +79,24 @@ namespace DataAccessLayer.Services
                 throw new Application.Exceptions.BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
 
             return user.Id;
+        }
+
+        public async Task<(bool Succeeded, string[] Errors)> ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                // SEC: Do not reveal whether an account exists during password-reset flows
+                return (true, Array.Empty<string>()); 
+            }
+
+            var result = await userManager.ResetPasswordAsync(user, token, newPassword);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors.Select(e => e.Description).ToArray());
+            }
+
+            return (true, Array.Empty<string>());
         }
     }
 }

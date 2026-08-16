@@ -1,3 +1,5 @@
+using Application.Exceptions;
+using Application.Services;
 using MediatR;
 
 namespace Application.Modules.Auth.Commands.PasswordResetConfirm
@@ -11,10 +13,24 @@ namespace Application.Modules.Auth.Commands.PasswordResetConfirm
 
     public class PasswordResetConfirmCommandHandler : IRequestHandler<PasswordResetConfirmCommand, bool>
     {
-        public Task<bool> Handle(PasswordResetConfirmCommand request, CancellationToken cancellationToken)
+        private readonly IAuthService _authService;
+
+        public PasswordResetConfirmCommandHandler(IAuthService authService)
         {
-            // Just return true for MVP
-            return Task.FromResult(true);
+            _authService = authService;
+        }
+
+        public async Task<bool> Handle(PasswordResetConfirmCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _authService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword);
+            
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.ToDictionary(x => "PasswordReset", x => (IEnumerable<string>)new[] { x });
+                throw new BadRequestException("Password reset failed", errors);
+            }
+
+            return true;
         }
     }
 }

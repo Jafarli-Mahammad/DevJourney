@@ -1,0 +1,36 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: devjourney-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - devjourney-redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    cap_drop:
+      - ALL
+
+  api:
+    build:
+      context: .
+      dockerfile: Devjourney/Dockerfile
+    container_name: devjourney-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - redis
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - devjourney-uploads:/app/App_Data/uploads
+
+volumes:
+  devjourney-redis-data:
+  devjourney-uploads:

@@ -11,6 +11,7 @@ namespace Devjourney.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicListings")]
     public class LookupsController : ControllerBase
     {
         private readonly IMediator mediator;

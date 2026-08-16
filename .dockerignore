@@ -23,6 +23,10 @@
 **/values.dev.yaml
 LICENSE
 README.md
+**/*.pfx
+**/*.key
+**/appsettings.Development.json
+**/appsettings.Production.json
 !**/.gitignore
 !.git/HEAD
 !.git/config

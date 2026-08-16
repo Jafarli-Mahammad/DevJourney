@@ -7,6 +7,9 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# SEC: Declare explicit volume for uploads to support read-only container filesystems
+VOLUME /app/App_Data/uploads
+
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
