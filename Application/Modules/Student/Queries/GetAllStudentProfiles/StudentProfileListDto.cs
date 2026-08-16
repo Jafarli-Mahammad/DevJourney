@@ -3,10 +3,8 @@ namespace Application.Modules.Student.Queries.GetAllStudentProfiles
     public class StudentProfileListDto
     {
         public Guid Id { get; set; }
-        public Guid ApplicationUserId { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public string? Email { get; set; }
         public Guid? UniversityId { get; set; }
         public string? UniversityName { get; set; }
         public Guid? ProfessionId { get; set; }

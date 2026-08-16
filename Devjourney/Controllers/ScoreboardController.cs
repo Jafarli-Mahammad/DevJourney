@@ -22,6 +22,7 @@ namespace Devjourney.Controllers
 
         [HttpGet("/api/scoreboard")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicListings")]
         public async Task<IActionResult> GetScoreboard()
         {
             var result = await _mediator.Send(new GetPublicScoreboardQuery());

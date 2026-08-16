@@ -64,8 +64,8 @@ namespace DevJourney.Tests.Controllers
             // Arrange
             var expectedProfiles = new List<StudentProfileListDto>
             {
-                new StudentProfileListDto { Id = Guid.NewGuid(), Email = "student1@example.com" },
-                new StudentProfileListDto { Id = Guid.NewGuid(), Email = "student2@example.com" }
+                new StudentProfileListDto { Id = Guid.NewGuid(), FirstName = "student1" },
+                new StudentProfileListDto { Id = Guid.NewGuid(), FirstName = "student2" }
             };
             _mediatorMock.Setup(m => m.Send(It.IsAny<GetAllStudentProfilesQuery>(), It.IsAny<CancellationToken>()))
                          .ReturnsAsync(expectedProfiles);

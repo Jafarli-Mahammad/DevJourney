@@ -25,26 +25,17 @@ namespace Application.Modules.Student.Commands.UpdateCabinetProfile
 
         public async Task<StudentProfileDto> Handle(UpdateStudentProfileCommand request, CancellationToken cancellationToken)
         {
-            StudentProfile? profile = null;
-
-            if (request.StudentProfileId.HasValue && request.StudentProfileId.Value != Guid.Empty)
+            if (!_currentUserService.IsAuthenticated)
             {
-                profile = await _studentProfileRepository.GetFullProfileByIdAsync(request.StudentProfileId.Value, cancellationToken);
+                throw new UnauthorizedException();
             }
 
-            if (profile == null && _currentUserService.IsAuthenticated)
-            {
-                profile = await _studentProfileRepository.GetFullProfileByUserIdAsync(_currentUserService.UserId, cancellationToken);
-            }
+            // SEC: Prevent IDOR by loading resource directly via authenticated user context
+            var profile = await _studentProfileRepository.GetFullProfileByUserIdAsync(_currentUserService.UserId, cancellationToken);
 
             if (profile == null)
             {
-                throw new NotFoundException("StudentProfile", request.StudentProfileId ?? _currentUserService.UserId);
-            }
-
-            if (profile.ApplicationUserId != _currentUserService.UserId)
-            {
-                throw new ForbiddenAccessException();
+                throw new NotFoundException("StudentProfile", _currentUserService.UserId);
             }
 
             profile.UpdateCabinetProfile(

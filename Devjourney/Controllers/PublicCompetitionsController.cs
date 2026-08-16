@@ -26,6 +26,7 @@ namespace Devjourney.Controllers
 
         [HttpGet("/api/competitions")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicListings")]
         public async Task<IActionResult> GetAvailableCompetitions()
         {
             var result = await _mediator.Send(new GetAvailableCompetitionsQuery());
@@ -35,6 +36,7 @@ namespace Devjourney.Controllers
         [HttpGet("/api/competitions/{id:guid}")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+        [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicDetails")]
         public async Task<IActionResult> GetCompetitionDetails(Guid id)
         {
             var result = await _mediator.Send(new GetCompetitionDetailsQuery { Id = id });

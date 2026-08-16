@@ -30,7 +30,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<List<(StudentProfile Profile, string? Email)>> GetAllWithEmailAsync(CancellationToken cancellationToken = default)
         {
-            var list = await (from sp in DataContext.StudentProfiles
+            var list = await (from sp in DataContext.StudentProfiles.AsNoTracking()
                               join u in DataContext.Users on sp.ApplicationUserId equals u.Id into usersGroup
                               from u in usersGroup.DefaultIfEmpty()
                               select new

@@ -7,6 +7,8 @@ using Devjourney.AppCode.DI;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 public partial class Program
 {
@@ -20,14 +22,91 @@ public partial class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                    .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 1;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings
+            options.User.RequireUniqueEmail = true;
+        })
             .AddEntityFrameworkStores<DataContext>()
             .AddDefaultTokenProviders();
 
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<Application.Common.Interfaces.IFileStorage, DataAccessLayer.Services.LocalFileStorage>();
+
+        // Phase 4: OpenTelemetry
+        var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracing =>
+            {
+                tracing.AddAspNetCoreInstrumentation()
+                       .AddHttpClientInstrumentation()
+                       .AddSqlClientInstrumentation();
+
+                if (useOtlpExporter)
+                    tracing.AddOtlpExporter();
+                else if (builder.Environment.IsDevelopment())
+                    tracing.AddConsoleExporter();
+            })
+            .WithMetrics(metrics =>
+            {
+                metrics.AddAspNetCoreInstrumentation()
+                       .AddHttpClientInstrumentation()
+                       .AddRuntimeInstrumentation();
+
+                if (useOtlpExporter)
+                    metrics.AddOtlpExporter();
+                else if (builder.Environment.IsDevelopment())
+                    metrics.AddConsoleExporter();
+            });
+
+        builder.Services.AddSingleton<Application.Common.Background.IBackgroundTaskQueue>(ctx => 
+            new Application.Common.Background.DefaultBackgroundTaskQueue(100));
+        builder.Services.AddHostedService<Application.Common.Background.QueuedHostedService>();
+        
+        // Phase 4: Data Retention Worker
+        builder.Services.AddHostedService<Devjourney.BackgroundServices.DataRetentionWorker>();
 
         builder.Services.AddMemoryCache();
+        var redisConnection = builder.Configuration.GetConnectionString("Redis");
+        if (string.IsNullOrWhiteSpace(redisConnection))
+        {
+            builder.Services.AddDistributedMemoryCache();
+        }
+        else
+        {
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnection;
+                options.InstanceName = "DevJourney:";
+            });
+        }
         builder.Services.AddResponseCompression();
+
+        builder.Services.AddOutputCache(options =>
+        {
+            options.AddPolicy("PublicListings", builder => 
+                builder.Expire(TimeSpan.FromMinutes(1))
+                       .SetVaryByQuery("*")
+                       .Tag("public-listings"));
+
+            options.AddPolicy("PublicDetails", builder => 
+                builder.Expire(TimeSpan.FromMinutes(1))
+                       .SetVaryByRouteValue("id")
+                       .Tag("public-details"));
+        });
 
         builder.Services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(IApplicationReferance).Assembly));
@@ -108,10 +187,26 @@ public partial class Program
 
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", builder =>
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader());
+            options.AddPolicy("AllowAll", corsBuilder =>
+            {
+                if (builder.Environment.IsDevelopment())
+                {
+                    corsBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                }
+                else
+                {
+                    var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+                    if (allowedOrigins.Length > 0)
+                    {
+                        corsBuilder.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader();
+                    }
+                    else
+                    {
+                        // Fallback secure policy
+                        corsBuilder.WithOrigins("https://trusted-domain.com").AllowAnyMethod().AllowAnyHeader();
+                    }
+                }
+            });
         });
 
         var app = builder.Build();
@@ -149,13 +244,15 @@ public partial class Program
         app.UseDefaultFiles();
         app.UseStaticFiles();
 
-        app.UseSwagger();
-
-        app.UseSwaggerUI(c =>
+        if (app.Environment.IsDevelopment())
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevJourney API v1");
-            c.SwaggerEndpoint("/swagger/partner/swagger.json", "Partner API v1");
-        });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevJourney API v1");
+                c.SwaggerEndpoint("/swagger/partner/swagger.json", "Partner API v1");
+            });
+        }
 
         //app.UseRouting();
         app.UseRateLimiter();
@@ -167,6 +264,8 @@ public partial class Program
         app.UseAuthentication();
 
         app.UseAuthorization();
+        
+        app.UseOutputCache();
 
         //app.MapRazorPages();
 

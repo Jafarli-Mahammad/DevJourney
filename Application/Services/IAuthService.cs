@@ -7,5 +7,6 @@ namespace Application.Services
         Task<bool> CheckPasswordByUserNameAsync(string userName, string password);
         Task<(Guid UserId, string UserName, string Email)?> GetUserInfoByEmailAsync(string email);
         Task<(Guid UserId, string UserName, string Email)?> GetUserInfoByNameAsync(string userName);
+        Task<(bool Succeeded, string[] Errors)> ResetPasswordAsync(string email, string token, string newPassword);
     }
 }

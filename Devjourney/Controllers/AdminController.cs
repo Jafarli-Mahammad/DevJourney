@@ -10,7 +10,7 @@ namespace Devjourney.Controllers
     {
         [HttpGet("companies")]
         public IActionResult GetCompanies() => Ok(new { success = true, data = Array.Empty<object>() });
-
+        
         [HttpGet("users")]
         public IActionResult GetUsers() => Ok(new { success = true, data = Array.Empty<object>() });
 
