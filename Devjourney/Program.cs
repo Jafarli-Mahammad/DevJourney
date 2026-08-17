@@ -138,6 +138,18 @@ public partial class Program
                 ValidAudience = audience,
                 IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey))
             };
+
+            options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Cookies.ContainsKey("accessToken"))
+                    {
+                        context.Token = context.Request.Cookies["accessToken"];
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         builder.Services.AddRateLimiter(options =>
@@ -191,19 +203,19 @@ public partial class Program
             {
                 if (builder.Environment.IsDevelopment())
                 {
-                    corsBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    corsBuilder.SetIsOriginAllowed(origin => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                 }
                 else
                 {
                     var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
                     if (allowedOrigins.Length > 0)
                     {
-                        corsBuilder.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader();
+                        corsBuilder.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                     }
                     else
                     {
                         // Fallback secure policy
-                        corsBuilder.WithOrigins("https://trusted-domain.com").AllowAnyMethod().AllowAnyHeader();
+                        corsBuilder.WithOrigins("https://trusted-domain.com").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                     }
                 }
             });

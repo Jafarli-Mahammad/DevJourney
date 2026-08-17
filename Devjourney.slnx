@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/CLI ITems/">
+    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260818_013128.png" />
+  </Folder>
   <Folder Name="/FrontendFrames/">
     <File Path="..\..\..\Downloads\DevJourney Frames\frontend_screenshots.pdf" />
   </Folder>

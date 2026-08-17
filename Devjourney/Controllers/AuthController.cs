@@ -71,6 +71,18 @@ namespace Devjourney.Controllers
             return StatusCode(201, profileId);
         }
 
+        private void SetTokenCookie(string token, DateTime expiresAt)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true, // Must be true when using SameSiteMode.None
+                SameSite = SameSiteMode.None, // Required for cross-domain requests
+                Expires = expiresAt
+            };
+            Response.Cookies.Append("accessToken", token, cookieOptions);
+        }
+
         [HttpPost("login")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -79,6 +91,7 @@ namespace Devjourney.Controllers
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(request, cancellationToken);
+            SetTokenCookie(result.AccessToken, result.ExpiresAt);
             return Ok(new { success = true, data = result });
         }
 
@@ -90,6 +103,7 @@ namespace Devjourney.Controllers
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(request, cancellationToken);
+            SetTokenCookie(result.AccessToken, result.ExpiresAt);
             return Ok(new { success = true, data = result });
         }
 
@@ -101,6 +115,7 @@ namespace Devjourney.Controllers
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(request, cancellationToken);
+            SetTokenCookie(result.AccessToken, result.ExpiresAt);
             return Ok(new { success = true, data = result });
         }
 
@@ -112,6 +127,7 @@ namespace Devjourney.Controllers
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(request, cancellationToken);
+            SetTokenCookie(result.AccessToken, result.ExpiresAt);
             return Ok(new { success = true, data = result });
         }
 
@@ -121,6 +137,12 @@ namespace Devjourney.Controllers
             CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new LogoutCommand(), cancellationToken);
+            Response.Cookies.Delete("accessToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
             return Ok(new { success = result });
         }
 
