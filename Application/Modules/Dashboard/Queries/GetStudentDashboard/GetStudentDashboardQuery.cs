@@ -13,15 +13,18 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
     private readonly Application.Repositories.Core.ICertificateRepository _certificateRepository;
     private readonly Application.Repositories.Competitions.ICompetitionParticipantRepository _competitionParticipantRepository;
     private readonly Application.Services.ICurrentUserService _currentUserService;
+    private readonly Application.Repositories.IStudentProfileRepository _studentProfileRepository;
 
     public GetStudentDashboardQueryHandler(
         Application.Repositories.Core.ICertificateRepository certificateRepository,
         Application.Repositories.Competitions.ICompetitionParticipantRepository competitionParticipantRepository,
-        Application.Services.ICurrentUserService currentUserService)
+        Application.Services.ICurrentUserService currentUserService,
+        Application.Repositories.IStudentProfileRepository studentProfileRepository)
     {
         _certificateRepository = certificateRepository;
         _competitionParticipantRepository = competitionParticipantRepository;
         _currentUserService = currentUserService;
+        _studentProfileRepository = studentProfileRepository;
     }
 
     public async Task<object> Handle(GetStudentDashboardQuery request, CancellationToken cancellationToken)
@@ -35,10 +38,19 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
         var certificates = await _certificateRepository.GetAllAsync(c => c.UserId == userId, cancellationToken);
         var certCount = certificates.Count();
 
-        // Getting profile ID is tricky without injecting student repo, but for dashboard let's just return what we can
-        // We will just return 0 for active comps if we can't find profile easily, or we can guess frontend only uses cert count.
-        // Actually frontend probably fetches student profile for the dashboard.
+        var profile = await _studentProfileRepository.GetByUserIdAsync(userId);
+        int activeComps = 0;
+        if (profile != null)
+        {
+            var comps = await _competitionParticipantRepository.GetAllAsync(cp => 
+                cp.CaptainId == profile.Id || 
+                cp.IndividualStudentId == profile.Id || 
+                cp.Members.Any(m => m.StudentProfileId == profile.Id), cancellationToken);
+            activeComps = comps.Count();
+        }
         
-        return new { success = true, data = new { CertificatesCount = certCount, ActiveCompetitions = 0, DeveloperXp = 0 } };
+        int xp = certCount * 50 + activeComps * 10;
+        
+        return new { success = true, data = new { CertificatesCount = certCount, ActiveCompetitions = activeComps, DeveloperXp = xp } };
     }
 }

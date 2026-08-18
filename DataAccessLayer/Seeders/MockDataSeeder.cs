@@ -232,8 +232,8 @@ namespace DataAccessLayer.Seeders
 
             foreach (var student in students)
             {
-                // Attach random certificates (add 1-2 new certificates to everyone)
-                int certCount = faker.Random.Int(1, 2);
+                // Attach exactly 2 certificates
+                int certCount = 2;
                 for (int i = 0; i < certCount; i++)
                 {
                     _dataContext.Certificates.Add(new Certificate
@@ -253,7 +253,7 @@ namespace DataAccessLayer.Seeders
                     Name = faker.Commerce.ProductName() + " Team",
                     IsTeam = true,
                     AppliedAt = faker.Date.Recent(30),
-                    Status = faker.PickRandom<ApplicationStatus>(),
+                    Status = ApplicationStatus.Approved,
                     ProjectName = faker.Commerce.ProductName(),
                     ProjectDescription = faker.Lorem.Sentence(),
                     CaptainId = student.Id
