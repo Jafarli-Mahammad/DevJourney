@@ -28,8 +28,8 @@ namespace DataAccessLayer.Seeders
 
         public async Task SeedAsync()
         {
-            // Only seed if there are no students (meaning DB is relatively empty of mock data)
-            if (await _dataContext.StudentProfiles.AnyAsync())
+            // Seed if there are no mock students created yet
+            if (await _dataContext.StudentProfiles.CountAsync() > 10)
             {
                 return;
             }
