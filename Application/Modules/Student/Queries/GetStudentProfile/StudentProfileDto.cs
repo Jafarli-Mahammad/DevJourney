@@ -33,5 +33,25 @@ namespace Application.Modules.Student.Queries.GetStudentProfile
 
         public List<SkillDto> Skills { get; set; } = new();
         public List<StudentLanguageDto> Languages { get; set; } = new();
+        
+        public List<CertificateProfileDto> Certificates { get; set; } = new();
+        public List<CompetitionProfileDto> Competitions { get; set; } = new();
+    }
+
+    public class CertificateProfileDto
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = null!;
+        public string? Description { get; set; }
+        public string? AssetId { get; set; }
+    }
+
+    public class CompetitionProfileDto
+    {
+        public Guid CompetitionId { get; set; }
+        public string CompetitionName { get; set; } = null!;
+        public string TeamName { get; set; } = null!;
+        public string Role { get; set; } = null!;
+        public string Status { get; set; } = null!;
     }
 }
