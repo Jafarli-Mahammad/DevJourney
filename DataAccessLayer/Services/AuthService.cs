@@ -13,10 +13,10 @@ namespace DataAccessLayer.Services
             this.userManager = userManager;
         }
 
-        public async Task<bool> CheckPasswordAsync(string email, string password)
+        public async Task<(Guid UserId, string UserName, string Email)?> CheckPasswordAsync(string email, string password)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if (user == null) return false;
+            if (user == null) return null;
 
             if (await userManager.IsLockedOutAsync(user))
                 throw new Application.Exceptions.ForbiddenAccessException("Account is locked out.");
@@ -25,17 +25,20 @@ namespace DataAccessLayer.Services
             if (!isValid)
             {
                 await userManager.AccessFailedAsync(user);
-                return false;
+                return null;
             }
 
-            await userManager.ResetAccessFailedCountAsync(user);
-            return true;
+            if (user.AccessFailedCount > 0)
+            {
+                await userManager.ResetAccessFailedCountAsync(user);
+            }
+            return (user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty);
         }
 
-        public async Task<bool> CheckPasswordByUserNameAsync(string userName, string password)
+        public async Task<(Guid UserId, string UserName, string Email)?> CheckPasswordByUserNameAsync(string userName, string password)
         {
             var user = await userManager.FindByNameAsync(userName);
-            if (user == null) return false;
+            if (user == null) return null;
 
             if (await userManager.IsLockedOutAsync(user))
                 throw new Application.Exceptions.ForbiddenAccessException("Account is locked out.");
@@ -44,11 +47,14 @@ namespace DataAccessLayer.Services
             if (!isValid)
             {
                 await userManager.AccessFailedAsync(user);
-                return false;
+                return null;
             }
 
-            await userManager.ResetAccessFailedCountAsync(user);
-            return true;
+            if (user.AccessFailedCount > 0)
+            {
+                await userManager.ResetAccessFailedCountAsync(user);
+            }
+            return (user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty);
         }
 
         public async Task<(Guid UserId, string UserName, string Email)?> GetUserInfoByEmailAsync(string email)

@@ -21,16 +21,10 @@ namespace Application.Modules.Jury.Commands.Login
 
         public async Task<LoginResponseDto> Handle(JuryLoginRequest request, CancellationToken cancellationToken)
         {
-            var isValid = await _authService.CheckPasswordByUserNameAsync(request.JuryCode, request.Password);
-            if (!isValid)
-            {
-                throw new Application.Exceptions.BadRequestException("Invalid jury code or password.");
-            }
-
-            var user = await _authService.GetUserInfoByNameAsync(request.JuryCode);
+            var user = await _authService.CheckPasswordByUserNameAsync(request.JuryCode, request.Password);
             if (user == null)
             {
-                throw new Application.Exceptions.BadRequestException("Jury user not found.");
+                throw new Application.Exceptions.BadRequestException("Invalid jury code or password.");
             }
 
             var claims = new[]

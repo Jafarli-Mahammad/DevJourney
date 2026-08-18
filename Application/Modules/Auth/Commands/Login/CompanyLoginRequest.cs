@@ -24,16 +24,10 @@ namespace Application.Modules.Auth.Commands.Login
 
         public async Task<LoginResponseDto> Handle(CompanyLoginRequest request, CancellationToken cancellationToken)
         {
-            var isValid = await _authService.CheckPasswordAsync(request.Email, request.Password);
-            if (!isValid)
-            {
-                throw new Application.Exceptions.BadRequestException("Invalid email or password.");
-            }
-
-            var user = await _authService.GetUserInfoByEmailAsync(request.Email);
+            var user = await _authService.CheckPasswordAsync(request.Email, request.Password);
             if (user == null)
             {
-                throw new Application.Exceptions.BadRequestException("Company user not found.");
+                throw new Application.Exceptions.BadRequestException("Invalid email or password.");
             }
 
             var claims = new[]
