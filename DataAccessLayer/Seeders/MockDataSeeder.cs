@@ -3,6 +3,7 @@ using Bogus;
 using DataAccessLayer.DataContexts;
 using DataAccessLayer.IdentityEntities;
 using Domain.Models.Entities.Competition;
+using Domain.Models.Entities.Core;
 using Domain.Models.Entities.Partner;
 using Domain.Models.Entities.Student;
 using Domain.Models.Enums;
@@ -28,136 +29,157 @@ namespace DataAccessLayer.Seeders
 
         public async Task SeedAsync()
         {
-            // Seed if there are no mock students created yet
-            if (await _dataContext.StudentProfiles.CountAsync() > 10)
-            {
-                return;
-            }
-
             var password = "Password123!";
 
-            // 1. Seed Partners
-            var partners = new List<PartnerProfile>();
-            var partnerFaker = new Faker<PartnerProfile>()
-                .RuleFor(p => p.PartnerName, f => f.Company.CompanyName())
-                .RuleFor(p => p.PartnerType, f => f.PickRandom<PartnerType>())
-                .RuleFor(p => p.WebsiteUrl, f => f.Internet.Url())
-                .RuleFor(p => p.Location, f => f.Address.City())
-                .RuleFor(p => p.Description, f => f.Company.CatchPhrase())
-                .RuleFor(p => p.IsVerified, f => true);
-
-            for (int i = 0; i < 5; i++)
+            // 1. Ensure Partners Exist
+            var partners = await _dataContext.PartnerProfiles.ToListAsync();
+            if (partners.Count < 5)
             {
-                var user = new ApplicationUser
-                {
-                    Id = Guid.NewGuid(),
-                    UserName = $"partner{i}@test.com",
-                    Email = $"partner{i}@test.com",
-                    EmailConfirmed = true
-                };
-                var result = await _userManager.CreateAsync(user, password);
-                if (result.Succeeded)
-                {
-                    var partner = partnerFaker.Generate();
-                    partner.ApplicationUserId = user.Id;
-                    partners.Add(partner);
-                }
-            }
-            await _dataContext.PartnerProfiles.AddRangeAsync(partners);
-            await _dataContext.SaveChangesAsync();
+                var partnerFaker = new Faker<PartnerProfile>()
+                    .RuleFor(p => p.PartnerName, f => f.Company.CompanyName())
+                    .RuleFor(p => p.PartnerType, f => f.PickRandom<PartnerType>())
+                    .RuleFor(p => p.WebsiteUrl, f => f.Internet.Url())
+                    .RuleFor(p => p.Location, f => f.Address.City())
+                    .RuleFor(p => p.Description, f => f.Company.CatchPhrase())
+                    .RuleFor(p => p.IsVerified, f => true);
 
-            // 2. Seed Students
+                for (int i = 0; i < 5 - partners.Count; i++)
+                {
+                    var user = new ApplicationUser
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = $"partner_mock_{i}_{Guid.NewGuid().ToString().Substring(0, 5)}@test.com",
+                        Email = $"partner_mock_{i}_{Guid.NewGuid().ToString().Substring(0, 5)}@test.com",
+                        EmailConfirmed = true
+                    };
+                    var result = await _userManager.CreateAsync(user, password);
+                    if (result.Succeeded)
+                    {
+                        var partner = partnerFaker.Generate();
+                        partner.ApplicationUserId = user.Id;
+                        _dataContext.PartnerProfiles.Add(partner);
+                        partners.Add(partner);
+                    }
+                }
+                await _dataContext.SaveChangesAsync();
+            }
+
+            // 2. Ensure Competitions Exist
+            var competitions = await _dataContext.Competitions.ToListAsync();
+            if (competitions.Count < 10)
+            {
+                var competitionFaker = new Faker<Competition>()
+                    .RuleFor(c => c.PartnerId, f => f.PickRandom(partners).Id)
+                    .RuleFor(c => c.Title, f => f.Commerce.ProductName() + " Hackathon")
+                    .RuleFor(c => c.ShortSummary, f => f.Lorem.Sentence())
+                    .RuleFor(c => c.Description, f => f.Lorem.Paragraphs(3))
+                    .RuleFor(c => c.ParticipationFormat, f => f.PickRandom<ParticipationFormat>())
+                    .RuleFor(c => c.MaxTeamSize, f => f.Random.Int(2, 5))
+                    .RuleFor(c => c.StartDate, f => f.Date.Soon(30))
+                    .RuleFor(c => c.EndDate, (f, c) => c.StartDate.AddDays(f.Random.Int(2, 5)))
+                    .RuleFor(c => c.RegistrationDeadline, (f, c) => c.StartDate.AddDays(-2))
+                    .RuleFor(c => c.Location, f => f.Address.FullAddress())
+                    .RuleFor(c => c.IsPublished, f => true);
+
+                for (int i = 0; i < 10 - competitions.Count; i++)
+                {
+                    var comp = competitionFaker.Generate();
+                    _dataContext.Competitions.Add(comp);
+                    competitions.Add(comp);
+                }
+                await _dataContext.SaveChangesAsync();
+            }
+
+            // 3. Ensure Students Exist
             var universities = await _dataContext.UniversityProfiles.ToListAsync();
-            var students = new List<StudentProfile>();
-            var studentFaker = new Faker<StudentProfile>()
-                .CustomInstantiator(f => new StudentProfile(
-                    Guid.Empty,
-                    f.Name.FirstName(),
-                    f.Name.LastName(),
-                    universities.Any() ? f.PickRandom(universities).Id : null
-                ))
-                .RuleFor(s => s.PhoneNumber, f => f.Phone.PhoneNumber())
-                .RuleFor(s => s.Course, f => f.PickRandom(new[] { "BSc Computer Science", "BEng Software Engineering", "IT", "Information Systems" }))
-                .RuleFor(s => s.GitHubUrl, f => $"https://github.com/{f.Internet.UserName()}")
-                .RuleFor(s => s.LinkedinUrl, f => $"https://linkedin.com/in/{f.Internet.UserName()}")
-                .RuleFor(s => s.ExperienceLevel, f => f.PickRandom<ExperienceLevel>())
-                .RuleFor(s => s.Bio, f => f.Lorem.Paragraph());
-
-            for (int i = 0; i < 50; i++)
+            var students = await _dataContext.StudentProfiles.ToListAsync();
+            if (students.Count < 40)
             {
-                var user = new ApplicationUser
+                var studentFaker = new Faker<StudentProfile>()
+                    .CustomInstantiator(f => new StudentProfile(
+                        Guid.Empty,
+                        f.Name.FirstName(),
+                        f.Name.LastName(),
+                        universities.Any() ? f.PickRandom(universities).Id : null
+                    ))
+                    .RuleFor(s => s.PhoneNumber, f => f.Phone.PhoneNumber())
+                    .RuleFor(s => s.Course, f => f.PickRandom(new[] { "BSc Computer Science", "BEng Software Engineering", "IT", "Information Systems" }))
+                    .RuleFor(s => s.GitHubUrl, f => $"https://github.com/{f.Internet.UserName()}")
+                    .RuleFor(s => s.LinkedinUrl, f => $"https://linkedin.com/in/{f.Internet.UserName()}")
+                    .RuleFor(s => s.ExperienceLevel, f => f.PickRandom<ExperienceLevel>())
+                    .RuleFor(s => s.Bio, f => f.Lorem.Paragraph());
+
+                for (int i = 0; i < 40 - students.Count; i++)
                 {
-                    Id = Guid.NewGuid(),
-                    UserName = $"student{i}@test.com",
-                    Email = $"student{i}@test.com",
-                    EmailConfirmed = true
-                };
-                var result = await _userManager.CreateAsync(user, password);
-                if (result.Succeeded)
-                {
-                    var student = studentFaker.Generate();
-                    student.ApplicationUserId = user.Id;
-                    students.Add(student);
+                    var user = new ApplicationUser
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = $"student_mock_{i}_{Guid.NewGuid().ToString().Substring(0, 5)}@test.com",
+                        Email = $"student_mock_{i}_{Guid.NewGuid().ToString().Substring(0, 5)}@test.com",
+                        EmailConfirmed = true
+                    };
+                    var result = await _userManager.CreateAsync(user, password);
+                    if (result.Succeeded)
+                    {
+                        var student = studentFaker.Generate();
+                        student.ApplicationUserId = user.Id;
+                        _dataContext.StudentProfiles.Add(student);
+                        students.Add(student);
+                    }
                 }
+                await _dataContext.SaveChangesAsync();
             }
-            await _dataContext.StudentProfiles.AddRangeAsync(students);
-            await _dataContext.SaveChangesAsync();
 
-            // 3. Seed Competitions
-            var competitions = new List<Competition>();
-            var competitionFaker = new Faker<Competition>()
-                .RuleFor(c => c.PartnerId, f => f.PickRandom(partners).Id)
-                .RuleFor(c => c.Title, f => f.Commerce.ProductName() + " Hackathon")
-                .RuleFor(c => c.ShortSummary, f => f.Lorem.Sentence())
-                .RuleFor(c => c.Description, f => f.Lorem.Paragraphs(3))
-                .RuleFor(c => c.ParticipationFormat, f => f.PickRandom<ParticipationFormat>())
-                .RuleFor(c => c.MaxTeamSize, f => f.Random.Int(2, 5))
-                .RuleFor(c => c.StartDate, f => f.Date.Soon(30))
-                .RuleFor(c => c.EndDate, (f, c) => c.StartDate.AddDays(f.Random.Int(2, 5)))
-                .RuleFor(c => c.RegistrationDeadline, (f, c) => c.StartDate.AddDays(-2))
-                .RuleFor(c => c.Location, f => f.Address.FullAddress())
-                .RuleFor(c => c.IsPublished, f => true);
+            // 4. Attach Competitions and Certificates to EVERY Student
+            var faker = new Faker();
+            var allCertificates = await _dataContext.Certificates.ToListAsync();
+            var allParticipants = await _dataContext.CompetitionParticipants.Include(cp => cp.Members).ToListAsync();
 
-            for (int i = 0; i < 10; i++)
+            foreach (var student in students)
             {
-                competitions.Add(competitionFaker.Generate());
-            }
-            await _dataContext.Competitions.AddRangeAsync(competitions);
-            await _dataContext.SaveChangesAsync();
-
-            // 4. Seed Competition Participants (Teams & Individuals)
-            var participants = new List<CompetitionParticipant>();
-            var participantFaker = new Faker<CompetitionParticipant>()
-                .RuleFor(p => p.CompetitionId, f => f.PickRandom(competitions).Id)
-                .RuleFor(p => p.Name, f => f.Company.CatchPhrase() + " Team")
-                .RuleFor(p => p.IsTeam, f => true)
-                .RuleFor(p => p.AppliedAt, f => f.Date.Recent(10))
-                .RuleFor(p => p.Status, f => f.PickRandom<ApplicationStatus>())
-                .RuleFor(p => p.ProjectName, f => f.Commerce.ProductName())
-                .RuleFor(p => p.ProjectDescription, f => f.Lorem.Sentence());
-
-            for (int i = 0; i < 20; i++)
-            {
-                var team = participantFaker.Generate();
-                
-                // Pick random students for the team
-                var teamSize = new Random().Next(2, 5);
-                var shuffledStudents = students.OrderBy(x => Guid.NewGuid()).Take(teamSize).ToList();
-                
-                team.CaptainId = shuffledStudents.First().Id;
-                
-                foreach (var s in shuffledStudents)
+                // Attach random certificates if they have none
+                if (!allCertificates.Any(c => c.UserId == student.ApplicationUserId))
                 {
+                    int certCount = faker.Random.Int(1, 3);
+                    for (int i = 0; i < certCount; i++)
+                    {
+                        _dataContext.Certificates.Add(new Certificate
+                        {
+                            UserId = student.ApplicationUserId,
+                            Title = faker.PickRandom(new[] { "1st Place Winner", "Top 10 Finalist", "Participation Award", "Best UI/UX Award", "Most Innovative" }) + " - " + faker.Company.CatchPhrase(),
+                            Description = faker.Lorem.Sentence(),
+                            AssetId = "certificates/mock-cert-" + faker.Random.Int(1, 5) + ".svg"
+                        });
+                    }
+                }
+
+                // Attach to random competitions if they are not in any
+                if (!allParticipants.Any(p => p.CaptainId == student.Id || p.Members.Any(m => m.StudentProfileId == student.Id)))
+                {
+                    var comp = faker.PickRandom(competitions);
+                    var team = new CompetitionParticipant
+                    {
+                        CompetitionId = comp.Id,
+                        Name = faker.Commerce.ProductName() + " Team",
+                        IsTeam = true,
+                        AppliedAt = faker.Date.Recent(30),
+                        Status = faker.PickRandom<ApplicationStatus>(),
+                        ProjectName = faker.Commerce.ProductName(),
+                        ProjectDescription = faker.Lorem.Sentence(),
+                        CaptainId = student.Id
+                    };
+                    
                     team.Members.Add(new CompetitionTeamMember
                     {
-                        StudentProfileId = s.Id,
-                        Role = s.Id == team.CaptainId ? "Captain" : "Member"
+                        StudentProfileId = student.Id,
+                        Role = "Captain"
                     });
+                    
+                    _dataContext.CompetitionParticipants.Add(team);
+                    allParticipants.Add(team);
                 }
-                participants.Add(team);
             }
-            
-            await _dataContext.CompetitionParticipants.AddRangeAsync(participants);
+
             await _dataContext.SaveChangesAsync();
         }
     }
