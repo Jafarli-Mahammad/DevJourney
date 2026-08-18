@@ -1,0 +1,60 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore Devjourney.sln
+
+    - name: Build
+      run: dotnet build Devjourney.sln --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test Devjourney.sln --no-build --verbosity normal
+
+  security_scan:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    
+    # We would typically start the app here in background
+    # - name: Start app
+    #   run: dotnet run --project Devjourney & sleep 15
+    
+    - name: OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://localhost:5000'
+        # Actionable security threshold: fail on high/critical alerts
+        fail_action: true
+
+  performance_test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    
+    # - name: Start app
+    #   run: dotnet run --project Devjourney & sleep 15
+
+    - name: Run k6 load test
+      uses: grafana/k6-action@v0.3.1
+      with:
+        filename: loadtests/performance.js
+        # Actionable performance threshold (e.g., fail if avg response time > 500ms or error rate > 1%)
+        flags: --out json=results.json
