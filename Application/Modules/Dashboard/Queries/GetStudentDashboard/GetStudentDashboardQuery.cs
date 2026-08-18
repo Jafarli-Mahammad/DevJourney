@@ -51,6 +51,15 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
         
         int xp = certCount * 50 + activeComps * 10;
         
-        return new { success = true, data = new { CertificatesCount = certCount, ActiveCompetitions = activeComps, DeveloperXp = xp } };
+        return new { 
+            success = true, 
+            data = new { 
+                CertificatesCount = certCount, 
+                ActiveCompetitions = activeComps, 
+                DeveloperXp = xp,
+                Name = profile?.FirstName ?? "",
+                Surname = profile?.LastName ?? ""
+            } 
+        };
     }
 }

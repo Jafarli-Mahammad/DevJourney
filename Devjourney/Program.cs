@@ -18,8 +18,14 @@ public partial class Program
 
         builder.Host.UseServiceProviderFactory(new DevJourneyServiceProviderFactory());
 
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrEmpty(connectionString) || connectionString.Contains("YOUR_SERVER") || connectionString.Contains("YOUR_USER"))
+        {
+            throw new InvalidOperationException("Database credentials must be provided via environment variables or secret manager. The default placeholder cannot be used.");
+        }
+
         builder.Services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            options.UseSqlServer(connectionString)
                    .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
@@ -121,9 +127,9 @@ public partial class Program
         .AddJwtBearer(options =>
         {
             var secretKey = builder.Configuration["Jwt:SecretKey"];
-            if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+            if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32 || secretKey == "YOUR_SUPER_SECRET_KEY_MUST_BE_AT_LEAST_32_CHARS_LONG")
             {
-                throw new InvalidOperationException("A secure Jwt:SecretKey of at least 32 characters must be provided in configuration.");
+                throw new InvalidOperationException("A secure Jwt:SecretKey of at least 32 characters must be provided via environment variables. The placeholder cannot be used.");
             }
             var issuer = builder.Configuration["Jwt:Issuer"] ?? "DevJourney";
             var audience = builder.Configuration["Jwt:Audience"] ?? "DevJourneyUsers";
