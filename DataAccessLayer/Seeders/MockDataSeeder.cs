@@ -138,10 +138,10 @@ namespace DataAccessLayer.Seeders
             };
             var demoPassword = "Demo1234";
 
+            var hasher = new PasswordHasher<ApplicationUser>();
             foreach (var demo in demoAccounts)
             {
                 var demoUser = await _userManager.FindByEmailAsync(demo.Email);
-                bool isNew = false;
                 if (demoUser == null)
                 {
                     demoUser = new ApplicationUser
@@ -151,27 +151,35 @@ namespace DataAccessLayer.Seeders
                         Email = demo.Email,
                         EmailConfirmed = true
                     };
-                    var result = await _userManager.CreateAsync(demoUser, demoPassword);
-                    if (result.Succeeded)
+                    demoUser.PasswordHash = hasher.HashPassword(demoUser, demoPassword);
+                    await _userManager.CreateAsync(demoUser);
+                }
+                else
+                {
+                    // Force reset password to Demo1234, bypassing password policy validators
+                    demoUser.PasswordHash = hasher.HashPassword(demoUser, demoPassword);
+                    await _userManager.UpdateAsync(demoUser);
+                }
+
+                var student = await _dataContext.StudentProfiles.FirstOrDefaultAsync(s => s.ApplicationUserId == demoUser.Id);
+                if (student == null)
+                {
+                    student = new StudentProfile(
+                        Guid.Empty,
+                        demo.NeedsData ? "Demo" : "New",
+                        demo.NeedsData ? "ActiveUser" : "User",
+                        universities.FirstOrDefault()?.Id
+                    )
                     {
-                        isNew = true;
-                        var student = new StudentProfile(
-                            Guid.Empty,
-                            demo.NeedsData ? "Demo" : "New",
-                            demo.NeedsData ? "ActiveUser" : "User",
-                            universities.FirstOrDefault()?.Id
-                        )
-                        {
-                            ApplicationUserId = demoUser.Id,
-                            PhoneNumber = "+994500000000",
-                            Course = "BSc Computer Science",
-                            ExperienceLevel = ExperienceLevel.Middle,
-                            Bio = "This is a demo account automatically seeded for testing purposes."
-                        };
-                        _dataContext.StudentProfiles.Add(student);
-                        students.Add(student); // Add to the main list so loop 4 can see it if needed
-                        await _dataContext.SaveChangesAsync();
-                    }
+                        ApplicationUserId = demoUser.Id,
+                        PhoneNumber = "+994500000000",
+                        Course = "BSc Computer Science",
+                        ExperienceLevel = ExperienceLevel.Middle,
+                        Bio = "This is a demo account automatically seeded for testing purposes."
+                    };
+                    _dataContext.StudentProfiles.Add(student);
+                    students.Add(student);
+                    await _dataContext.SaveChangesAsync();
                 }
 
                 if (demo.NeedsData)
