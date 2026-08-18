@@ -130,6 +130,93 @@ namespace DataAccessLayer.Seeders
                 await _dataContext.SaveChangesAsync();
             }
 
+            // 3.5 Ensure Demo Accounts Exist and are Populated
+            var demoAccounts = new[] 
+            { 
+                new { Email = "demo.active@devjourney.az", NeedsData = true }, 
+                new { Email = "demo.new@devjourney.az", NeedsData = false } 
+            };
+            var demoPassword = "Demo1234";
+
+            foreach (var demo in demoAccounts)
+            {
+                var demoUser = await _userManager.FindByEmailAsync(demo.Email);
+                bool isNew = false;
+                if (demoUser == null)
+                {
+                    demoUser = new ApplicationUser
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = demo.Email,
+                        Email = demo.Email,
+                        EmailConfirmed = true
+                    };
+                    var result = await _userManager.CreateAsync(demoUser, demoPassword);
+                    if (result.Succeeded)
+                    {
+                        isNew = true;
+                        var student = new StudentProfile(
+                            Guid.Empty,
+                            demo.NeedsData ? "Demo" : "New",
+                            demo.NeedsData ? "ActiveUser" : "User",
+                            universities.FirstOrDefault()?.Id
+                        )
+                        {
+                            ApplicationUserId = demoUser.Id,
+                            PhoneNumber = "+994500000000",
+                            Course = "BSc Computer Science",
+                            ExperienceLevel = ExperienceLevel.Middle,
+                            Bio = "This is a demo account automatically seeded for testing purposes."
+                        };
+                        _dataContext.StudentProfiles.Add(student);
+                        students.Add(student); // Add to the main list so loop 4 can see it if needed
+                        await _dataContext.SaveChangesAsync();
+                    }
+                }
+
+                if (demo.NeedsData)
+                {
+                    // Find their student profile ID
+                    var profile = await _dataContext.StudentProfiles.FirstOrDefaultAsync(s => s.ApplicationUserId == demoUser.Id);
+                    if (profile != null)
+                    {
+                        // Check if they already have certificates
+                        var hasData = await _dataContext.Certificates.AnyAsync(c => c.UserId == demoUser.Id);
+                        if (!hasData)
+                        {
+                            var demoFaker = new Faker();
+                            var shuffledComps = competitions.OrderBy(x => Guid.NewGuid()).Take(4).ToList();
+                            
+                            foreach (var comp in shuffledComps)
+                            {
+                                var team = new CompetitionParticipant
+                                {
+                                    CompetitionId = comp.Id,
+                                    Name = "Demo Active Team " + demoFaker.Random.Int(1, 100),
+                                    IsTeam = true,
+                                    AppliedAt = demoFaker.Date.Recent(30),
+                                    Status = ApplicationStatus.Approved,
+                                    ProjectName = "Demo Innovation Project",
+                                    ProjectDescription = "A revolutionary product made by the demo user.",
+                                    CaptainId = profile.Id
+                                };
+                                team.Members.Add(new CompetitionTeamMember { StudentProfileId = profile.Id, Role = "Captain" });
+                                _dataContext.CompetitionParticipants.Add(team);
+
+                                _dataContext.Certificates.Add(new Certificate
+                                {
+                                    UserId = demoUser.Id,
+                                    Title = demoFaker.PickRandom(new[] { "1st Place Winner", "Best Innovation", "Outstanding Pitch", "Hackathon Champion" }) + " - " + comp.Title,
+                                    Description = "Awarded for exceptional performance in the " + comp.Title,
+                                    AssetId = "certificates/mock-cert-" + demoFaker.Random.Int(1, 5) + ".svg"
+                                });
+                            }
+                            await _dataContext.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+
             // 4. Attach Competitions and Certificates to EVERY Student
             var faker = new Faker();
             var allCertificates = await _dataContext.Certificates.ToListAsync();
@@ -137,47 +224,41 @@ namespace DataAccessLayer.Seeders
 
             foreach (var student in students)
             {
-                // Attach random certificates if they have none
-                if (!allCertificates.Any(c => c.UserId == student.ApplicationUserId))
+                // Attach random certificates (add 1-2 new certificates to everyone)
+                int certCount = faker.Random.Int(1, 2);
+                for (int i = 0; i < certCount; i++)
                 {
-                    int certCount = faker.Random.Int(1, 3);
-                    for (int i = 0; i < certCount; i++)
+                    _dataContext.Certificates.Add(new Certificate
                     {
-                        _dataContext.Certificates.Add(new Certificate
-                        {
-                            UserId = student.ApplicationUserId,
-                            Title = faker.PickRandom(new[] { "1st Place Winner", "Top 10 Finalist", "Participation Award", "Best UI/UX Award", "Most Innovative" }) + " - " + faker.Company.CatchPhrase(),
-                            Description = faker.Lorem.Sentence(),
-                            AssetId = "certificates/mock-cert-" + faker.Random.Int(1, 5) + ".svg"
-                        });
-                    }
+                        UserId = student.ApplicationUserId,
+                        Title = faker.PickRandom(new[] { "1st Place Winner", "Top 10 Finalist", "Participation Award", "Best UI/UX Award", "Most Innovative" }) + " - " + faker.Company.CatchPhrase(),
+                        Description = faker.Lorem.Sentence(),
+                        AssetId = "certificates/mock-cert-" + faker.Random.Int(1, 5) + ".svg"
+                    });
                 }
 
-                // Attach to random competitions if they are not in any
-                if (!allParticipants.Any(p => p.CaptainId == student.Id || p.Members.Any(m => m.StudentProfileId == student.Id)))
+                // Attach to random competition
+                var comp = faker.PickRandom(competitions);
+                var team = new CompetitionParticipant
                 {
-                    var comp = faker.PickRandom(competitions);
-                    var team = new CompetitionParticipant
-                    {
-                        CompetitionId = comp.Id,
-                        Name = faker.Commerce.ProductName() + " Team",
-                        IsTeam = true,
-                        AppliedAt = faker.Date.Recent(30),
-                        Status = faker.PickRandom<ApplicationStatus>(),
-                        ProjectName = faker.Commerce.ProductName(),
-                        ProjectDescription = faker.Lorem.Sentence(),
-                        CaptainId = student.Id
-                    };
-                    
-                    team.Members.Add(new CompetitionTeamMember
-                    {
-                        StudentProfileId = student.Id,
-                        Role = "Captain"
-                    });
-                    
-                    _dataContext.CompetitionParticipants.Add(team);
-                    allParticipants.Add(team);
-                }
+                    CompetitionId = comp.Id,
+                    Name = faker.Commerce.ProductName() + " Team",
+                    IsTeam = true,
+                    AppliedAt = faker.Date.Recent(30),
+                    Status = faker.PickRandom<ApplicationStatus>(),
+                    ProjectName = faker.Commerce.ProductName(),
+                    ProjectDescription = faker.Lorem.Sentence(),
+                    CaptainId = student.Id
+                };
+                
+                team.Members.Add(new CompetitionTeamMember
+                {
+                    StudentProfileId = student.Id,
+                    Role = "Captain"
+                });
+                
+                _dataContext.CompetitionParticipants.Add(team);
+                allParticipants.Add(team);
             }
 
             await _dataContext.SaveChangesAsync();
