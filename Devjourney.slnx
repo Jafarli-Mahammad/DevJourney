@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Certificates/">
+    <File Path="..\DevJourneyFront\devjourney\public\assets\certificates\baku-id-finalist copy.svg" />
+  </Folder>
   <Folder Name="/CLI ITems/">
     <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260818_013128.png" />
   </Folder>

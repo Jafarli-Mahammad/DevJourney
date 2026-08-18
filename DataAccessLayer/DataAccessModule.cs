@@ -1,9 +1,11 @@
 using Application.Repositories;
+using Application.Repositories.Core;
 using Application.Repositories.Post;
 using Application.Seeder;
 using Application.Services;
 using Autofac;
 using DataAccessLayer.Repositories;
+using DataAccessLayer.Repositories.Core;
 using DataAccessLayer.Repositories.Post;
 using DataAccessLayer.Seeders;
 using DataAccessLayer.Services;
@@ -16,6 +18,10 @@ namespace DataAccessLayer
         {
             builder.RegisterGeneric(typeof(AsyncRepository<>))
                 .As(typeof(IAsyncRepository<>))
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<CertificateRepository>()
+                .As<ICertificateRepository>()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<StudentProfileRepository>()
