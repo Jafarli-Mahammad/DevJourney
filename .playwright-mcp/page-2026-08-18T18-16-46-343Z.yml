@@ -1,0 +1,60 @@
+- main [ref=f2e2]:
+  - generic [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "DevJourney ana səhifəsi" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e7]: DevJourney
+      - generic [ref=f2e8]:
+        - link "Ana səhifə" [ref=f2e9] [cursor=pointer]:
+          - /url: /
+        - button "Qaranlıq rejimə keç" [ref=f2e13] [cursor=pointer]
+    - generic [ref=f2e17]:
+      - heading "DevJourney-yə qoşul" [level=1] [ref=f2e18]
+      - paragraph [ref=f2e19]: Şəxsi inkişaf profilini yarat və universitetinə uyğun imkanları kəşf et.
+      - generic [ref=f2e21]:
+        - generic [ref=f2e22]:
+          - generic [ref=f2e23]:
+            - generic [ref=f2e24]: Ad və soyad
+            - textbox "Ad və soyad" [ref=f2e26]:
+              - /placeholder: Aysel Məmmədova
+              - text: John Doe
+          - generic [ref=f2e27]:
+            - generic [ref=f2e28]: E-poçt
+            - textbox "E-poçt" [ref=f2e30]:
+              - /placeholder: aysel@university.edu
+              - text: johndoe777@test.com
+        - generic [ref=f2e31]:
+          - generic [ref=f2e32]: Nickname
+          - textbox "Nickname" [ref=f2e34]:
+            - /placeholder: aysel.dev
+            - text: johndoe777
+        - generic [ref=f2e35]:
+          - generic [ref=f2e36]: Universitet
+          - combobox "Universitet" [active] [ref=f2e38] [cursor=pointer]:
+            - generic: Azerbaijan Technical University (AzTU)
+          - combobox [ref=f2e106]
+        - generic [ref=f2e42]:
+          - generic [ref=f2e43]:
+            - generic [ref=f2e44]:
+              - generic [ref=f2e45]: Şifrə
+              - generic [ref=f2e46]: 8+ simvol
+            - generic [ref=f2e47]:
+              - textbox "Şifrə" [ref=f2e48]:
+                - /placeholder: Güclü şifrə yaradın
+                - text: Password123!
+              - button "Şifrəni göstər" [ref=f2e49] [cursor=pointer]
+          - generic [ref=f2e53]:
+            - generic [ref=f2e54]: Şifrəni təsdiqlə
+            - generic [ref=f2e56]:
+              - textbox "Şifrəni təsdiqlə" [ref=f2e57]:
+                - /placeholder: Şifrəni yenidən yazın
+                - text: Password123!
+              - button "Şifrəni göstər" [ref=f2e58] [cursor=pointer]
+        - paragraph [ref=f2e62]: Şifrədə ən azı 1 böyük hərf və 1 rəqəm olmalıdır.
+        - button "Hesabı yarat" [ref=f2e63] [cursor=pointer]
+      - generic [ref=f2e64]:
+        - text: Artıq hesabın var?
+        - link "Daxil ol" [ref=f2e65] [cursor=pointer]:
+          - /url: /login
+  - complementary [ref=f2e66]:
+    - img "DevJourney Auth Illustration" [ref=f2e68]

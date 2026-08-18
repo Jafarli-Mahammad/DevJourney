@@ -1,0 +1,124 @@
+- generic [ref=f2e161]:
+  - complementary "Tələbə portalı naviqasiyası" [ref=f2e162]:
+    - generic [ref=f2e163]:
+      - generic [ref=f2e164]:
+        - link "DevJourney" [ref=f2e165] [cursor=pointer]:
+          - /url: /dashboard
+        - generic [ref=f2e169]: Tələbə
+      - navigation [ref=f2e171]:
+        - paragraph [ref=f2e172]: İş sahəsi
+        - link "İdarəetmə" [ref=f2e173] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Yarışlar" [ref=f2e182] [cursor=pointer]:
+          - /url: /dashboard/competitions
+        - link "Sertifikatlar" [ref=f2e192] [cursor=pointer]:
+          - /url: /dashboard/certificates
+        - link "Bildirişlər 3" [ref=f2e198] [cursor=pointer]:
+          - /url: /dashboard/notifications
+          - generic [ref=f2e199]: Bildirişlər
+          - generic [ref=f2e204]: "3"
+        - link "Liderlər Cədvəli" [ref=f2e205] [cursor=pointer]:
+          - /url: /dashboard/scoreboard
+        - link "Məlumatlarım" [ref=f2e213] [cursor=pointer]:
+          - /url: /dashboard/profile
+    - generic [ref=f2e220]:
+      - link "Johndoe777 AzTU • Tələbə" [ref=f2e221] [cursor=pointer]:
+        - /url: /dashboard/profile
+        - generic [ref=f2e223]:
+          - generic [ref=f2e224]: Johndoe777
+          - generic [ref=f2e225]: AzTU • Tələbə
+      - generic [ref=f2e226]:
+        - button "Qaranlıq rejimə keç" [ref=f2e227] [cursor=pointer]
+        - button "Çıxış" [ref=f2e230] [cursor=pointer]
+  - generic [ref=f2e235]:
+    - banner [ref=f2e236]:
+      - generic [ref=f2e237]:
+        - paragraph [ref=f2e240]: İdarəetmə
+        - generic [ref=f2e241]:
+          - 'link "Bildirişlər: 3 oxunmamış" [ref=f2e242] [cursor=pointer]':
+            - /url: /dashboard/notifications
+          - link "Profil" [ref=f2e247] [cursor=pointer]:
+            - /url: /dashboard/profile
+    - main [ref=f2e251]:
+      - generic [ref=f2e252]:
+        - generic [ref=f2e254]:
+          - generic [ref=f2e255]:
+            - heading "Xoş gəldin, Johndoe777!" [level=1] [ref=f2e256]
+            - paragraph [ref=f2e257]: Komandanın irəliləyişini izlə, təqdimat tarixlərini qaçırma və developer profilini gücləndir.
+            - generic [ref=f2e258]:
+              - button "İştirakçı kartı" [ref=f2e259] [cursor=pointer]
+              - link "Profili tamamla" [ref=f2e260] [cursor=pointer]:
+                - /url: /dashboard/profile
+          - generic [ref=f2e261]:
+            - generic [ref=f2e263]:
+              - paragraph [ref=f2e264]: Profil tamamlanması
+              - paragraph [ref=f2e265]: 100% hazırdır
+            - progressbar "Profil tamamlanması" [ref=f2e269]
+            - paragraph [ref=f2e271]: Bacarıqlar və portfolio keçidi əlavə edərək görünürlüğünü artır.
+        - region [ref=f2e272]:
+          - heading "İdarəetmə statistikası" [level=2] [ref=f2e273]
+          - generic [ref=f2e274]:
+            - article [ref=f2e275]:
+              - generic [ref=f2e278]:
+                - paragraph [ref=f2e279]: Aktiv müsabiqələr
+                - paragraph [ref=f2e280]: "0"
+                - paragraph [ref=f2e281]: aktiv iştirak yoxdur
+            - article [ref=f2e290]:
+              - generic [ref=f2e293]:
+                - paragraph [ref=f2e294]: Sertifikatlar
+                - paragraph [ref=f2e295]: "0"
+                - paragraph [ref=f2e296]: sertifikat yoxdur
+            - article [ref=f2e301]:
+              - generic [ref=f2e304]:
+                - paragraph [ref=f2e305]: Developer XP
+                - paragraph [ref=f2e306]: 0XP
+                - paragraph [ref=f2e307]: ilk xalınızı yarışda qazanın
+        - generic [ref=f2e311]:
+          - generic [ref=f2e312]:
+            - status [ref=f2e313]:
+              - heading "Aktiv yarışınız yoxdur" [level=2] [ref=f2e322]
+              - paragraph [ref=f2e323]: Açıq yarışları nəzərdən keçirin və uyğun çağırışa qeydiyyatdan keçin.
+              - link "Aktiv Yarışlara Bax" [ref=f2e325] [cursor=pointer]:
+                - /url: /dashboard/competitions
+            - status [ref=f2e326]:
+              - heading "Yarış gündəliyi boşdur" [level=2] [ref=f2e331]
+              - paragraph [ref=f2e332]: Təsdiqlənmiş yarış proqramınız olduqda tədbirlər burada görünəcək.
+          - complementary "Komanda məlumatları" [ref=f2e333]:
+            - status [ref=f2e334]:
+              - heading "Hələ komandanız yoxdur" [level=2] [ref=f2e341]
+              - paragraph [ref=f2e342]: Yarışa qeydiyyat zamanı komanda yaradın və ya mövcud komandaya qoşulun.
+              - generic [ref=f2e344]:
+                - button "Komanda Yarat" [ref=f2e345] [cursor=pointer]
+                - button "Komandaya Qatıl" [ref=f2e346] [cursor=pointer]
+            - region [ref=f2e347]:
+              - generic [ref=f2e348]:
+                - generic [ref=f2e349]:
+                  - heading "Bildirişlər" [level=2] [ref=f2e355]
+                  - generic [ref=f2e356]: "3"
+                - link "Hamısına bax" [ref=f2e357] [cursor=pointer]:
+                  - /url: /dashboard/notifications
+              - generic [ref=f2e361]:
+                - link "Yarış başladı Oxunmamış bildiriş Yarış başladı! Uğurlar! İndi" [ref=f2e362] [cursor=pointer]:
+                  - /url: /dashboard/notifications
+                  - generic [ref=f2e371]:
+                    - generic [ref=f2e372]:
+                      - generic [ref=f2e373]: Yarış başladı
+                      - generic "Oxunmamış bildiriş" [ref=f2e374]
+                    - generic [ref=f2e375]: Yarış başladı! Uğurlar!
+                    - generic [ref=f2e376]: İndi
+                - link "Community care Oxunmamış bildiriş Deyəsən acmısan? Getdik yeməyə! 12 dəq əvvəl" [ref=f2e377] [cursor=pointer]:
+                  - /url: /dashboard/notifications
+                  - generic [ref=f2e386]:
+                    - generic [ref=f2e387]:
+                      - generic [ref=f2e388]: Community care
+                      - generic "Oxunmamış bildiriş" [ref=f2e389]
+                    - generic [ref=f2e390]: Deyəsən acmısan? Getdik yeməyə!
+                    - generic [ref=f2e391]: 12 dəq əvvəl
+                - link "Son 1 saat Oxunmamış bildiriş Pitch Deck təslim etməyə son 1 saat qalıb! Tələs! 28 dəq əvvəl" [ref=f2e392] [cursor=pointer]:
+                  - /url: /dashboard/notifications
+                  - generic [ref=f2e401]:
+                    - generic [ref=f2e402]:
+                      - generic [ref=f2e403]: Son 1 saat
+                      - generic "Oxunmamış bildiriş" [ref=f2e404]
+                    - generic [ref=f2e405]: Pitch Deck təslim etməyə son 1 saat qalıb! Tələs!
+                    - generic [ref=f2e406]: 28 dəq əvvəl

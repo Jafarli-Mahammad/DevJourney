@@ -1,0 +1,42 @@
+- main [ref=f2e108]:
+  - generic [ref=f2e109]:
+    - generic [ref=f2e110]:
+      - link "DevJourney ana səhifəsi" [ref=f2e111] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e113]: DevJourney
+      - generic [ref=f2e114]:
+        - link "Ana səhifə" [ref=f2e115] [cursor=pointer]:
+          - /url: /
+        - button "Qaranlıq rejimə keç" [ref=f2e119] [cursor=pointer]
+    - generic [ref=f2e123]:
+      - heading "Yenidən xoş gəldin" [level=1] [ref=f2e124]
+      - paragraph [ref=f2e125]: Giriş növünü seç və DevJourney yoluna təhlükəsiz davam et.
+      - generic [ref=f2e126]:
+        - tablist "Giriş hesab növü" [ref=f2e127]:
+          - tab "Tələbə / İstifadəçi" [selected] [ref=f2e128] [cursor=pointer]
+          - tab "Münsif" [ref=f2e129] [cursor=pointer]
+        - generic [ref=f2e131]:
+          - generic [ref=f2e132]:
+            - generic [ref=f2e133]: E-poçt
+            - textbox "E-poçt" [ref=f2e135]:
+              - /placeholder: ad@university.edu
+              - text: demo.active@devjourney.az
+          - generic [ref=f2e136]:
+            - generic [ref=f2e137]: Şifrə
+            - generic [ref=f2e139]:
+              - textbox "Şifrə" [ref=f2e140]:
+                - /placeholder: Şifrənizi daxil edin
+                - text: Password123!
+              - button "Şifrəni göstər" [ref=f2e141] [cursor=pointer]
+          - generic [ref=f2e145]:
+            - generic [ref=f2e146]: Demo hesabları
+            - button "demo.active@devjourney.az" [ref=f2e152] [cursor=pointer]
+            - button "demo.new@devjourney.az" [ref=f2e153] [cursor=pointer]
+          - button "Giriş et" [ref=f2e154] [cursor=pointer]
+          - status [ref=f2e160]: Invalid email or password.
+      - generic [ref=f2e155]:
+        - text: Tələbə hesabın yoxdur?
+        - link "Qeydiyyatdan keç" [ref=f2e156] [cursor=pointer]:
+          - /url: /register
+  - complementary [ref=f2e157]:
+    - img "DevJourney Auth Illustration" [ref=f2e159]

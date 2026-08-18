@@ -1,0 +1,77 @@
+- generic:
+  - main:
+    - generic:
+      - generic:
+        - link:
+          - /url: /
+          - generic: DevJourney
+        - generic:
+          - link:
+            - /url: /
+            - text: Ana səhifə
+          - button
+      - generic:
+        - generic:
+          - heading [level=1]: DevJourney-yə qoşul
+          - paragraph: Şəxsi inkişaf profilini yarat və universitetinə uyğun imkanları kəşf et.
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: Ad və soyad
+                  - textbox:
+                    - /placeholder: Aysel Məmmədova
+                    - text: John Doe
+                - generic:
+                  - generic: E-poçt
+                  - textbox:
+                    - /placeholder: aysel@university.edu
+                    - text: johndoe777@test.com
+              - generic:
+                - generic: Nickname
+                - textbox:
+                  - /placeholder: aysel.dev
+                  - text: johndoe777
+              - generic:
+                - generic: Universitet
+                - combobox [expanded]:
+                  - generic: Universiteti seçin
+                - combobox
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Şifrə
+                    - generic: 8+ simvol
+                  - generic:
+                    - textbox:
+                      - /placeholder: Güclü şifrə yaradın
+                      - text: Password123!
+                    - button
+                - generic:
+                  - generic: Şifrəni təsdiqlə
+                  - generic:
+                    - textbox:
+                      - /placeholder: Şifrəni yenidən yazın
+                      - text: Password123!
+                    - button
+              - paragraph: Şifrədə ən azı 1 böyük hərf və 1 rəqəm olmalıdır.
+              - button: Hesabı yarat
+          - generic:
+            - text: Artıq hesabın var?
+            - link:
+              - /url: /login
+              - text: Daxil ol
+    - complementary
+  - listbox [ref=f2e69]:
+    - option "string" [active] [ref=f2e70]
+    - option "Baku State University (BDU)" [ref=f2e73]
+    - option "Azerbaijan State Oil and Industry University (ADNSU)" [ref=f2e76]
+    - option "ADA University" [ref=f2e79]
+    - option "Khazar University" [ref=f2e82]
+    - option "National Aviation Academy (MAA)" [ref=f2e85]
+    - option "Azerbaijan Technical University (AzTU)" [ref=f2e88]
+    - option "Baku Engineering University (BMU)" [ref=f2e91]
+    - option "Azerbaijan State University of Economics (UNEC)" [ref=f2e94]
+    - option "Baku Higher Oil School (BANM)" [ref=f2e97]
+    - 'option "XP󡡆ìä򲫟ÔaM°񄼯獞ÿ2" [ref=f2e100]'
+    - option "񍰻" [ref=f2e103]
