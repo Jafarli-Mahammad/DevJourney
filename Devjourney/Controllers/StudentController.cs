@@ -42,6 +42,21 @@ namespace Devjourney.Controllers
             return Ok(result);
         }
 
+        [HttpGet("profile")]
+        [Authorize]
+        [ProducesResponseType(typeof(StudentProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetCurrentStudentProfile(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new Application.Modules.Student.Queries.GetMyStudentProfile.GetMyStudentProfileQuery(), cancellationToken);
+            if (result == null)
+            {
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Student profile not found" } });
+            }
+            return Ok(result);
+        }
+
         [HttpPut("profile")]
         [Authorize]
         [ProducesResponseType(typeof(StudentProfileDto), StatusCodes.Status200OK)]

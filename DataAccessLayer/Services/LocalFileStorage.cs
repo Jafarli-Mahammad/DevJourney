@@ -22,12 +22,25 @@ namespace DataAccessLayer.Services
         private string GetPhysicalPath(string containerName, string objectKey)
         {
             // SEC: Never allow uploads into the web root (wwwroot). Store them in a restricted volume.
-            var uploadsFolder = Path.Combine(_env.ContentRootPath, "App_Data", "uploads", containerName);
-            if (!Directory.Exists(uploadsFolder))
+            try
             {
-                Directory.CreateDirectory(uploadsFolder);
+                var uploadsFolder = Path.Combine(_env.ContentRootPath, "App_Data", "uploads", containerName);
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                return Path.Combine(uploadsFolder, objectKey);
             }
-            return Path.Combine(uploadsFolder, objectKey);
+            catch
+            {
+                // Fallback to temp path for environments with restricted root filesystem permissions (e.g. cloud containers)
+                var fallbackFolder = Path.Combine(Path.GetTempPath(), "devjourney_uploads", containerName);
+                if (!Directory.Exists(fallbackFolder))
+                {
+                    Directory.CreateDirectory(fallbackFolder);
+                }
+                return Path.Combine(fallbackFolder, objectKey);
+            }
         }
 
         public async Task<string> UploadFileAsync(string containerName, string objectKey, Stream fileStream, string contentType, CancellationToken cancellationToken)
@@ -45,6 +58,13 @@ namespace DataAccessLayer.Services
             var filePath = GetPhysicalPath(containerName, objectKey);
             if (!File.Exists(filePath))
             {
+                // Also check fallback location if primary doesn't have it
+                var fallbackPath = Path.Combine(Path.GetTempPath(), "devjourney_uploads", containerName, objectKey);
+                if (File.Exists(fallbackPath))
+                {
+                    var fallbackStream = new FileStream(fallbackPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+                    return Task.FromResult<Stream?>(fallbackStream);
+                }
                 return Task.FromResult<Stream?>(null);
             }
             var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);

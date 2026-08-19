@@ -9,13 +9,13 @@ namespace Application.Modules.Profile.Commands.UploadCv
     {
         public UploadCvCommandValidator()
         {
-            RuleFor(x => x.File)
+            RuleFor(x => x.File ?? x.Cv)
                 .NotNull().WithMessage("File is required.")
                 .Must(file => file == null || file.Length <= 5 * 1024 * 1024).WithMessage("File size must not exceed 5MB.")
                 .Must(BeAValidFileSignature).WithMessage("Invalid file type. Only PDF, DOC, or DOCX files are allowed.");
         }
 
-        private bool BeAValidFileSignature(IFormFile file)
+        private bool BeAValidFileSignature(IFormFile? file)
         {
             if (file == null) return true; // Handled by NotNull rule
 

@@ -9,7 +9,8 @@ namespace Application.Modules.Profile.Commands.UploadCv
 {
     public class UploadCvCommand : IRequest<CvUploadResultDto>
     {
-        public IFormFile File { get; set; } = null!;
+        public IFormFile? File { get; set; }
+        public IFormFile? Cv { get; set; }
     }
 
     public class UploadCvCommandHandler : IRequestHandler<UploadCvCommand, CvUploadResultDto>
@@ -23,17 +24,18 @@ namespace Application.Modules.Profile.Commands.UploadCv
 
         public async Task<CvUploadResultDto> Handle(UploadCvCommand request, CancellationToken cancellationToken)
         {
-            if (request.File == null || request.File.Length == 0)
+            var file = request.File ?? request.Cv;
+            if (file == null || file.Length == 0)
             {
                 throw new Application.Exceptions.BadRequestException("No file was uploaded or the file is empty.");
             }
 
-            var rawExt = System.IO.Path.GetExtension(request.File.FileName);
+            var rawExt = System.IO.Path.GetExtension(file.FileName);
             var extension = !string.IsNullOrWhiteSpace(rawExt) ? rawExt.ToLowerInvariant() : ".pdf";
             var objectKey = $"{Guid.NewGuid()}{extension}"; // SEC: Random UUID to prevent enumeration/traversal
 
-            using var stream = request.File.OpenReadStream();
-            var contentType = !string.IsNullOrWhiteSpace(request.File.ContentType) ? request.File.ContentType : "application/pdf";
+            using var stream = file.OpenReadStream();
+            var contentType = !string.IsNullOrWhiteSpace(file.ContentType) ? file.ContentType : "application/pdf";
             var url = await _fileStorage.UploadFileAsync("cvs", objectKey, stream, contentType, cancellationToken);
 
             return new CvUploadResultDto { AssetId = Guid.NewGuid(), Url = url };

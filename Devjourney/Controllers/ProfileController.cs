@@ -55,6 +55,7 @@ namespace Devjourney.Controllers
 
         [HttpPost("uploads/cv")]
         [Authorize]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> UploadCv(
             [FromForm] UploadCvCommand command,
