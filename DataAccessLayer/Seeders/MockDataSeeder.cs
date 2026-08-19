@@ -271,6 +271,21 @@ namespace DataAccessLayer.Seeders
                 allParticipants.Add(team);
             }
 
+            // 5. Upgrade any legacy placeholder certificate AssetIds in database to custom designs
+            var legacyCerts = await _dataContext.Certificates
+                .Where(c => c.AssetId != null && (c.AssetId.Contains("mock-cert") || c.AssetId.EndsWith(".svg")))
+                .ToListAsync();
+            if (legacyCerts.Any())
+            {
+                var upgradeAssets = new[] { "certificates/winner_certificate.jpg", "certificates/participant_certificate.jpg", "certificates/innovation_certificate.jpg" };
+                int idx = 0;
+                foreach (var cert in legacyCerts)
+                {
+                    cert.AssetId = upgradeAssets[idx % upgradeAssets.Length];
+                    idx++;
+                }
+            }
+
             await _dataContext.SaveChangesAsync();
         }
     }
