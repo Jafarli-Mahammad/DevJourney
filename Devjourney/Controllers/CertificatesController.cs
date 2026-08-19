@@ -70,7 +70,7 @@ namespace Devjourney.Controllers
                     UserId = student.ApplicationUserId,
                     Title = "1st Place - SmartSolutions Hackathon",
                     Description = "Awarded for creating an outstanding MVP",
-                    AssetId = "certificates/mock-cert-1.svg"
+                    AssetId = "certificates/winner_certificate.jpg"
                 };
 
                 var mockCert2 = new Certificate
@@ -78,7 +78,7 @@ namespace Devjourney.Controllers
                     UserId = student.ApplicationUserId,
                     Title = "Participation - DevJourney Startup Days",
                     Description = "Successfully completed the 48-hour startup challenge",
-                    AssetId = "certificates/mock-cert-2.svg"
+                    AssetId = "certificates/participant_certificate.jpg"
                 };
 
                 await _certificateRepository.AddAsync(mockCert1);

@@ -45,6 +45,18 @@ namespace Devjourney.Controllers
             {
                 contentType = "application/msword";
             }
+            else if (objectKey.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || objectKey.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "image/jpeg";
+            }
+            else if (objectKey.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "image/png";
+            }
+            else if (objectKey.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "image/svg+xml";
+            }
 
             return File(stream, contentType);
         }

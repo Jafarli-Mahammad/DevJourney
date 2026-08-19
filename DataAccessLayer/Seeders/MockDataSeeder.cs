@@ -195,6 +195,7 @@ namespace DataAccessLayer.Seeders
                             var demoFaker = new Faker();
                             var shuffledComps = competitions.OrderBy(x => Guid.NewGuid()).Take(4).ToList();
                             
+                            var certAssets = new[] { "certificates/winner_certificate.jpg", "certificates/participant_certificate.jpg", "certificates/innovation_certificate.jpg" };
                             foreach (var comp in shuffledComps)
                             {
                                 var team = new CompetitionParticipant
@@ -216,7 +217,7 @@ namespace DataAccessLayer.Seeders
                                     UserId = demoUser.Id,
                                     Title = demoFaker.PickRandom(new[] { "1st Place Winner", "Best Innovation", "Outstanding Pitch", "Hackathon Champion" }) + " - " + comp.Title,
                                     Description = "Awarded for exceptional performance in the " + comp.Title,
-                                    AssetId = "certificates/mock-cert-" + demoFaker.Random.Int(1, 5) + ".svg"
+                                    AssetId = demoFaker.PickRandom(certAssets)
                                 });
                             }
                             await _dataContext.SaveChangesAsync();
@@ -230,6 +231,7 @@ namespace DataAccessLayer.Seeders
             var allCertificates = await _dataContext.Certificates.ToListAsync();
             var allParticipants = await _dataContext.CompetitionParticipants.Include(cp => cp.Members).ToListAsync();
 
+            var studentCertAssets = new[] { "certificates/winner_certificate.jpg", "certificates/participant_certificate.jpg", "certificates/innovation_certificate.jpg" };
             foreach (var student in students)
             {
                 // Attach exactly 2 certificates
@@ -241,7 +243,7 @@ namespace DataAccessLayer.Seeders
                         UserId = student.ApplicationUserId,
                         Title = faker.PickRandom(new[] { "1st Place Winner", "Top 10 Finalist", "Participation Award", "Best UI/UX Award", "Most Innovative" }) + " - " + faker.Company.CatchPhrase(),
                         Description = faker.Lorem.Sentence(),
-                        AssetId = "certificates/mock-cert-" + faker.Random.Int(1, 5) + ".svg"
+                        AssetId = studentCertAssets[i % studentCertAssets.Length]
                     });
                 }
 
