@@ -41,6 +41,10 @@ namespace Devjourney.Controllers
             {
                 contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             }
+            else if (objectKey.EndsWith(".doc", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "application/msword";
+            }
 
             return File(stream, contentType);
         }

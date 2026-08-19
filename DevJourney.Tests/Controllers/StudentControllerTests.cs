@@ -55,7 +55,7 @@ namespace DevJourney.Tests.Controllers
             var result = await _controller.GetStudentProfile(studentId, CancellationToken.None);
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact]
@@ -86,7 +86,6 @@ namespace DevJourney.Tests.Controllers
             var studentId = Guid.NewGuid();
             var command = new UpdateStudentProfileCommand
             {
-                StudentProfileId = studentId,
                 PhoneNumber = "+994501234567",
                 Bio = "Updated bio"
             };
@@ -147,7 +146,7 @@ namespace DevJourney.Tests.Controllers
             var result = await _controller.GetProfileCompletion(studentId, CancellationToken.None);
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
     }
 }

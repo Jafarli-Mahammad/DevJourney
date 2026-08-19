@@ -11,6 +11,10 @@ namespace DevJourney.Tests.Handlers
     public class UpdateStudentProfileCommandHandlerTests
     {
         private readonly Mock<IStudentProfileRepository> _repositoryMock;
+        private readonly Mock<IUniversityProfileRepository> _universityRepositoryMock;
+        private readonly Mock<IProfessionRepository> _professionRepositoryMock;
+        private readonly Mock<IMainRoleRepository> _mainRoleRepositoryMock;
+        private readonly Mock<ISkillRepository> _skillRepositoryMock;
         private readonly Mock<ICurrentUserService> _currentUserServiceMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly UpdateStudentProfileCommandHandler _handler;
@@ -18,11 +22,19 @@ namespace DevJourney.Tests.Handlers
         public UpdateStudentProfileCommandHandlerTests()
         {
             _repositoryMock = new Mock<IStudentProfileRepository>();
+            _universityRepositoryMock = new Mock<IUniversityProfileRepository>();
+            _professionRepositoryMock = new Mock<IProfessionRepository>();
+            _mainRoleRepositoryMock = new Mock<IMainRoleRepository>();
+            _skillRepositoryMock = new Mock<ISkillRepository>();
             _currentUserServiceMock = new Mock<ICurrentUserService>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
 
             _handler = new UpdateStudentProfileCommandHandler(
                 _repositoryMock.Object,
+                _universityRepositoryMock.Object,
+                _professionRepositoryMock.Object,
+                _mainRoleRepositoryMock.Object,
+                _skillRepositoryMock.Object,
                 _currentUserServiceMock.Object,
                 _unitOfWorkMock.Object);
         }
@@ -31,19 +43,20 @@ namespace DevJourney.Tests.Handlers
         public async Task Handle_UpdatesProfileDetailsAndReturnsDto_WhenProfileExists()
         {
             // Arrange
-            var studentId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var existingProfile = new StudentProfile(userId, "John", "Doe");
 
             var command = new UpdateStudentProfileCommand
             {
-                StudentProfileId = studentId,
                 PhoneNumber = "+994509999999",
                 Course = "3-ci kurs",
                 Bio = "Software developer student"
             };
 
-            _repositoryMock.Setup(r => r.GetFullProfileByIdAsync(studentId, It.IsAny<CancellationToken>()))
+            _currentUserServiceMock.Setup(c => c.IsAuthenticated).Returns(true);
+            _currentUserServiceMock.Setup(c => c.UserId).Returns(userId);
+
+            _repositoryMock.Setup(r => r.GetFullProfileByUserIdAsync(userId, It.IsAny<CancellationToken>()))
                            .ReturnsAsync(existingProfile);
 
             _repositoryMock.Setup(r => r.GetWithEmailByIdAsync(existingProfile.Id, It.IsAny<CancellationToken>()))
@@ -65,22 +78,14 @@ namespace DevJourney.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_ThrowsNotFoundException_WhenProfileDoesNotExist()
+        public async Task Handle_ThrowsUnauthorizedException_WhenNotAuthenticated()
         {
             // Arrange
-            var studentId = Guid.NewGuid();
-            var command = new UpdateStudentProfileCommand
-            {
-                StudentProfileId = studentId
-            };
-
-            _repositoryMock.Setup(r => r.GetFullProfileByIdAsync(studentId, It.IsAny<CancellationToken>()))
-                           .ReturnsAsync((StudentProfile?)null);
-
+            var command = new UpdateStudentProfileCommand();
             _currentUserServiceMock.Setup(c => c.IsAuthenticated).Returns(false);
 
             // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
+            await Assert.ThrowsAsync<UnauthorizedException>(() => _handler.Handle(command, CancellationToken.None));
         }
     }
 }

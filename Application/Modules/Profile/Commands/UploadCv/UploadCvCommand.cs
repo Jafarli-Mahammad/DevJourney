@@ -23,11 +23,18 @@ namespace Application.Modules.Profile.Commands.UploadCv
 
         public async Task<CvUploadResultDto> Handle(UploadCvCommand request, CancellationToken cancellationToken)
         {
-            var extension = System.IO.Path.GetExtension(request.File.FileName);
+            if (request.File == null || request.File.Length == 0)
+            {
+                throw new Application.Exceptions.BadRequestException("No file was uploaded or the file is empty.");
+            }
+
+            var rawExt = System.IO.Path.GetExtension(request.File.FileName);
+            var extension = !string.IsNullOrWhiteSpace(rawExt) ? rawExt.ToLowerInvariant() : ".pdf";
             var objectKey = $"{Guid.NewGuid()}{extension}"; // SEC: Random UUID to prevent enumeration/traversal
 
             using var stream = request.File.OpenReadStream();
-            var url = await _fileStorage.UploadFileAsync("cvs", objectKey, stream, request.File.ContentType, cancellationToken);
+            var contentType = !string.IsNullOrWhiteSpace(request.File.ContentType) ? request.File.ContentType : "application/pdf";
+            var url = await _fileStorage.UploadFileAsync("cvs", objectKey, stream, contentType, cancellationToken);
 
             return new CvUploadResultDto { AssetId = Guid.NewGuid(), Url = url };
         }

@@ -53,7 +53,7 @@ namespace DevJourney.Tests.Controllers
             var result = await _controller.GetJuryProfile(juryId, CancellationToken.None);
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<NotFoundObjectResult>(result);
         }
 
         [Fact]

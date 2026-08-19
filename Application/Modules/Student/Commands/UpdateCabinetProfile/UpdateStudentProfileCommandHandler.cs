@@ -10,15 +10,27 @@ namespace Application.Modules.Student.Commands.UpdateCabinetProfile
     public class UpdateStudentProfileCommandHandler : IRequestHandler<UpdateStudentProfileCommand, StudentProfileDto>
     {
         private readonly IStudentProfileRepository _studentProfileRepository;
+        private readonly IUniversityProfileRepository _universityProfileRepository;
+        private readonly IProfessionRepository _professionRepository;
+        private readonly IMainRoleRepository _mainRoleRepository;
+        private readonly ISkillRepository _skillRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateStudentProfileCommandHandler(
             IStudentProfileRepository studentProfileRepository,
+            IUniversityProfileRepository universityProfileRepository,
+            IProfessionRepository professionRepository,
+            IMainRoleRepository mainRoleRepository,
+            ISkillRepository skillRepository,
             ICurrentUserService currentUserService,
             IUnitOfWork unitOfWork)
         {
             _studentProfileRepository = studentProfileRepository;
+            _universityProfileRepository = universityProfileRepository;
+            _professionRepository = professionRepository;
+            _mainRoleRepository = mainRoleRepository;
+            _skillRepository = skillRepository;
             _currentUserService = currentUserService;
             _unitOfWork = unitOfWork;
         }
@@ -38,20 +50,114 @@ namespace Application.Modules.Student.Commands.UpdateCabinetProfile
                 throw new NotFoundException("StudentProfile", _currentUserService.UserId);
             }
 
+            // 1. Resolve University (GUID or Slug/Name)
+            Guid? resolvedUniversityId = null;
+            if (!string.IsNullOrWhiteSpace(request.UniversityId))
+            {
+                if (Guid.TryParse(request.UniversityId, out var uniGuid))
+                {
+                    resolvedUniversityId = uniGuid;
+                }
+                else
+                {
+                    var rawUni = request.UniversityId.Trim().ToLowerInvariant();
+                    var allUnis = await _universityProfileRepository.GetAllAsync(cancellationToken: cancellationToken);
+                    var matchedUni = allUnis.FirstOrDefault(u =>
+                        u.UniversityName.ToLowerInvariant().Contains(rawUni) ||
+                        (rawUni == "bmu" && u.UniversityName.Contains("BMU")) ||
+                        (rawUni == "aztu" && u.UniversityName.Contains("AzTU")) ||
+                        (rawUni == "bdu" && u.UniversityName.Contains("BDU")) ||
+                        (rawUni == "ada" && u.UniversityName.Contains("ADA")) ||
+                        (rawUni == "bhos" && (u.UniversityName.Contains("BANM") || u.UniversityName.Contains("BHOS"))) ||
+                        (rawUni == "banm" && u.UniversityName.Contains("BANM")) ||
+                        (rawUni == "unec" && u.UniversityName.Contains("UNEC")) ||
+                        (rawUni == "adnsu" && u.UniversityName.Contains("ADNSU")) ||
+                        (rawUni == "khazar" && u.UniversityName.Contains("Khazar")) ||
+                        (rawUni == "sdu" && u.UniversityName.Contains("SDU")) ||
+                        (rawUni == "atu" && u.UniversityName.Contains("ATU")) ||
+                        (rawUni == "adiu" && u.UniversityName.Contains("ADU")) ||
+                        (rawUni == "adu" && u.UniversityName.Contains("ADU")) ||
+                        (rawUni == "maa" && u.UniversityName.Contains("MAA")));
+                    resolvedUniversityId = matchedUni?.Id;
+                }
+            }
+
+            // 2. Resolve Profession (GUID or Name)
+            Guid? resolvedProfessionId = null;
+            if (!string.IsNullOrWhiteSpace(request.ProfessionId))
+            {
+                if (Guid.TryParse(request.ProfessionId, out var profGuid))
+                {
+                    resolvedProfessionId = profGuid;
+                }
+                else
+                {
+                    var rawProf = request.ProfessionId.Trim().ToLowerInvariant();
+                    var allProfs = await _professionRepository.GetAllAsync(cancellationToken: cancellationToken);
+                    var matchedProf = allProfs.FirstOrDefault(p =>
+                        p.Name.ToLowerInvariant().Contains(rawProf) || rawProf.Contains(p.Name.ToLowerInvariant()));
+                    resolvedProfessionId = matchedProf?.Id;
+                }
+            }
+
+            // 3. Resolve MainRole (GUID or Name)
+            Guid? resolvedMainRoleId = null;
+            if (!string.IsNullOrWhiteSpace(request.MainRoleId))
+            {
+                if (Guid.TryParse(request.MainRoleId, out var roleGuid))
+                {
+                    resolvedMainRoleId = roleGuid;
+                }
+                else
+                {
+                    var rawRole = request.MainRoleId.Trim().ToLowerInvariant();
+                    var allRoles = await _mainRoleRepository.GetAllAsync(cancellationToken: cancellationToken);
+                    var matchedRole = allRoles.FirstOrDefault(r =>
+                        r.Name.ToLowerInvariant().Contains(rawRole) || rawRole.Contains(r.Name.ToLowerInvariant()));
+                    resolvedMainRoleId = matchedRole?.Id;
+                }
+            }
+
+            // 4. Resolve Skills (GUIDs or Names)
+            List<Guid>? resolvedSkillIds = null;
+            if (request.SkillIds != null && request.SkillIds.Count > 0)
+            {
+                resolvedSkillIds = new List<Guid>();
+                var allSkills = await _skillRepository.GetAllAsync(cancellationToken: cancellationToken);
+                foreach (var rawSkill in request.SkillIds)
+                {
+                    if (string.IsNullOrWhiteSpace(rawSkill)) continue;
+                    if (Guid.TryParse(rawSkill, out var sGuid))
+                    {
+                        resolvedSkillIds.Add(sGuid);
+                    }
+                    else
+                    {
+                        var rawSkillLower = rawSkill.Trim().ToLowerInvariant();
+                        var matchedSkill = allSkills.FirstOrDefault(s =>
+                            s.Name.ToLowerInvariant() == rawSkillLower || s.Name.ToLowerInvariant().Contains(rawSkillLower));
+                        if (matchedSkill != null)
+                        {
+                            resolvedSkillIds.Add(matchedSkill.Id);
+                        }
+                    }
+                }
+            }
+
             profile.UpdateCabinetProfile(
-                request.UniversityId,
+                resolvedUniversityId,
                 request.PhoneNumber,
-                request.ProfessionId,
+                resolvedProfessionId,
                 request.Course,
                 request.GitHubUrl,
                 request.LinkedinUrl,
                 request.PortfolioUrl,
                 request.CVUrl,
-                request.MainRoleId,
+                resolvedMainRoleId,
                 request.ExperienceLevel,
                 request.Bio);
 
-            profile.SetSkills(request.SkillIds);
+            profile.SetSkills(resolvedSkillIds);
 
             if (request.Languages != null)
             {
