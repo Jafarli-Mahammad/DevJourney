@@ -16,6 +16,9 @@ namespace Application.Modules.Auth.Models
         public string FullName { get; set; } = null!;
         public string Role { get; set; } = null!;
         public Guid? UniversityId { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string? RepresentativeName { get; set; }
+        public string? PartnerType { get; set; }
         public string? AvatarUrl { get; set; }
         public bool IsVerified { get; set; }
     }

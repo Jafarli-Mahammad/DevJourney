@@ -11,5 +11,8 @@ public class CompetitionTeamMember : BaseEntity
     public bool IsCheckedIn { get; set; }
     public DateTime? CheckInTime { get; set; }
 
+    public Guid? TeamId { get; set; }
+    public virtual Team? Team { get; set; }
+
     public virtual CompetitionParticipant Participant { get; set; } = null!;
 }

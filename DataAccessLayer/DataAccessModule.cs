@@ -36,6 +36,10 @@ namespace DataAccessLayer
                 .As<ICompanyProfileRepository>()
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<DataAccessLayer.Repositories.Company.CompanyInvitationRepository>()
+                .As<Application.Repositories.Company.ICompanyInvitationRepository>()
+                .InstancePerLifetimeScope();
+
             builder.RegisterType<UniversityProfileRepository>()
                 .As<IUniversityProfileRepository>()
                 .InstancePerLifetimeScope();

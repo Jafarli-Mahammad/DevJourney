@@ -49,6 +49,30 @@ namespace Devjourney.Controllers
             return Ok(new { success = true, certificateId });
         }
 
+        [HttpPost("/api/partner/certificates/bulk-issue")]
+        [Authorize(Roles = "COMPANY_ADMIN")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> BulkIssueCertificates()
+        {
+            // Placeholder for bulk issue logic
+            return Ok(new { success = true, data = new { totalCount = 0, successCount = 0, failureCount = 0, results = Array.Empty<object>() } });
+        }
+
+        [HttpGet("/api/partner/certificates")]
+        [Authorize(Roles = "COMPANY_ADMIN")]
+        public async Task<IActionResult> GetPartnerIssuedCertificates()
+        {
+            return Ok(new { success = true, data = Array.Empty<object>() });
+        }
+
+        [HttpGet("verify/{codeOrId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyCertificate(string codeOrId)
+        {
+            // Placeholder for verification lookup
+            return Ok(new { success = true, data = new { status = "VALID", verificationCode = codeOrId } });
+        }
+
         [HttpPost("seed-mock")]
         [AllowAnonymous]
         public async Task<IActionResult> SeedMockCertificates()

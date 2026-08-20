@@ -1,4 +1,4 @@
-﻿using Application.Repositories;
+using Application.Repositories;
 using Application.Services;
 using Domain.Models.Entities.Company;
 using MediatR;
@@ -8,12 +8,18 @@ namespace Application.Modules.Company.Commands.Register
     public class CompanyRegisterRequestHandler : IRequestHandler<CompanyRegisterRequest, Guid>
     {
         private readonly ICompanyProfileRepository companyProfileRepository;
+        private readonly IPartnerProfileRepository partnerProfileRepository;
         private readonly IUnitOfWork unitOfWork;
         private readonly IAuthService authService;
 
-        public CompanyRegisterRequestHandler(ICompanyProfileRepository companyProfileRepository, IUnitOfWork unitOfWork, IAuthService authService)
+        public CompanyRegisterRequestHandler(
+            ICompanyProfileRepository companyProfileRepository,
+            IPartnerProfileRepository partnerProfileRepository,
+            IUnitOfWork unitOfWork,
+            IAuthService authService)
         {
             this.companyProfileRepository = companyProfileRepository;
+            this.partnerProfileRepository = partnerProfileRepository;
             this.unitOfWork = unitOfWork;
             this.authService = authService;
         }
@@ -33,6 +39,19 @@ namespace Application.Modules.Company.Commands.Register
                     request.Location, request.RepresentativeName, request.RepresentativeEmail);
 
                 await companyProfileRepository.AddAsync(profile, cancellationToken);
+
+                var partnerProfile = new Domain.Models.Entities.Partner.PartnerProfile
+                {
+                    ApplicationUserId = userId,
+                    PartnerName = request.CompanyName,
+                    PartnerType = Domain.Models.Enums.PartnerType.SponsorPartner,
+                    WebsiteUrl = request.WebsiteUrl,
+                    Location = request.Location,
+                    Description = request.CompanySector,
+                    IsVerified = true
+                };
+                await partnerProfileRepository.AddAsync(partnerProfile, cancellationToken);
+
                 await unitOfWork.SaveChangesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);

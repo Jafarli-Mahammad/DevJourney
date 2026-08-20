@@ -20,6 +20,8 @@ public class CompetitionParticipant : BaseEntity
     public string? ProjectDescription { get; set; }
     public string? GithubUrl { get; set; }
     public string? PitchDeckAssetId { get; set; }
+    public DateTime? HoldAt { get; set; }
+    public bool IsFinalist { get; set; }
 
     public virtual ICollection<CompetitionTeamMember> Members { get; set; } = new List<CompetitionTeamMember>();
     public virtual ICollection<Evaluation> Evaluations { get; set; } = new List<Evaluation>();

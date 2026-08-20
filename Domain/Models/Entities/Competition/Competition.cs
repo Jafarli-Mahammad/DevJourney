@@ -43,5 +43,11 @@ namespace Domain.Models.Entities.Competition
         
         // Status
         public bool IsPublished { get; set; }
+        
+        // Lifecycle flags
+        public bool IsRegistrationOpen { get; set; }
+        public bool IsJuryActive { get; set; }
+        public bool IsScoreboardLive { get; set; }
+        public bool IsCertificatesPublished { get; set; }
     }
 }

@@ -2,13 +2,6 @@
   <Folder Name="/Certificates/">
     <File Path="..\DevJourneyFront\devjourney\public\assets\certificates\baku-id-finalist copy.svg" />
   </Folder>
-  <Folder Name="/CLI ITems/">
-    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260818_013128.png" />
-    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260819_030754.png" />
-    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260819_030804.png" />
-    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260819_030813.png" />
-    <File Path="..\..\..\Pictures\Screenshots\Screenshot_20260819_030816.png" />
-  </Folder>
   <Folder Name="/FrontendFrames/">
     <File Path="..\..\..\Downloads\DevJourney Frames\frontend_screenshots.pdf" />
   </Folder>

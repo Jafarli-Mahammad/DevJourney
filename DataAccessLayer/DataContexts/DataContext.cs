@@ -46,6 +46,7 @@ namespace DataAccessLayer.DataContexts
         public DbSet<CompetitionStage> CompetitionStages { get; set; }
         public DbSet<CompetitionParticipant> CompetitionParticipants { get; set; }
         public DbSet<CompetitionTeamMember> CompetitionTeamMembers { get; set; }
+        public DbSet<Team> Teams { get; set; }
         public DbSet<Evaluation> Evaluations { get; set; }
         public DbSet<Criterion> Criteria { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
@@ -53,6 +54,8 @@ namespace DataAccessLayer.DataContexts
         public DbSet<Broadcast> Broadcasts { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SupportMessage> SupportMessages { get; set; }
+        public DbSet<CompanyInvitation> CompanyInvitations { get; set; }
+        public DbSet<CheckInLog> CheckInLogs { get; set; }
         public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;

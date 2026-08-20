@@ -107,7 +107,6 @@ public partial class Program
                 builder.Expire(TimeSpan.FromMinutes(1))
                        .SetVaryByQuery("*")
                        .Tag("public-listings"));
-
             options.AddPolicy("PublicDetails", builder => 
                 builder.Expire(TimeSpan.FromMinutes(1))
                        .SetVaryByRouteValue("id")

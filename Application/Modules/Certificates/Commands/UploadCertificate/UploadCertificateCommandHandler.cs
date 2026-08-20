@@ -17,41 +17,70 @@ namespace Application.Modules.Certificates.Commands.UploadCertificate
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorage _fileStorage;
         private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IPartnerProfileRepository _partnerProfileRepository;
 
         public UploadCertificateCommandHandler(
             ICertificateRepository certificateRepository,
             IUnitOfWork unitOfWork,
             IFileStorage fileStorage,
-            IAuthService authService)
+            IAuthService authService,
+            ICurrentUserService currentUserService,
+            IPartnerProfileRepository partnerProfileRepository)
         {
             _certificateRepository = certificateRepository;
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
             _authService = authService;
+            _currentUserService = currentUserService;
+            _partnerProfileRepository = partnerProfileRepository;
         }
 
         public async Task<Guid> Handle(UploadCertificateCommand request, CancellationToken cancellationToken)
         {
-            // 1. Upload the certificate SVG file
-            var fileExtension = Path.GetExtension(request.CertificateFile.FileName);
+            var file = request.CertificateFile ?? request.Certificate ?? request.File;
+            if (file == null || file.Length == 0)
+            {
+                throw new Application.Exceptions.BadRequestException("Certificate file is required.");
+            }
+
+            var studentEmail = request.StudentEmail ?? request.Email;
+            if (string.IsNullOrWhiteSpace(studentEmail))
+            {
+                throw new Application.Exceptions.BadRequestException("Student email is required.");
+            }
+
+            var title = request.Title ?? request.CompetitionTitle ?? "Certificate of Achievement";
+            var description = request.Description ?? request.Desc;
+
+            // Resolve PartnerId if not explicitly provided
+            var partnerId = request.PartnerId;
+            if (!partnerId.HasValue && _currentUserService.IsAuthenticated && _currentUserService.UserId != Guid.Empty)
+            {
+                var partners = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+                partnerId = partners.FirstOrDefault()?.Id;
+            }
+
+            // 1. Upload the certificate file
+            var fileExtension = Path.GetExtension(file.FileName);
             var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
             var containerName = "certificates"; // Store in a specific container/folder
 
-            using var stream = request.CertificateFile.OpenReadStream();
-            await _fileStorage.UploadFileAsync(containerName, uniqueFileName, stream, request.CertificateFile.ContentType, cancellationToken);
+            using var stream = file.OpenReadStream();
+            await _fileStorage.UploadFileAsync(containerName, uniqueFileName, stream, file.ContentType, cancellationToken);
             var assetId = $"{containerName}/{uniqueFileName}";
 
             // 2. Check if the user exists
-            var user = await _authService.GetUserInfoByEmailAsync(request.StudentEmail);
+            var user = await _authService.GetUserInfoByEmailAsync(studentEmail.Trim());
 
             // 3. Create the Certificate entity
             var certificate = new Certificate
             {
                 UserId = user?.UserId,
-                PendingEmail = user == null ? request.StudentEmail : null,
-                IssuedByPartnerId = request.PartnerId,
-                Title = request.Title,
-                Description = request.Description,
+                PendingEmail = user == null ? studentEmail.Trim() : null,
+                IssuedByPartnerId = partnerId,
+                Title = title.Trim(),
+                Description = description?.Trim(),
                 AssetId = assetId
             };
 

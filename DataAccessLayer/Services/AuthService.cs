@@ -104,5 +104,13 @@ namespace DataAccessLayer.Services
 
             return (true, Array.Empty<string>());
         }
+
+        public async Task<bool> AddToRoleAsync(Guid userId, string role)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+            var result = await userManager.AddToRoleAsync(user, role);
+            return result.Succeeded;
+        }
     }
 }
