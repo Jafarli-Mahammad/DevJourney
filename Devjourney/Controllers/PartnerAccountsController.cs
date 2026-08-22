@@ -6,6 +6,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Modules.PartnerAccounts.Commands.CreatePartnerAccount;
+using Application.Modules.PartnerAccounts.Commands.DeletePartnerAccount;
+using Application.Modules.PartnerAccounts.Queries.GetPartnerAccounts;
 
 namespace Devjourney.Controllers
 {
@@ -22,7 +24,11 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAccounts() => Ok(new { success = true, data = Array.Empty<object>() });
+        public async Task<IActionResult> GetAccounts() 
+        {
+            var result = await _mediator.Send(new GetPartnerAccountsQuery());
+            return Ok(new { success = true, data = result });
+        }
 
         [HttpPost]
         [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
@@ -33,8 +39,9 @@ namespace Devjourney.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteAccount(Guid id)
+        public async Task<IActionResult> DeleteAccount(Guid id)
         {
+            await _mediator.Send(new DeletePartnerAccountCommand { AccountId = id });
             return Ok(new { success = true, message = "Account access revoked and removed successfully." });
         }
     }

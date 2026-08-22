@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/login/jury",
   "fingerprint": "0f473aec",
-  "case_id": "ZP3F3q",
+  "case_id": "andWbj",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"juryCode\": \"0\", \"password\": \"00\"}' http://localhost:5074/api/Auth/login/jury",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "ZP3F3q",
+        "X-Schemathesis-TestCaseId": "andWbj",
         "Content-Type": "application/json",
         "Content-Length": "35"
       },
@@ -23,11 +23,12 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:45 GMT",
+          "date": "Sat, 22 Aug 2026 00:01:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "17df4ea8678243a6befac5d3a7dade7a"
         },
         "body": "{\"message\":\"Invalid jury code or password.\",\"errors\":null}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 6.52250000712229e-05,
+          "time": 2.500599657651037e-05,
           "mode": "positive"
         },
         "components": {

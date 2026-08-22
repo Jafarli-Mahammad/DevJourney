@@ -52,25 +52,26 @@ namespace Devjourney.Controllers
         [HttpPost("/api/partner/certificates/bulk-issue")]
         [Authorize(Roles = "COMPANY_ADMIN")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> BulkIssueCertificates()
+        public async Task<IActionResult> BulkIssueCertificates([FromForm] Application.Modules.Certificates.Commands.BulkIssueCertificates.BulkIssueCertificatesCommand command)
         {
-            // Placeholder for bulk issue logic
-            return Ok(new { success = true, data = new { totalCount = 0, successCount = 0, failureCount = 0, results = Array.Empty<object>() } });
+            var result = await _mediator.Send(command);
+            return Ok(new { success = true, data = result });
         }
 
         [HttpGet("/api/partner/certificates")]
         [Authorize(Roles = "COMPANY_ADMIN")]
         public async Task<IActionResult> GetPartnerIssuedCertificates()
         {
-            return Ok(new { success = true, data = Array.Empty<object>() });
+            var result = await _mediator.Send(new Application.Modules.Certificates.Queries.GetPartnerIssuedCertificates.GetPartnerIssuedCertificatesQuery());
+            return Ok(new { success = true, data = result });
         }
 
         [HttpGet("verify/{codeOrId}")]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyCertificate(string codeOrId)
         {
-            // Placeholder for verification lookup
-            return Ok(new { success = true, data = new { status = "VALID", verificationCode = codeOrId } });
+            var result = await _mediator.Send(new Application.Modules.Certificates.Queries.VerifyCertificate.VerifyCertificateQuery { CodeOrId = codeOrId });
+            return Ok(new { success = true, data = result });
         }
 
         [HttpPost("seed-mock")]

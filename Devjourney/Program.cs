@@ -27,7 +27,7 @@ public partial class Program
         builder.Services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(connectionString)
                    .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
-
+        
         builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
         {
             // Password settings

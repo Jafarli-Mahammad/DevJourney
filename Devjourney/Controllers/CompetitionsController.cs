@@ -67,27 +67,30 @@ namespace Devjourney.Controllers
         [HttpPut("{id}")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateCompetition(Guid id, [FromBody] object request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCompetition(Guid id, [FromBody] Application.Modules.Competitions.Dtos.CreateCompetitionDto request, CancellationToken cancellationToken)
         {
-            // Placeholder for update logic
-            return Ok(new { success = true, data = new { competitionId = id }, message = "Competition updated successfully" });
+            var command = new Application.Modules.Competitions.Commands.UpdateCompetition.UpdateCompetitionCommand { CompetitionId = id, Dto = request };
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(new { success = true, data = new { competitionId = result }, message = "Competition updated successfully" });
         }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteCompetition(Guid id, CancellationToken cancellationToken)
         {
-            // Placeholder for delete logic
+            var command = new Application.Modules.Competitions.Commands.DeleteCompetition.DeleteCompetitionCommand { CompetitionId = id };
+            await _mediator.Send(command, cancellationToken);
             return Ok(new { success = true, message = "Competition deleted successfully" });
         }
 
         [HttpPatch("{id}/lifecycle")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateCompetitionLifecycle(Guid id, [FromBody] object request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCompetitionLifecycle(Guid id, [FromBody] Application.Modules.Competitions.Commands.UpdateCompetitionLifecycle.UpdateCompetitionLifecycleCommand request, CancellationToken cancellationToken)
         {
-            // Placeholder for lifecycle update logic
-            return Ok(new { success = true, data = new { competitionId = id, isRegistrationOpen = true }, message = "Competition lifecycle updated successfully" });
+            request.CompetitionId = id;
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result, message = "Competition lifecycle updated successfully" });
         }
 
         [HttpGet]

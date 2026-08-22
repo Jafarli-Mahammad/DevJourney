@@ -3,7 +3,7 @@
   "method": "PUT",
   "path_template": "/api/competitions/{id}/submission",
   "fingerprint": "0b58d0df",
-  "case_id": "nr7O0t",
+  "case_id": "w78pe6",
   "code_sample": "curl -X PUT -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"githubUrl\": null, \"pitchDeckAssetId\": null, \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/submission",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "nr7O0t",
+        "X-Schemathesis-TestCaseId": "w78pe6",
         "Content-Type": "application/json",
         "Content-Length": "141"
       },
@@ -23,11 +23,12 @@
         "status_code": 200,
         "headers": {
           "content-type": "application/json; charset=utf-8",
-          "date": "Sat, 15 Aug 2026 15:13:02 GMT",
+          "date": "Sat, 22 Aug 2026 00:13:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "64af75e182ac484794518be0c850cdc1"
         },
         "body": "{\"success\":true,\"data\":{\"success\":true,\"data\":{\"message\":\"Submission updated\"}}}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 9.153500104730483e-05,
+          "time": 3.4669999877223745e-05,
           "mode": "negative"
         },
         "components": {
@@ -65,7 +66,7 @@
             "parameter_name": "id",
             "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
             "resource_field": "id",
-            "source_operation": "GET /api/Jury/competitions/{id}/workspace",
+            "source_operation": "GET /api/competitions/{id}/results/me",
             "source_status": 200
           }
         ],

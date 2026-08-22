@@ -3,8 +3,8 @@
   "method": "PUT",
   "path_template": "/api/Student/profile",
   "fingerprint": "7b46eb47",
-  "case_id": "XPUX07",
-  "code_sample": "curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://localhost:5074/api/Student/profile",
+  "case_id": "I3YGAz",
+  "code_sample": "curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{\"professionId\": \"=\\u00d5\\uda81\\udeba\\u001fx\\u00acn\\u001d\\u0005\\u00ea\\u00101\\r\\ud89c\\ude26Ay\", \"linkedinUrl\": \"-script.pyw\"}' http://localhost:5074/api/Student/profile",
   "sequence": [
     {
       "method": "PUT",
@@ -16,16 +16,16 @@
         "Accept": "*/*",
         "Connection": "keep-alive",
         "Authorization": "[Filtered]",
-        "X-Schemathesis-TestCaseId": "XPUX07",
+        "X-Schemathesis-TestCaseId": "I3YGAz",
         "Content-Type": "application/json",
-        "Content-Length": "2"
+        "Content-Length": "124"
       },
       "response": {
         "status_code": 400,
         "headers": {
           "content-length": "0",
           "connection": "close",
-          "date": "Sat, 15 Aug 2026 15:14:02 GMT",
+          "date": "Sat, 22 Aug 2026 00:18:05 GMT",
           "server": "Kestrel"
         },
         "body": ""
@@ -40,7 +40,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 0.00698402200032433,
+          "time": 0.0038821930029371288,
           "mode": "positive"
         },
         "components": {
@@ -74,7 +74,10 @@
       "cookies": {},
       "case_body": {
         "encoding": "json",
-        "value": {}
+        "value": {
+          "professionId": "=\u00d5\uda81\udeba\u001fx\u00acn\u001d\u0005\u00ea\u00101\r\ud89c\ude26Ay",
+          "linkedinUrl": "-script.pyw"
+        }
       },
       "media_type": "application/json",
       "parent_index": null

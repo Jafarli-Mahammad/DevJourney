@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/register/student",
   "fingerprint": "ab9e2e9e",
-  "case_id": "8av1zp",
+  "case_id": "TEhlMA",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"firstName\": \"0\", \"lastName\": \"0\", \"password\": \"0\", \"universityId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\"}' http://localhost:5074/api/Auth/register/student",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "8av1zp",
+        "X-Schemathesis-TestCaseId": "TEhlMA",
         "Content-Type": "application/json",
         "Content-Length": "122"
       },
@@ -23,11 +23,12 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:59 GMT",
+          "date": "Sat, 22 Aug 2026 00:10:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "eaa090578bc4450e9e226312e7efceb5"
         },
         "body": "{\"message\":\"Validation failed\",\"errors\":[{\"PropertyName\":\"Email\",\"ErrorMessage\":\"Invalid email format.\"},{\"PropertyName\":\"Password\",\"ErrorMessage\":\"Password must be at least 8 characters.\"},{\"PropertyName\":\"Password\",\"ErrorMessage\":\"Password must contain at least one uppercase letter.\"}]}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 0.00015280899970093742,
+          "time": 2.549900091253221e-05,
           "mode": "positive"
         },
         "components": {

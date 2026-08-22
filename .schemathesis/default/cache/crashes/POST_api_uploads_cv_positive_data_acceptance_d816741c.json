@@ -3,8 +3,8 @@
   "method": "POST",
   "path_template": "/api/uploads/cv",
   "fingerprint": "d816741c",
-  "case_id": "5o4Lq2",
-  "code_sample": "curl -X POST -H 'Content-Type: multipart/form-data; boundary=e635968d1387faf7279de0c07a33f477' -d $'--0d59712a89e37ad13fbc4fbcffe76499\\r\\nContent-Disposition: form-data; name=\"file\"\\r\\n\\r\\n0\\r\\n--0d59712a89e37ad13fbc4fbcffe76499--\\r\\n' http://localhost:5074/api/uploads/cv",
+  "case_id": "A22061",
+  "code_sample": "curl -X POST -H 'Authorization: [Filtered]' http://localhost:5074/api/uploads/cv",
   "sequence": [
     {
       "method": "POST",
@@ -15,36 +15,35 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "5o4Lq2",
-        "Content-Length": "124",
-        "Content-Type": "multipart/form-data; boundary=e635968d1387faf7279de0c07a33f477"
+        "Authorization": "[Filtered]",
+        "X-Schemathesis-TestCaseId": "A22061",
+        "Content-Length": "0"
       },
       "response": {
         "status_code": 400,
         "headers": {
-          "content-type": "application/json; charset=utf-8",
-          "date": "Sat, 15 Aug 2026 15:13:07 GMT",
-          "server": "Kestrel",
-          "content-encoding": "gzip",
-          "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "content-length": "0",
+          "connection": "close",
+          "date": "Sat, 22 Aug 2026 00:18:00 GMT",
+          "server": "Kestrel"
         },
-        "body": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\"title\":\"One or more validation errors occurred.\",\"status\":400,\"errors\":{\"File\":[\"The File field is required.\"]},\"traceId\":\"00-3caec6b5d8f16365b4fcb135378a79e8-511a5a2f70e37e88-00\"}"
+        "body": ""
       },
       "link": null,
       "checks": [
         {
           "name": "positive_data_acceptance",
           "status": "failure",
-          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx\nHint: The request body contains 1 additional property not defined in the schema (`file`). The server likely rejects unexpected fields. Add `additionalProperties: false` to your schema to prevent this."
+          "message": "API rejected schema-compliant request\n\nValid data should have been accepted\nExpected: 2xx, 401, 403, 404, 409, 5xx"
         }
       ],
       "meta": {
         "generation": {
-          "time": 0.004008048999821767,
+          "time": 0.0006134450013632886,
           "mode": "positive"
         },
         "components": {
+          "HEADER": "positive",
           "BODY": "positive"
         },
         "phase": {
@@ -68,13 +67,12 @@
       "path": "/api/uploads/cv",
       "path_parameters": {},
       "query": {},
-      "case_headers": {},
+      "case_headers": {
+        "Authorization": "[Filtered]"
+      },
       "cookies": {},
       "case_body": {
-        "encoding": "json",
-        "value": {
-          "file": "0"
-        }
+        "encoding": "none"
       },
       "media_type": "multipart/form-data",
       "parent_index": null

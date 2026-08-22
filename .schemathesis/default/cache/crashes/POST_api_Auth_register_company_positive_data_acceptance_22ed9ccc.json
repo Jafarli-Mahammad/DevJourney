@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/register/company",
   "fingerprint": "22ed9ccc",
-  "case_id": "Z4p9kv",
+  "case_id": "2RWysg",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"companyName\": \"0\", \"companySector\": null, \"companySize\": 0, \"email\": \"0\", \"linkedInUrl\": null, \"location\": null, \"password\": \"0\", \"representativeEmail\": \"\", \"representativeName\": null, \"userName\": \"0\", \"websiteUrl\": null}' http://localhost:5074/api/Auth/register/company",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "Z4p9kv",
+        "X-Schemathesis-TestCaseId": "2RWysg",
         "Content-Type": "application/json",
         "Content-Length": "223"
       },
@@ -23,13 +23,14 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:51 GMT",
+          "date": "Sat, 22 Aug 2026 00:07:26 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "4426d018cd744a1e926a88523e6ac2f7"
         },
-        "body": "{\"message\":\"Passwords must be at least 6 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
+        "body": "{\"message\":\"Passwords must be at least 8 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
       },
       "link": null,
       "checks": [
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 0.00013397000111581292,
+          "time": 3.8889000279596075e-05,
           "mode": "positive"
         },
         "components": {

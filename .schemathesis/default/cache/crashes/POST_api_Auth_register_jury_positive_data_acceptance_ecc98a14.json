@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/register/jury",
   "fingerprint": "ecc98a14",
-  "case_id": "xTSZmo",
+  "case_id": "j9NM7K",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"email\": \"0\", \"fullName\": \"0\", \"juryCode\": \"0\", \"password\": \"0\", \"specialization\": null}' http://localhost:5074/api/Auth/register/jury",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "xTSZmo",
+        "X-Schemathesis-TestCaseId": "j9NM7K",
         "Content-Type": "application/json",
         "Content-Length": "146"
       },
@@ -23,13 +23,14 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:58 GMT",
+          "date": "Sat, 22 Aug 2026 00:09:29 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "6ac661ee0151426d8649396bed30da32"
         },
-        "body": "{\"message\":\"Passwords must be at least 6 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
+        "body": "{\"message\":\"Passwords must be at least 8 characters., Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase (\\u0027a\\u0027-\\u0027z\\u0027)., Passwords must have at least one uppercase (\\u0027A\\u0027-\\u0027Z\\u0027).\",\"errors\":null}"
       },
       "link": null,
       "checks": [
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 8.594099926995113e-05,
+          "time": 6.488399958470836e-05,
           "mode": "positive"
         },
         "components": {

@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/competitions/{id}/teams/join",
   "fingerprint": "eeb549de",
-  "case_id": "j5yaST",
+  "case_id": "Eb8ovo",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"inviteCode\": \"\", \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams/join",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "j5yaST",
+        "X-Schemathesis-TestCaseId": "Eb8ovo",
         "Content-Type": "application/json",
         "Content-Length": "114"
       },
@@ -23,11 +23,12 @@
         "status_code": 200,
         "headers": {
           "content-type": "application/json; charset=utf-8",
-          "date": "Sat, 15 Aug 2026 15:12:59 GMT",
+          "date": "Sat, 22 Aug 2026 00:10:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "ff3f105415544aa584e1e8e102282ebd"
         },
         "body": "{\"success\":true,\"data\":{\"success\":true,\"data\":{\"message\":\"Joined successfully\"}}}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 3.992199890490156e-05,
+          "time": 4.7655001253588125e-05,
           "mode": "negative"
         },
         "components": {
@@ -65,7 +66,7 @@
             "parameter_name": "id",
             "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
             "resource_field": "id",
-            "source_operation": "GET /api/Jury/competitions/{id}/workspace",
+            "source_operation": "GET /api/competitions/{id}/results/me",
             "source_status": 200
           }
         ],

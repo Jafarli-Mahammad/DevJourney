@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/competitions/{id}/teams",
   "fingerprint": "cd056674",
-  "case_id": "reLALA",
+  "case_id": "bdV72D",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"competitionId\": \"e3e70682-c209-1cac-a29f-6fbed82c07cd\", \"teamName\": \"\", \"x-schemathesis-unknown-property\": 42}' http://localhost:5074/api/competitions/e3e70682-c209-1cac-a29f-6fbed82c07cd/teams",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "reLALA",
+        "X-Schemathesis-TestCaseId": "bdV72D",
         "Content-Type": "application/json",
         "Content-Length": "112"
       },
@@ -23,11 +23,12 @@
         "status_code": 200,
         "headers": {
           "content-type": "application/json; charset=utf-8",
-          "date": "Sat, 15 Aug 2026 15:12:59 GMT",
+          "date": "Sat, 22 Aug 2026 00:10:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "870380fdad2d446aa2da7c7abc46603c"
         },
         "body": "{\"success\":true,\"data\":{\"success\":true,\"data\":{\"teamId\":1,\"teamName\":\"\"}}}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 4.23380006395746e-05,
+          "time": 2.869700256269425e-05,
           "mode": "negative"
         },
         "components": {
@@ -65,7 +66,7 @@
             "parameter_name": "id",
             "resource_name": "Application.Modules.Competitions.Queries.GetPartnerCompetitions.PartnerCompetition",
             "resource_field": "id",
-            "source_operation": "GET /api/Jury/competitions/{id}/workspace",
+            "source_operation": "GET /api/competitions/{id}/results/me",
             "source_status": 200
           }
         ],

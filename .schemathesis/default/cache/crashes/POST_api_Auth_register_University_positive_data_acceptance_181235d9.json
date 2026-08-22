@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/register/University",
   "fingerprint": "181235d9",
-  "case_id": "Zi8k74",
+  "case_id": "wxdfX0",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"location\": null, \"password\": \"0\", \"representativeEmail\": \"\", \"representativeName\": null, \"universityName\": \"0\", \"userName\": \"0\", \"websiteUrl\": null}' http://localhost:5074/api/Auth/register/University",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "Zi8k74",
+        "X-Schemathesis-TestCaseId": "wxdfX0",
         "Content-Type": "application/json",
         "Content-Length": "164"
       },
@@ -23,11 +23,12 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:56 GMT",
+          "date": "Sat, 22 Aug 2026 00:09:25 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "4eceb93279fc4d9e8ba6ae3beb7b815f"
         },
         "body": "{\"message\":\"Validation failed\",\"errors\":[{\"PropertyName\":\"Password\",\"ErrorMessage\":\"The length of \\u0027Password\\u0027 must be at least 6 characters. You entered 1 characters.\"}]}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 7.468999865523074e-05,
+          "time": 3.8748999941162765e-05,
           "mode": "positive"
         },
         "components": {

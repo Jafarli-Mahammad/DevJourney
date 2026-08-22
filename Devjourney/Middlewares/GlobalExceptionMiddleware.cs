@@ -81,7 +81,7 @@ namespace Devjourney.Middlewares
                 }
             } // Close using scope
 
-            if (!context.Response.HasStarted && context.Response.StatusCode >= 400 && (string.IsNullOrEmpty(context.Response.ContentType) || context.Response.ContentLength == 0))
+            if (!context.Response.HasStarted && context.Response.StatusCode >= 400 && (string.IsNullOrEmpty(context.Response.ContentType) || context.Response.ContentLength == null || context.Response.ContentLength == 0))
             {
                 context.Response.ContentType = "application/json";
                 var status = context.Response.StatusCode;

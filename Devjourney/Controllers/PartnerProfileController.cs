@@ -24,16 +24,16 @@ namespace Devjourney.Controllers
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
         {
-            // Placeholder: return new { success = true, data = ... }
-            return Ok(new { success = true, data = new object() });
+            var result = await _mediator.Send(new Application.Modules.PartnerProfile.Queries.GetPartnerProfile.GetPartnerProfileQuery(), cancellationToken);
+            return Ok(new { success = true, data = result });
         }
 
         [HttpPut]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateProfile([FromBody] object request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateProfile([FromBody] Application.Modules.PartnerProfile.Commands.UpdatePartnerProfile.UpdatePartnerProfileCommand request, CancellationToken cancellationToken)
         {
-            // Placeholder: return new { success = true, data = ... }
-            return Ok(new { success = true, data = new object(), message = "Partner profile updated successfully" });
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(new { success = true, data = result, message = "Partner profile updated successfully" });
         }
     }
 }

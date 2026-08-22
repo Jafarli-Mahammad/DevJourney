@@ -3,7 +3,7 @@
   "method": "POST",
   "path_template": "/api/Auth/login/company",
   "fingerprint": "b0d0e8d7",
-  "case_id": "qpL0Q9",
+  "case_id": "OnVWDe",
   "code_sample": "curl -X POST -H 'Content-Type: application/json' -d '{\"email\": \"0\", \"password\": \"00\"}' http://localhost:5074/api/Auth/login/company",
   "sequence": [
     {
@@ -15,7 +15,7 @@
         "Accept-Encoding": "gzip, deflate, zstd",
         "Accept": "*/*",
         "Connection": "keep-alive",
-        "X-Schemathesis-TestCaseId": "qpL0Q9",
+        "X-Schemathesis-TestCaseId": "OnVWDe",
         "Content-Type": "application/json",
         "Content-Length": "32"
       },
@@ -23,11 +23,12 @@
         "status_code": 400,
         "headers": {
           "content-type": "application/json",
-          "date": "Sat, 15 Aug 2026 15:12:44 GMT",
+          "date": "Sat, 22 Aug 2026 00:00:47 GMT",
           "server": "Kestrel",
           "content-encoding": "gzip",
           "transfer-encoding": "chunked",
-          "vary": "Accept-Encoding"
+          "vary": "Accept-Encoding",
+          "x-correlation-id": "76c7f4d2d76244e3b1195cc4811cdfec"
         },
         "body": "{\"message\":\"Invalid email or password.\",\"errors\":null}"
       },
@@ -41,7 +42,7 @@
       ],
       "meta": {
         "generation": {
-          "time": 9.823599975788966e-05,
+          "time": 5.0391998229315504e-05,
           "mode": "positive"
         },
         "components": {
