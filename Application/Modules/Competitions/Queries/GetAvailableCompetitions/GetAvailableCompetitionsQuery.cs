@@ -1,9 +1,12 @@
 using MediatR;
+
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Repositories.Competitions;
+
 using Application.Repositories;
+using Application.Repositories.Competitions;
+
 
 namespace Application.Modules.Competitions.Queries.GetAvailableCompetitions;
 

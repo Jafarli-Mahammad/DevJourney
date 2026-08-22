@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+
 using Domain.Models.Enums;
 using Domain.Models.Entities.Partner;
 using Application.Exceptions;
@@ -67,7 +68,7 @@ namespace Application.Modules.PartnerAuth.Commands.RegisterPartner
 
             var userId = await _authService.RegisterAsync(request.Email, request.Email, request.Password);
 
-            var partnerProfile = new PartnerProfile
+            var partnerProfile = new Domain.Models.Entities.Partner.PartnerProfile
             {
                 ApplicationUserId = userId,
                 PartnerName = request.OrganizationName,

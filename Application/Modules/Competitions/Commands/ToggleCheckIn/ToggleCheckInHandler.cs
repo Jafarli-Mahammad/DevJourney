@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Application.Exceptions;
 using Application.Repositories;
 using Application.Repositories.Competitions;
+
+
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

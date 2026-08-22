@@ -1,5 +1,8 @@
+using Application.Repositories;
+using Application.Repositories.Competitions;
 using MediatR;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,9 +15,27 @@ namespace Application.Modules.Competitions.Queries.GetCompetitionAttendance
 
     public class GetCompetitionAttendanceQueryHandler : IRequestHandler<GetCompetitionAttendanceQuery, object>
     {
-        public Task<object> Handle(GetCompetitionAttendanceQuery request, CancellationToken cancellationToken)
+        private readonly ICompetitionParticipantRepository _participantRepo;
+        
+        public GetCompetitionAttendanceQueryHandler(ICompetitionParticipantRepository participantRepo)
         {
-            return Task.FromResult<object>(new { success = true, data = Array.Empty<object>() });
+            _participantRepo = participantRepo;
+        }
+
+        public async Task<object> Handle(GetCompetitionAttendanceQuery request, CancellationToken cancellationToken)
+        {
+            var participants = await _participantRepo.GetAllAsync(p => p.CompetitionId == request.CompetitionId, cancellationToken);
+            
+            var attendanceList = participants.Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.IsTeam,
+                p.IsCheckedIn,
+                p.CheckInTime
+            }).ToList();
+
+            return attendanceList;
         }
     }
 }

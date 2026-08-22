@@ -3,6 +3,7 @@ using Application.Services;
 using Domain.Models.Entities.Company;
 using MediatR;
 
+
 namespace Application.Modules.Company.Commands.Register
 {
     public class CompanyRegisterRequestHandler : IRequestHandler<CompanyRegisterRequest, Guid>

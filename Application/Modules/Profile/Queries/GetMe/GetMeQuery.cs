@@ -1,5 +1,6 @@
 using Application.Modules.Profile.Models;
 using MediatR;
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;

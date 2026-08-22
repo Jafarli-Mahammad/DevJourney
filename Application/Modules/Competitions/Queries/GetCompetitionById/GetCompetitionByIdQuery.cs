@@ -1,3 +1,6 @@
+using Application.Exceptions;
+using Application.Repositories;
+using Application.Repositories.Competitions;
 using MediatR;
 using System;
 using System.Threading;
@@ -12,9 +15,20 @@ namespace Application.Modules.Competitions.Queries.GetCompetitionById
 
     public class GetCompetitionByIdQueryHandler : IRequestHandler<GetCompetitionByIdQuery, object>
     {
-        public Task<object> Handle(GetCompetitionByIdQuery request, CancellationToken cancellationToken)
+        private readonly ICompetitionRepository _competitionRepo;
+
+        public GetCompetitionByIdQueryHandler(ICompetitionRepository competitionRepo)
         {
-            return Task.FromResult<object>(new { success = true, data = new object() });
+            _competitionRepo = competitionRepo;
+        }
+
+        public async Task<object> Handle(GetCompetitionByIdQuery request, CancellationToken cancellationToken)
+        {
+            var competition = await _competitionRepo.GetAsync(c => c.Id == request.CompetitionId, null, cancellationToken);
+            if (competition == null)
+                throw new NotFoundException("Competition", request.CompetitionId);
+
+            return competition;
         }
     }
 }

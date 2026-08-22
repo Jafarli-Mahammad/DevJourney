@@ -1,9 +1,11 @@
 using Application.Common.Interfaces;
 using Application.Repositories;
+
 using Application.Repositories.Core;
 using Application.Services;
 using Domain.Models.Entities.Core;
 using MediatR;
+
 using System;
 using System.IO;
 using System.Threading;

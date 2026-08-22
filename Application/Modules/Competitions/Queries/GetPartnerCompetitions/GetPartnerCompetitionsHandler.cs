@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Repositories.Competitions;
+
 using Domain.Models.Enums;
 using MediatR;
+using Application.Repositories.Competitions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Modules.Competitions.Queries.GetPartnerCompetitions;
