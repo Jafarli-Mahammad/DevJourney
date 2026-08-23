@@ -34,6 +34,7 @@ namespace Devjourney.Controllers
 
         [HttpGet]
         [Authorize]
+        [ApiExplorerSettings(GroupName = "v1")]
         public async Task<IActionResult> GetCertificates()
         {
             var data = await _mediator.Send(new GetMyCertificatesQuery());
@@ -42,6 +43,7 @@ namespace Devjourney.Controllers
 
         [HttpPost("upload")]
         [Authorize]
+        [ApiExplorerSettings(GroupName = "v1,partner")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadCertificate([FromForm] UploadCertificateCommand command)
         {
@@ -51,6 +53,7 @@ namespace Devjourney.Controllers
 
         [HttpPost("/api/partner/certificates/bulk-issue")]
         [Authorize(Roles = "COMPANY_ADMIN")]
+        [ApiExplorerSettings(GroupName = "partner,company")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> BulkIssueCertificates([FromForm] Application.Modules.Certificates.Commands.BulkIssueCertificates.BulkIssueCertificatesCommand command)
         {
@@ -60,6 +63,7 @@ namespace Devjourney.Controllers
 
         [HttpGet("/api/partner/certificates")]
         [Authorize(Roles = "COMPANY_ADMIN")]
+        [ApiExplorerSettings(GroupName = "partner,company")]
         public async Task<IActionResult> GetPartnerIssuedCertificates()
         {
             var result = await _mediator.Send(new Application.Modules.Certificates.Queries.GetPartnerIssuedCertificates.GetPartnerIssuedCertificatesQuery());
@@ -68,6 +72,7 @@ namespace Devjourney.Controllers
 
         [HttpGet("verify/{codeOrId}")]
         [AllowAnonymous]
+        [ApiExplorerSettings(GroupName = "v1,partner,company")]
         public async Task<IActionResult> VerifyCertificate(string codeOrId)
         {
             var result = await _mediator.Send(new Application.Modules.Certificates.Queries.VerifyCertificate.VerifyCertificateQuery { CodeOrId = codeOrId });
@@ -76,6 +81,7 @@ namespace Devjourney.Controllers
 
         [HttpPost("seed-mock")]
         [AllowAnonymous]
+        [ApiExplorerSettings(GroupName = "v1")]
         public async Task<IActionResult> SeedMockCertificates()
         {
             // Get some students to attach mock certificates to

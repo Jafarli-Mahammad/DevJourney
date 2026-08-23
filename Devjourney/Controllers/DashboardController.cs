@@ -7,6 +7,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/student/[controller]")]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class DashboardController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -12,6 +12,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/partner-invitations")]
+    [ApiExplorerSettings(GroupName = "partner,company")]
     [Produces("application/json", "application/problem+json")]
     public class PartnerInvitationsController : ControllerBase
     {

@@ -5,6 +5,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/admin")]
+    [ApiExplorerSettings(GroupName = "admin")]
     [Produces("application/json", "application/problem+json")]
     public class AdminController : ControllerBase
     {

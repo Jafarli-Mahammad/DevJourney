@@ -180,8 +180,44 @@ public partial class Program
 
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "DevJourney API", Version = "v1" });
-            c.SwaggerDoc("partner", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Partner API", Version = "v1" });
+            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "DevJourney API (Student & Core)",
+                Version = "v1",
+                Description = "Core API endpoints for Student Profiles, Public Competitions, Scoreboard, and Platform Services"
+            });
+
+            c.SwaggerDoc("partner", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "DevJourney Partner API",
+                Version = "v1",
+                Description = "API endpoints for Partner Portal, Hackathon Lifecycle Management, Staff/Jury Management, and Jury Workspaces"
+            });
+
+            c.SwaggerDoc("company", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "DevJourney Company API",
+                Version = "v1",
+                Description = "API endpoints for Company Registration, Authentication, Corporate Partner Profile, and Company Hackathons"
+            });
+
+            c.SwaggerDoc("admin", new Microsoft.OpenApi.Models.OpenApiInfo
+            {
+                Title = "DevJourney Admin API",
+                Version = "v1",
+                Description = "Administrative platform endpoints"
+            });
+
+            c.DocInclusionPredicate((docName, apiDesc) =>
+            {
+                if (!string.IsNullOrEmpty(apiDesc.GroupName))
+                {
+                    var groups = apiDesc.GroupName.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                    return groups.Contains(docName, StringComparer.OrdinalIgnoreCase);
+                }
+
+                return false;
+            });
 
             var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
@@ -266,8 +302,12 @@ public partial class Program
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevJourney API v1");
-                c.SwaggerEndpoint("/swagger/partner/swagger.json", "Partner API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DevJourney API (Student & Core)");
+                c.SwaggerEndpoint("/swagger/partner/swagger.json", "Partner Portal API");
+                c.SwaggerEndpoint("/swagger/company/swagger.json", "Company API");
+                c.SwaggerEndpoint("/swagger/admin/swagger.json", "Admin API");
+                c.DocumentTitle = "DevJourney API Documentation";
+                c.RoutePrefix = "swagger";
             });
         }
 

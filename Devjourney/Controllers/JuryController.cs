@@ -8,6 +8,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [ApiExplorerSettings(GroupName = "partner")]
     [Authorize]
     [Produces("application/json", "application/problem+json")]
     public class JuryController : ControllerBase

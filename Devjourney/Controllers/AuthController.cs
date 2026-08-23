@@ -28,6 +28,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/student")]
+        [ApiExplorerSettings(GroupName = "v1")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterStudent(
@@ -39,6 +40,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/company")]
+        [ApiExplorerSettings(GroupName = "company")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterCompany(
@@ -50,6 +52,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/University")]
+        [ApiExplorerSettings(GroupName = "v1")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterUniversity(
@@ -61,6 +64,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("register/jury")]
+        [ApiExplorerSettings(GroupName = "partner")]
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RegisterJury(
@@ -84,6 +88,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login")]
+        [ApiExplorerSettings(GroupName = "v1")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(
@@ -96,6 +101,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login/student")]
+        [ApiExplorerSettings(GroupName = "v1")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginStudent(
@@ -108,6 +114,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login/company")]
+        [ApiExplorerSettings(GroupName = "company,partner")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginCompany(
@@ -120,6 +127,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("login/jury")]
+        [ApiExplorerSettings(GroupName = "partner")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> LoginJury(
@@ -132,6 +140,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("logout")]
+        [ApiExplorerSettings(GroupName = "v1,partner,company")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         public async Task<IActionResult> Logout(
             CancellationToken cancellationToken)
@@ -147,6 +156,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("password-reset")]
+        [ApiExplorerSettings(GroupName = "v1,partner,company")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PasswordReset(
@@ -158,6 +168,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("password-reset/confirm")]
+        [ApiExplorerSettings(GroupName = "v1,partner,company")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PasswordResetConfirm(

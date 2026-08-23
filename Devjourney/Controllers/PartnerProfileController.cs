@@ -9,6 +9,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/partner/profile")]
+    [ApiExplorerSettings(GroupName = "partner,company")]
     [Produces("application/json", "application/problem+json")]
     [Authorize(Roles = "COMPANY_ADMIN")]
     public class PartnerProfileController : ControllerBase

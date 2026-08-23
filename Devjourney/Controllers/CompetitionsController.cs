@@ -19,7 +19,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/partner/[controller]")]
-    [ApiExplorerSettings(GroupName = "partner")]
+    [ApiExplorerSettings(GroupName = "partner,company")]
     [Authorize]
     [Produces("application/json", "application/problem+json")]
     public class CompetitionsController : ControllerBase

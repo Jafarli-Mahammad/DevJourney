@@ -17,6 +17,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("api/posts")]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class PostsController : ControllerBase
     {
         private readonly IMediator mediator;

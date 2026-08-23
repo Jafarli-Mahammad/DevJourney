@@ -6,12 +6,12 @@ This document outlines all architectural and code changes made to the backend to
 
 ## 1. Overview of Changes
 
-| Layer / Area | Modified / Added Components | Purpose & Frontend Impact |
-| :--- | :--- | :--- |
-| **Controllers** | `PartnerProfileController`, `CompetitionsController`, `CertificatesController`, `PartnerAccountsController` | Replaced in-memory mock responses with real `_mediator.Send(...)` invocations. **Zero route or payload changes.** |
+| Layer / Area                   | Modified / Added Components | Purpose & Frontend Impact |
+|:-------------------------------| :--- | :--- |
+| **Controllers**                | `PartnerProfileController`, `CompetitionsController`, `CertificatesController`, `PartnerAccountsController` | Replaced in-memory mock responses with real `_mediator.Send(...)` invocations. **Zero route or payload changes.** |
 | **MediatR Commands & Queries** | 9 new handlers added across Partner Profile, Competitions, Certificates, and Partner Accounts | Interacts with EF Core Repositories to query/persist data to Azure SQL. |
-| **Middleware** | `GlobalExceptionMiddleware.cs` | Formats framework-level empty 400 Bad Request responses into standard JSON envelopes. |
-| **Test Suites & Tooling** | Unit Tests, Integration Tests, Schemathesis, OWASP ZAP, k6 | Multi-layer test coverage verifying logic, security, schema conformance, and load resilience. |
+| **Middleware**                 | `GlobalExceptionMiddleware.cs` | Formats framework-level empty 400 Bad Request responses into standard JSON envelopes. |
+| **v**                          | Unit Tests, Integration Tests, Schemathesis, OWASP ZAP, k6 | Multi-layer test coverage verifying logic, security, schema conformance, and load resilience. |
 
 ---
 

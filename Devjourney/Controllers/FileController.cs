@@ -5,6 +5,7 @@ namespace Devjourney.Controllers
 {
     [ApiController]
     [Route("uploads")]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class FileController : ControllerBase
     {
         private readonly IFileStorage _fileStorage;

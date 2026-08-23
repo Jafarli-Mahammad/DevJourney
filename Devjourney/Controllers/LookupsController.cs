@@ -11,6 +11,7 @@ namespace Devjourney.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1,partner,company")]
     [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicListings")]
     public class LookupsController : ControllerBase
     {
