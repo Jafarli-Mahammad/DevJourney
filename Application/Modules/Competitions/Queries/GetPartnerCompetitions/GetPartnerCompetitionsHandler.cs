@@ -23,7 +23,11 @@ public class GetPartnerCompetitionsHandler : IRequestHandler<GetPartnerCompetiti
 
     public async Task<List<PartnerCompetitionDto>> Handle(GetPartnerCompetitionsQuery request, CancellationToken cancellationToken)
     {
-        var competitions = await _competitionRepository.GetAllAsync(c => c.PartnerId == request.PartnerId, cancellationToken);
+        var competitions = await _competitionRepository.GetAllAsync(
+            c => c.PartnerId == request.PartnerId,
+            q => q.Include(c => c.Stages),
+            cancellationToken);
+
         if (competitions.Count == 0)
         {
             return new List<PartnerCompetitionDto>();
@@ -46,6 +50,37 @@ public class GetPartnerCompetitionsHandler : IRequestHandler<GetPartnerCompetiti
             {
                 Id = competition.Id,
                 Title = competition.Title,
+                ShortSummary = competition.ShortSummary,
+                Description = competition.Description,
+                StartDate = competition.StartDate,
+                EndDate = competition.EndDate,
+                RegistrationDeadline = competition.RegistrationDeadline,
+                SubmissionDeadline = competition.SubmissionDeadline,
+                Location = competition.Location,
+                LocationMapLink = competition.LocationMapLink,
+                Tags = competition.Tags,
+                EvaluationCriteria = competition.EvaluationCriteria,
+                CoverImageUrl = competition.CoverImageUrl,
+                ContactEmail = competition.ContactEmail,
+                ContactPhone = competition.ContactPhone,
+                ContactSocialLink = competition.ContactSocialLink,
+                ParticipationFormat = (int)competition.ParticipationFormat,
+                MaxTeamSize = competition.MaxTeamSize,
+                IsPublished = competition.IsPublished,
+                IsRegistrationOpen = competition.IsRegistrationOpen,
+                IsJuryActive = competition.IsJuryActive,
+                IsScoreboardLive = competition.IsScoreboardLive,
+                IsCertificatesPublished = competition.IsCertificatesPublished,
+                AgendaMode = competition.AgendaMode ?? "MANUAL",
+                AgendaPdfUrl = competition.AgendaPdfUrl,
+                Stages = competition.Stages?.Select(s => new PartnerCompetitionStageDto
+                {
+                    Id = s.Id,
+                    DayNumber = s.DayNumber,
+                    Title = s.Title,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime
+                }).OrderBy(s => s.DayNumber).ThenBy(s => s.StartTime).ToList() ?? new List<PartnerCompetitionStageDto>(),
                 ApplicantCount = participantList.Count,
                 ApprovedCount = participantList.Count(p => p.Status == ApplicationStatus.Approved),
                 CheckInCount = participantList.Count(p => p.IsCheckedIn),

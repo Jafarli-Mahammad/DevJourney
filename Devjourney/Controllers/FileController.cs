@@ -38,6 +38,29 @@ namespace Devjourney.Controllers
             return Ok(new { success = true, data = new { url = url } });
         }
 
+        [HttpPost("document")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadDocument(IFormFile file, CancellationToken cancellationToken)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var ext = Path.GetExtension(file.FileName).ToLower();
+            if (ext != ".pdf" && ext != ".docx" && ext != ".doc")
+            {
+                return BadRequest("Invalid document format. Allowed formats are pdf, docx, doc.");
+            }
+
+            var containerName = "documents";
+            var objectKey = $"{Guid.NewGuid()}{ext}";
+
+            using var stream = file.OpenReadStream();
+            await _fileStorage.UploadFileAsync(containerName, objectKey, stream, file.ContentType, cancellationToken);
+            
+            var url = await _fileStorage.GetFileUrlAsync(containerName, objectKey, cancellationToken);
+            return Ok(new { success = true, data = new { url = url } });
+        }
+
         [HttpGet("{containerName}/{objectKey}")]
         public async Task<IActionResult> DownloadFile(string containerName, string objectKey, CancellationToken cancellationToken)
         {

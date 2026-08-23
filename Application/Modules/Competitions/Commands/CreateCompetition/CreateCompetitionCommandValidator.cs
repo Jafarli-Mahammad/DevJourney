@@ -35,7 +35,7 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
                     .LessThanOrEqualTo(x => x.Dto.EndDate).WithMessage("Submission deadline must be before or on the end date.");
 
                 RuleFor(x => x.Dto.MaxTeamSize)
-                    .GreaterThan(0).WithMessage("Max team size must be greater than 0.");
+                    .InclusiveBetween(1, 50).WithMessage("Max team size must be between 1 and 50.");
 
                 RuleFor(x => x.Dto.ContactEmail)
                     .EmailAddress().When(x => !string.IsNullOrEmpty(x.Dto.ContactEmail)).WithMessage("A valid email address is required.");

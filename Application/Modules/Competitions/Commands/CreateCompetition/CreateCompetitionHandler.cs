@@ -55,7 +55,7 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
                 LocationMapLink = request.Dto.LocationMapLink ?? string.Empty,
                 Tags = request.Dto.Tags ?? string.Empty,
                 EvaluationCriteria = request.Dto.EvaluationCriteria ?? string.Empty,
-                CoverImageUrl = request.Dto.CoverImageUrl ?? string.Empty,
+                CoverImageUrl = (request.Dto.CoverImageUrl != null && (request.Dto.CoverImageUrl.StartsWith("http://") || request.Dto.CoverImageUrl.StartsWith("https://"))) ? request.Dto.CoverImageUrl : string.Empty,
                 ContactEmail = request.Dto.ContactEmail ?? string.Empty,
                 ContactPhone = request.Dto.ContactPhone ?? string.Empty,
                 ContactSocialLink = request.Dto.ContactSocialLink ?? string.Empty,
@@ -63,6 +63,8 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
                 GitHubRepositoryRequirement = request.Dto.GitHubRepositoryRequirement,
                 LiveDeploymentRequirement = request.Dto.LiveDeploymentRequirement,
                 PitchDeckFormat = request.Dto.PitchDeckFormat,
+                AgendaMode = request.Dto.AgendaMode ?? "MANUAL",
+                AgendaPdfUrl = request.Dto.AgendaPdfUrl,
                 IsPublished = false,
                 Stages = request.Dto.Stages?.Where(s => s != null).Select(s => new CompetitionStage
                 {

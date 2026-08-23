@@ -38,6 +38,10 @@ namespace Domain.Models.Entities.Competition
         public RequirementLevel LiveDeploymentRequirement { get; set; }
         public PitchDeckFormat PitchDeckFormat { get; set; }
 
+        // Agenda File / Mode
+        public string AgendaMode { get; set; } = "MANUAL";
+        public string? AgendaPdfUrl { get; set; }
+
         // Navigation
         public ICollection<CompetitionStage> Stages { get; set; } = new List<CompetitionStage>();
         

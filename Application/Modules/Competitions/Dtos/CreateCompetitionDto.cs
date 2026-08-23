@@ -34,6 +34,8 @@ namespace Application.Modules.Competitions.Dtos
         public RequirementLevel GitHubRepositoryRequirement { get; set; }
         public RequirementLevel LiveDeploymentRequirement { get; set; }
         public PitchDeckFormat PitchDeckFormat { get; set; }
+        public string? AgendaMode { get; set; }
+        public string? AgendaPdfUrl { get; set; }
         public List<CreateCompetitionStageDto>? Stages { get; set; }
     }
 }
