@@ -15,6 +15,29 @@ namespace Devjourney.Controllers
             _fileStorage = fileStorage;
         }
 
+        [HttpPost("image")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadImage(IFormFile file, CancellationToken cancellationToken)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var ext = Path.GetExtension(file.FileName).ToLower();
+            if (ext != ".png" && ext != ".jpg" && ext != ".jpeg" && ext != ".svg")
+            {
+                return BadRequest("Invalid image format. Allowed formats are png, jpg, jpeg, svg.");
+            }
+
+            var containerName = "images";
+            var objectKey = $"{Guid.NewGuid()}{ext}";
+
+            using var stream = file.OpenReadStream();
+            await _fileStorage.UploadFileAsync(containerName, objectKey, stream, file.ContentType, cancellationToken);
+            
+            var url = await _fileStorage.GetFileUrlAsync(containerName, objectKey, cancellationToken);
+            return Ok(new { success = true, data = new { url = url } });
+        }
+
         [HttpGet("{containerName}/{objectKey}")]
         public async Task<IActionResult> DownloadFile(string containerName, string objectKey, CancellationToken cancellationToken)
         {
