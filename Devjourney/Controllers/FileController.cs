@@ -39,6 +39,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("document")]
+        [HttpPost("file")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadDocument(IFormFile file, CancellationToken cancellationToken)
         {

@@ -12,5 +12,8 @@ public class EvaluationConfiguration : IEntityTypeConfiguration<Evaluation>
 
         builder.Property(e => e.Comments)
             .HasMaxLength(1000);
+
+        builder.HasIndex(e => e.ParticipantId);
+        builder.HasIndex(e => e.JuryId);
     }
 }

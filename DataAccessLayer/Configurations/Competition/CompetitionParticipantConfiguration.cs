@@ -26,5 +26,10 @@ public class CompetitionParticipantConfiguration : IEntityTypeConfiguration<Comp
             .WithOne(e => e.Participant)
             .HasForeignKey(e => e.ParticipantId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(cp => cp.CompetitionId);
+        builder.HasIndex(cp => cp.CaptainId);
+        builder.HasIndex(cp => cp.IndividualStudentId);
+        builder.HasIndex(cp => new { cp.CompetitionId, cp.Status });
     }
 }

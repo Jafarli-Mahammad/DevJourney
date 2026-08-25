@@ -49,8 +49,9 @@ namespace Application.Modules.Student.Queries.GetStudentProfile
 
             // Fetch competition names
             var compIds = teams.Select(t => t.CompetitionId).Distinct().ToList();
-            var competitions = await _competitionRepository.GetAllAsync(c => compIds.Contains(c.Id), cancellationToken);
-            var compNames = competitions.ToDictionary(c => c.Id, c => c.Title);
+            var compNames = compIds.Count > 0
+                ? (await _competitionRepository.GetAllAsync(c => compIds.Contains(c.Id), cancellationToken)).ToDictionary(c => c.Id, c => c.Title)
+                : new Dictionary<Guid, string>();
 
             return new StudentProfileDto
             {

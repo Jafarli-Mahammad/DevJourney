@@ -4,6 +4,7 @@ using DataAccessLayer.DataContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260824190740_AddAgendaModeAndPdfUrlToCompetitions")]
+    partial class AddAgendaModeAndPdfUrlToCompetitions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,14 +438,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CaptainId");
-
-                    b.HasIndex("CompetitionId");
-
-                    b.HasIndex("IndividualStudentId");
-
-                    b.HasIndex("CompetitionId", "Status");
-
                     b.ToTable("CompetitionParticipants", "Identity");
                 });
 
@@ -508,8 +503,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ParticipantId");
 
-                    b.HasIndex("StudentProfileId");
-
                     b.HasIndex("TeamId");
 
                     b.ToTable("CompetitionTeamMembers", "Identity");
@@ -567,8 +560,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("JuryId");
 
                     b.HasIndex("ParticipantId");
 

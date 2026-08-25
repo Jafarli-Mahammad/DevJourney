@@ -32,16 +32,17 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
         public async Task<Guid> Handle(CreateCompetitionCommand request, CancellationToken cancellationToken)
         {
             var partnerId = request.PartnerId;
-            var partners = await _partnerProfileRepository.GetAllAsync(cancellationToken: cancellationToken);
-            
-            var existingPartner = partners.FirstOrDefault(p => p.Id == partnerId);
+            var partners = await _partnerProfileRepository.GetAllAsync(p => p.Id == partnerId, cancellationToken);
+            var existingPartner = partners.FirstOrDefault();
             if (existingPartner == null)
             {
                 throw new Application.Exceptions.NotFoundException("PartnerProfile", partnerId);
             }
 
+            var competitionId = Guid.NewGuid();
             var competition = new Competition
             {
+                Id = competitionId,
                 PartnerId = partnerId,
                 Title = request.Dto.Title ?? string.Empty,
                 ShortSummary = request.Dto.ShortSummary ?? string.Empty,
@@ -68,6 +69,8 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
                 IsPublished = false,
                 Stages = request.Dto.Stages?.Where(s => s != null).Select(s => new CompetitionStage
                 {
+                    Id = Guid.NewGuid(),
+                    CompetitionId = competitionId,
                     DayNumber = s.DayNumber,
                     Title = s.Title ?? string.Empty,
                     StartTime = s.StartTime,

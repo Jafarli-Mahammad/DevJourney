@@ -29,8 +29,10 @@ public class GetAvailableCompetitionsQueryHandler : IRequestHandler<GetAvailable
 
     public async Task<object> Handle(GetAvailableCompetitionsQuery request, CancellationToken cancellationToken)
     {
-        var competitions = await _competitionRepository.GetAllAsync(c => c.IsPublished, cancellationToken);
-        var partners = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
+        var competitions = await _competitionRepository.GetAllAsync(
+            c => c.IsPublished,
+            q => Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.Include(q, c => c.Partner),
+            cancellationToken);
 
         var data = competitions
             .OrderBy(c => c.StartDate)
@@ -47,7 +49,7 @@ public class GetAvailableCompetitionsQueryHandler : IRequestHandler<GetAvailable
                 c.CoverImageUrl,
                 c.ParticipationFormat,
                 c.MaxTeamSize,
-                PartnerName = partners.FirstOrDefault(p => p.Id == c.PartnerId)?.PartnerName
+                PartnerName = c.Partner?.PartnerName
             })
             .ToList();
 

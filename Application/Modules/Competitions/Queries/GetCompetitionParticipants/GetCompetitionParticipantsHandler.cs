@@ -26,12 +26,9 @@ public class GetCompetitionParticipantsHandler : IRequestHandler<GetCompetitionP
         if (competition == null)
             throw new Application.Exceptions.NotFoundException("Competition", request.CompetitionId);
 
-        var participants = await _repository.GetAllAsync(p => p.CompetitionId == request.CompetitionId, cancellationToken);
-
-        if (request.Status.HasValue)
-        {
-            participants = participants.Where(p => p.Status == request.Status.Value).ToList();
-        }
+        var participants = await _repository.GetAllAsync(
+            p => p.CompetitionId == request.CompetitionId && (!request.Status.HasValue || p.Status == request.Status.Value),
+            cancellationToken);
 
         return participants.Select(p => new CompetitionParticipantDto
         {

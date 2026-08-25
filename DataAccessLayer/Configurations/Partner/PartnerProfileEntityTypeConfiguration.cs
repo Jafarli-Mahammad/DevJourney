@@ -26,6 +26,8 @@ namespace DataAccessLayer.Configurations.Partner
                 .WithOne()
                 .HasForeignKey<PartnerProfile>(x => x.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(x => x.ApplicationUserId);
         }
     }
 }

@@ -12,5 +12,8 @@ public class CompetitionTeamMemberConfiguration : IEntityTypeConfiguration<Compe
 
         builder.Property(ctm => ctm.Role)
             .HasMaxLength(100);
+
+        builder.HasIndex(ctm => ctm.ParticipantId);
+        builder.HasIndex(ctm => ctm.StudentProfileId);
     }
 }
