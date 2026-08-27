@@ -7,10 +7,12 @@ namespace DataAccessLayer.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-        public AuthService(UserManager<ApplicationUser> userManager)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             this.userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<(Guid UserId, string UserName, string Email)?> CheckPasswordAsync(string email, string password)
@@ -109,6 +111,16 @@ namespace DataAccessLayer.Services
         {
             var user = await userManager.FindByIdAsync(userId.ToString());
             if (user == null) return false;
+
+            if (!await _roleManager.RoleExistsAsync(role))
+            {
+                await _roleManager.CreateAsync(new IdentityRole<Guid>
+                {
+                    Name = role,
+                    NormalizedName = role.ToUpperInvariant()
+                });
+            }
+
             var result = await userManager.AddToRoleAsync(user, role);
             return result.Succeeded;
         }

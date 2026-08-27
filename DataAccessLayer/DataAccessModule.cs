@@ -113,6 +113,7 @@ namespace DataAccessLayer
             builder.RegisterType<ProfessionSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<MainRoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<RoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
+            builder.RegisterType<IdentityRoleSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<IdeaFieldSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<UniversitySeeder>().As<IDataSeeder>().InstancePerLifetimeScope();
             builder.RegisterType<PartnerSeeder>().As<IDataSeeder>().InstancePerLifetimeScope();

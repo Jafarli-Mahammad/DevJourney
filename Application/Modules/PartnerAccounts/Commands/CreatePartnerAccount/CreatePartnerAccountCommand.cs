@@ -58,26 +58,51 @@ namespace Application.Modules.PartnerAccounts.Commands.CreatePartnerAccount
         public async Task<CreatePartnerAccountDto> Handle(CreatePartnerAccountCommand request, CancellationToken cancellationToken)
         {
             var tempPassword = GenerateRandomPassword();
-            var userId = await _authService.RegisterAsync(request.Email, request.Email, tempPassword);
-
             var role = request.Role.ToUpper() == "JURY" ? "JURY" : "SUPPORTER";
-            await _authService.AddToRoleAsync(userId, role);
-
             var referralCode = $"{(role == "JURY" ? "JURY" : "SUPP")}-{new Random().Next(100000, 999999)}";
+
+            var existingUser = await _authService.GetUserInfoByEmailAsync(request.Email);
+            Guid userId;
+            if (existingUser != null)
+            {
+                userId = existingUser.Value.UserId;
+                await _authService.AddToRoleAsync(userId, role);
+            }
+            else
+            {
+                userId = await _authService.RegisterAsync(referralCode, request.Email, tempPassword);
+                await _authService.AddToRoleAsync(userId, role);
+            }
 
             if (role == "JURY")
             {
-                var juryProfile = new JuryProfile(
-                    applicationUserId: userId,
-                    juryCode: referralCode,
-                    fullName: request.FullName,
-                    email: request.Email
-                );
-                
-                juryProfile.Specialization = request.Company; // Abusing Specialization field since company isn't in DB
+                var existingJuries = await _juryRepository.GetAllAsync(j => j.ApplicationUserId == userId || j.Email == request.Email, cancellationToken);
+                var juryProfile = existingJuries.FirstOrDefault();
+                if (juryProfile == null)
+                {
+                    juryProfile = new JuryProfile(
+                        applicationUserId: userId,
+                        juryCode: referralCode,
+                        fullName: request.FullName,
+                        email: request.Email
+                    )
+                    {
+                        Specialization = request.Company,
+                        CompetitionId = request.CompetitionId != Guid.Empty ? request.CompetitionId : null
+                    };
 
-                await _juryRepository.AddAsync(juryProfile, cancellationToken);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _juryRepository.AddAsync(juryProfile, cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                }
+                else
+                {
+                    juryProfile.JuryCode = referralCode;
+                    juryProfile.FullName = request.FullName;
+                    juryProfile.Specialization = request.Company;
+                    if (request.CompetitionId != Guid.Empty) juryProfile.CompetitionId = request.CompetitionId;
+                    await _juryRepository.EditAsync(juryProfile);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                }
             }
 
             // Mock sending email

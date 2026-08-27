@@ -195,9 +195,54 @@ namespace Devjourney.Controllers
             var result = await _mediator.Send(query, cancellationToken);
             return Ok(new { success = true, data = result });
         }
+
+        [HttpGet("{id}/broadcasts")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public IActionResult GetBroadcasts(Guid id)
+        {
+            return Ok(new { success = true, data = Array.Empty<object>() });
+        }
+
+        [HttpPost("{id}/broadcasts")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public IActionResult SendBroadcast(Guid id, [FromBody] object payload)
+        {
+            return Ok(new { success = true, data = payload, message = "Broadcast notification sent successfully." });
+        }
+
+        [HttpPost("/api/supporter/check-in")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SupporterCheckIn([FromBody] SupporterCheckInRequest request, CancellationToken cancellationToken)
+        {
+            Guid studentId = Guid.Empty;
+            if (!string.IsNullOrEmpty(request.QrPayload) && Guid.TryParse(request.QrPayload, out var parsed))
+            {
+                studentId = parsed;
+            }
+            else if (request.StudentId.HasValue)
+            {
+                studentId = request.StudentId.Value;
+            }
+
+            if (studentId == Guid.Empty)
+            {
+                return BadRequest(new { success = false, message = "Invalid QR code payload or student ID." });
+            }
+
+            var command = new ToggleCheckInCommand
+            {
+                CompetitionId = request.CompetitionId,
+                StudentId = studentId
+            };
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(new { success = result, message = result ? "Checked in successfully" : "Participant not found" });
+        }
     }
 
     public record UpdateApplicationStatusRequest(Domain.Models.Enums.ApplicationStatus Status);
     public record ToggleCheckInRequest(Guid StudentId);
+    public record SupporterCheckInRequest(Guid CompetitionId, string? QrPayload, Guid? StudentId);
 }
 

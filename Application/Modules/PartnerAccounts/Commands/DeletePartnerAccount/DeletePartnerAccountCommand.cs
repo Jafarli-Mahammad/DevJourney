@@ -15,19 +15,30 @@ namespace Application.Modules.PartnerAccounts.Commands.DeletePartnerAccount
 
     public class DeletePartnerAccountCommandHandler : IRequestHandler<DeletePartnerAccountCommand, bool>
     {
-        private readonly IPartnerProfileRepository _partnerProfileRepository;
+        private readonly IJuryProfileRepository _juryProfileRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DeletePartnerAccountCommandHandler(IPartnerProfileRepository partnerProfileRepository)
+        public DeletePartnerAccountCommandHandler(
+            IJuryProfileRepository juryProfileRepository,
+            IUnitOfWork unitOfWork)
         {
-            _partnerProfileRepository = partnerProfileRepository;
+            _juryProfileRepository = juryProfileRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> Handle(DeletePartnerAccountCommand request, CancellationToken cancellationToken)
         {
-            var account = await _partnerProfileRepository.GetAsync(a => a.Id == request.AccountId, null, cancellationToken);
-            if (account == null) throw new NotFoundException("PartnerAccount", request.AccountId);
+            var juries = await _juryProfileRepository.GetAllAsync(
+                j => j.Id == request.AccountId || j.ApplicationUserId == request.AccountId,
+                cancellationToken);
+            var jury = juries.FirstOrDefault();
             
-            _partnerProfileRepository.Remove(account);
+            if (jury != null)
+            {
+                _juryProfileRepository.Remove(jury);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+
             return true;
         }
     }
