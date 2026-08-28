@@ -1,0 +1,198 @@
+- generic [ref=f5e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f5e3]:
+    - generic [ref=f5e4]:
+      - generic [ref=f5e5]:
+        - link "DevJourney" [ref=f5e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f5e10]: Partnyor
+      - navigation [ref=f5e12]:
+        - paragraph [ref=f5e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f5e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f5e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f5e30] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f5e38] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f5e53] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f5e60] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f5e66] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f5e72] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f5e78] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f5e90]:
+      - generic [ref=f5e98]:
+        - generic [ref=f5e99]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f5e100]: Universitet • Təşkilatçı
+      - generic [ref=f5e101]:
+        - button "Qaranlıq rejimə keç" [ref=f5e102] [cursor=pointer]
+        - button "Çıxış" [ref=f5e105] [cursor=pointer]
+  - generic [ref=f5e110]:
+    - banner [ref=f5e111]:
+      - generic [ref=f5e112]:
+        - paragraph [ref=f5e114]: Liderlər Cədvəli
+        - link "Bildirişlər" [ref=f5e115] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f5e119]:
+      - generic [ref=f5e120]:
+        - generic [ref=f5e121]:
+          - generic [ref=f5e122]:
+            - heading "Liderlər Cədvəli" [level=1] [ref=f5e123]
+            - paragraph [ref=f5e124]: Komandaların meyarlar üzrə qiymətləndirməsini və yekun sıralamasını canlı izləyin.
+          - generic [ref=f5e128]:
+            - generic [ref=f5e129]: Canlı yenilənir
+            - generic [ref=f5e130]: Münsif xalları aktivdir
+        - region [ref=f5e131]:
+          - generic [ref=f5e133]:
+            - heading "Zirvədə olanlar" [level=2] [ref=f5e134]
+            - paragraph [ref=f5e135]: Yekun xala görə ilk üç komanda.
+          - generic [ref=f5e144]:
+            - article [ref=f5e145]:
+              - img "1. yer komanda nişanı" [ref=f5e147]
+              - heading "CyberGuard" [level=3] [ref=f5e150]
+              - generic [ref=f5e151]: 281xal
+            - article [ref=f5e152]:
+              - img "2. yer komanda nişanı" [ref=f5e154]
+              - heading "HealthAI" [level=3] [ref=f5e157]
+              - generic [ref=f5e158]: 278xal
+            - article [ref=f5e159]:
+              - img "3. yer komanda nişanı" [ref=f5e161]
+              - heading "DevTrio" [level=3] [ref=f5e164]
+              - generic [ref=f5e165]: 275xal
+        - region [ref=f5e166]:
+          - generic [ref=f5e167]:
+            - generic [ref=f5e168]:
+              - heading "Ümumi reytinq" [level=2] [ref=f5e169]
+              - paragraph [ref=f5e170]: Bütün 10 komandanın mövqeyi və detallı xalları.
+            - generic [ref=f5e171]:
+              - generic [ref=f5e172]:
+                - generic [ref=f5e173]: Komanda və ya layihə axtar
+                - searchbox "Komanda və ya layihə axtar" [ref=f5e174]
+              - combobox "İstiqamət üzrə filtr" [ref=f5e175] [cursor=pointer]:
+                - generic: Bütün istiqamətlər
+              - combobox [ref=f5e178]
+          - table [ref=f5e180]:
+            - rowgroup [ref=f5e181]:
+              - row [ref=f5e182]:
+                - columnheader "Yer" [ref=f5e183]
+                - columnheader "Komanda və layihə" [ref=f5e184]
+                - columnheader "İnnovasiya" [ref=f5e185]
+                - columnheader "Texniki icra" [ref=f5e186]
+                - columnheader "Pitch" [ref=f5e187]
+                - columnheader "Yekun xal" [ref=f5e188]
+            - rowgroup [ref=f5e189]:
+              - row [ref=f5e190]:
+                - cell [ref=f5e191]:
+                  - img "1. yer komanda nişanı" [ref=f5e192]
+                - cell "CyberGuard AI Anomaly Detector" [ref=f5e194]:
+                  - generic [ref=f5e196]:
+                    - generic [ref=f5e197]: CyberGuard
+                    - generic [ref=f5e198]: AI Anomaly Detector
+                - cell "94/100" [ref=f5e199]
+                - cell "96/100" [ref=f5e200]
+                - cell "91/100" [ref=f5e201]
+                - cell "281/ 300" [ref=f5e202]
+              - row [ref=f5e203]:
+                - cell [ref=f5e204]:
+                  - img "2. yer komanda nişanı" [ref=f5e205]
+                - cell "HealthAI Erkən sağlamlıq risk analizi" [ref=f5e207]:
+                  - generic [ref=f5e209]:
+                    - generic [ref=f5e210]: HealthAI
+                    - generic [ref=f5e211]: Erkən sağlamlıq risk analizi
+                - cell "93/100" [ref=f5e212]
+                - cell "91/100" [ref=f5e213]
+                - cell "94/100" [ref=f5e214]
+                - cell "278/ 300" [ref=f5e215]
+              - row [ref=f5e216]:
+                - cell [ref=f5e217]:
+                  - img "3. yer komanda nişanı" [ref=f5e218]
+                - cell "DevTrio EcoPay — Yaşıl ödənişlər" [ref=f5e220]:
+                  - generic [ref=f5e222]:
+                    - generic [ref=f5e223]: DevTrio
+                    - generic [ref=f5e224]: EcoPay — Yaşıl ödənişlər
+                - cell "92/100" [ref=f5e225]
+                - cell "90/100" [ref=f5e226]
+                - cell "93/100" [ref=f5e227]
+                - cell "275/ 300" [ref=f5e228]
+              - row [ref=f5e229]:
+                - cell [ref=f5e230]:
+                  - img "4. yer komanda nişanı" [ref=f5e231]
+                - cell "AgriTech SmartCrop Monitor" [ref=f5e236]:
+                  - generic [ref=f5e238]:
+                    - generic [ref=f5e239]: AgriTech
+                    - generic [ref=f5e240]: SmartCrop Monitor
+                - cell "90/100" [ref=f5e241]
+                - cell "89/100" [ref=f5e242]
+                - cell "88/100" [ref=f5e243]
+                - cell "267/ 300" [ref=f5e244]
+              - row [ref=f5e245]:
+                - cell [ref=f5e246]:
+                  - img "5. yer komanda nişanı" [ref=f5e247]
+                - cell "Edutain Adaptive Learning Hub" [ref=f5e252]:
+                  - generic [ref=f5e254]:
+                    - generic [ref=f5e255]: Edutain
+                    - generic [ref=f5e256]: Adaptive Learning Hub
+                - cell "88/100" [ref=f5e257]
+                - cell "87/100" [ref=f5e258]
+                - cell "90/100" [ref=f5e259]
+                - cell "265/ 300" [ref=f5e260]
+              - row [ref=f5e261]:
+                - cell [ref=f5e262]:
+                  - img "6. yer komanda nişanı" [ref=f5e263]
+                - cell "UrbanFlow Smart Mobility Map" [ref=f5e268]:
+                  - generic [ref=f5e270]:
+                    - generic [ref=f5e271]: UrbanFlow
+                    - generic [ref=f5e272]: Smart Mobility Map
+                - cell "87/100" [ref=f5e273]
+                - cell "89/100" [ref=f5e274]
+                - cell "86/100" [ref=f5e275]
+                - cell "262/ 300" [ref=f5e276]
+              - row [ref=f5e277]:
+                - cell [ref=f5e278]:
+                  - img "7. yer komanda nişanı" [ref=f5e279]
+                - cell "FinBridge MicroBiz Score" [ref=f5e284]:
+                  - generic [ref=f5e286]:
+                    - generic [ref=f5e287]: FinBridge
+                    - generic [ref=f5e288]: MicroBiz Score
+                - cell "85/100" [ref=f5e289]
+                - cell "88/100" [ref=f5e290]
+                - cell "87/100" [ref=f5e291]
+                - cell "260/ 300" [ref=f5e292]
+              - row [ref=f5e293]:
+                - cell [ref=f5e294]:
+                  - img "8. yer komanda nişanı" [ref=f5e295]
+                - cell "SafeRoute Crowd Safety Assistant" [ref=f5e300]:
+                  - generic [ref=f5e302]:
+                    - generic [ref=f5e303]: SafeRoute
+                    - generic [ref=f5e304]: Crowd Safety Assistant
+                - cell "86/100" [ref=f5e305]
+                - cell "84/100" [ref=f5e306]
+                - cell "88/100" [ref=f5e307]
+                - cell "258/ 300" [ref=f5e308]
+              - row [ref=f5e309]:
+                - cell [ref=f5e310]:
+                  - img "9. yer komanda nişanı" [ref=f5e311]
+                - cell "EcoSpark Energy Lens" [ref=f5e316]:
+                  - generic [ref=f5e318]:
+                    - generic [ref=f5e319]: EcoSpark
+                    - generic [ref=f5e320]: Energy Lens
+                - cell "89/100" [ref=f5e321]
+                - cell "83/100" [ref=f5e322]
+                - cell "84/100" [ref=f5e323]
+                - cell "256/ 300" [ref=f5e324]
+              - row [ref=f5e325]:
+                - cell [ref=f5e326]:
+                  - img "10. yer komanda nişanı" [ref=f5e327]
+                - cell "LearnLoop Peer Mentor Network" [ref=f5e332]:
+                  - generic [ref=f5e334]:
+                    - generic [ref=f5e335]: LearnLoop
+                    - generic [ref=f5e336]: Peer Mentor Network
+                - cell "84/100" [ref=f5e337]
+                - cell "85/100" [ref=f5e338]
+                - cell "85/100" [ref=f5e339]
+                - cell "254/ 300" [ref=f5e340]

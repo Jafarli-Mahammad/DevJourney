@@ -1,0 +1,45 @@
+- main [ref=f2e2]:
+  - generic [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "DevJourney ana səhifəsi" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e7]: DevJourney
+      - generic [ref=f2e8]:
+        - link "Ana səhifə" [ref=f2e9] [cursor=pointer]:
+          - /url: /
+        - button "Qaranlıq rejimə keç" [ref=f2e13] [cursor=pointer]
+    - generic [ref=f2e17]:
+      - heading "Yenidən xoş gəldin" [level=1] [ref=f2e18]
+      - paragraph [ref=f2e19]: Giriş növünü seç və DevJourney yoluna təhlükəsiz davam et.
+      - generic [ref=f2e20]:
+        - tablist "Giriş hesab növü" [ref=f2e21]:
+          - tab "Tələbə / İstifadəçi" [selected] [ref=f2e22] [cursor=pointer]
+          - tab "Münsif" [ref=f2e23] [cursor=pointer]
+          - tab "Tərəfdaş / Şirkət" [ref=f2e24] [cursor=pointer]
+        - generic [ref=f2e26]:
+          - generic [ref=f2e27]:
+            - generic [ref=f2e28]: E-poçt
+            - textbox "E-poçt" [ref=f2e30]:
+              - /placeholder: ad@university.edu
+          - generic [ref=f2e31]:
+            - generic [ref=f2e32]: Şifrə
+            - generic [ref=f2e34]:
+              - textbox "Şifrə" [ref=f2e35]:
+                - /placeholder: Şifrənizi daxil edin
+              - button "Şifrəni göstər" [ref=f2e36] [cursor=pointer]
+          - generic [ref=f2e40]:
+            - generic [ref=f2e41]: Demo hesabları
+            - button "demo.active@devjourney.az" [ref=f2e47] [cursor=pointer]
+            - button "demo.new@devjourney.az" [ref=f2e48] [cursor=pointer]
+          - button "Giriş et" [ref=f2e49] [cursor=pointer]
+      - generic [ref=f2e51]:
+        - generic [ref=f2e52]:
+          - text: Tələbə hesabın yoxdur?
+          - link "Qeydiyyatdan keç" [ref=f2e53] [cursor=pointer]:
+            - /url: /register
+        - generic [ref=f2e54]:
+          - text: Şirkət və ya Təşkilatçısınız?
+          - link "Tərəfdaş Girişi" [ref=f2e55] [cursor=pointer]:
+            - /url: /company/login
+  - complementary [ref=f2e56]:
+    - img "DevJourney Auth Illustration" [ref=f2e58]

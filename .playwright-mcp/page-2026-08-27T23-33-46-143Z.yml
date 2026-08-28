@@ -1,0 +1,91 @@
+- generic [ref=f7e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - generic [ref=f7e5]:
+        - link "DevJourney" [ref=f7e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f7e10]: Partnyor
+      - navigation [ref=f7e12]:
+        - paragraph [ref=f7e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f7e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f7e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f7e31] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f7e39] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f7e54] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f7e61] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f7e67] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f7e73] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f7e79] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f7e90]:
+      - generic [ref=f7e98]:
+        - generic [ref=f7e99]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f7e100]: Universitet • Təşkilatçı
+      - generic [ref=f7e101]:
+        - button "Qaranlıq rejimə keç" [ref=f7e102] [cursor=pointer]
+        - button "Çıxış" [ref=f7e105] [cursor=pointer]
+  - generic [ref=f7e110]:
+    - banner [ref=f7e111]:
+      - generic [ref=f7e112]:
+        - paragraph [ref=f7e114]: Yarışın İdarəetməsi
+        - link "Bildirişlər" [ref=f7e115] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f7e119]:
+      - generic [ref=f7e120]:
+        - generic [ref=f7e125]:
+          - generic [ref=f7e126]:
+            - generic [ref=f7e127]:
+              - generic [ref=f7e128]: Aktiv yarış
+              - generic [ref=f7e129]: Canlı monitorinq aktivdir
+            - heading "Baku Innovation Hackathon 2026" [level=1] [ref=f7e131]
+            - paragraph [ref=f7e132]: 48 saatlıq rəqəmsal həllər və süni intellekt yarışması.
+            - generic [ref=f7e133]:
+              - generic [ref=f7e134]: Bakı İdman Sarayı / A və B zalı
+              - generic [ref=f7e138]: 15 okt 2026 – 17 okt 2026
+          - link "Məlumatları dəyiş" [ref=f7e144] [cursor=pointer]:
+            - /url: "#edit-section"
+        - region [ref=f7e148]:
+          - generic [ref=f7e150]:
+            - heading "Məlumatları dəyiş və tənzimlə" [level=2] [ref=f7e151]
+            - paragraph [ref=f7e155]: Yarışın başlığını, afişasını, tarixlərini və keçirilmə yerini yeniləyin.
+          - generic [ref=f7e156]:
+            - generic [ref=f7e157]:
+              - generic [ref=f7e158]: Yarışın afişası
+              - generic [ref=f7e163]:
+                - img "Yeni yarış afişasının önizləməsi" [ref=f7e164]
+                - generic [ref=f7e165]:
+                  - paragraph [ref=f7e166]: Yeni afişa şəkli seçin
+                  - paragraph [ref=f7e167]: "Tövsiyə olunan ölçü: 1200 × 630 px. PNG, JPG və WEBP formatları dəstəklənir."
+                - generic [ref=f7e168] [cursor=pointer]:
+                  - text: Şəkil yüklə
+                  - button "Yarışın afişası Şəkil yüklə" [ref=f7e173]
+            - generic [ref=f7e174]:
+              - generic [ref=f7e175]:
+                - generic [ref=f7e176]: Yarışın adı
+                - textbox "Yarışın adı" [ref=f7e177]: Baku Innovation Hackathon 2026
+              - generic [ref=f7e178]:
+                - generic [ref=f7e179]: Keçirilmə yeri / zal
+                - textbox "Keçirilmə yeri / zal" [ref=f7e180]: Bakı İdman Sarayı / A və B zalı
+              - generic [ref=f7e181]:
+                - generic [ref=f7e182]: Başlama tarixi
+                - textbox "Başlama tarixi" [ref=f7e183]: 2026-10-15
+              - generic [ref=f7e184]:
+                - generic [ref=f7e185]: Bitiş tarixi
+                - textbox "Bitiş tarixi" [ref=f7e186]: 2026-10-17
+            - generic [ref=f7e187]:
+              - generic [ref=f7e188]: Təsvir və qaydalar
+              - textbox "Təsvir və qaydalar" [ref=f7e189]: 48 saatlıq rəqəmsal həllər və süni intellekt yarışması.
+            - button "Dəyişiklikləri yadda saxla" [ref=f7e191] [cursor=pointer]
+          - generic [ref=f7e197]:
+            - generic [ref=f7e198]:
+              - 'heading "Təhlükəli zona: yarışı sil" [level=3] [ref=f7e199]'
+              - paragraph [ref=f7e204]: Yarış silindikdə komanda qeydiyyatları və iştirak statistikası da həmişəlik silinəcək.
+            - button "Yarışı sil" [ref=f7e205] [cursor=pointer]

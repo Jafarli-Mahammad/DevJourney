@@ -1,0 +1,92 @@
+- generic [ref=f2e82]:
+  - banner [ref=f2e83]:
+    - generic [ref=f2e84]:
+      - generic [ref=f2e93]:
+        - paragraph [ref=f2e94]: Münsif iş sahəsi
+        - paragraph [ref=f2e95]: DevJourney Startup Challenge
+      - generic [ref=f2e96]:
+        - generic [ref=f2e97]:
+          - generic [ref=f2e98]: Komandalar
+          - generic [ref=f2e101]: Qiymətləndirmə
+        - button "Qaranlıq rejimə keç" [ref=f2e102] [cursor=pointer]
+        - link "Münsif panelindən çıx" [ref=f2e105] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f2e110]: Çıxış
+  - main [ref=f2e111]:
+    - region [ref=f2e364]:
+      - status [ref=f2e365]:
+        - paragraph [ref=f2e369]:
+          - strong [ref=f2e370]: Team Atlas
+          - text: üçün qiymətləndirmə yadda saxlanıldı.
+      - generic [ref=f2e371]:
+        - generic [ref=f2e372]:
+          - paragraph [ref=f2e373]: Münsif qiymətləndirməsi · Aktiv mərhələ
+          - heading "Komandaları qiymətləndir" [level=1] [ref=f2e374]
+          - paragraph [ref=f2e375]: Qiymətləndirmək istədiyiniz komandanı seçin, meyarlar üzrə bal verin və rəyinizi qeyd edin.
+        - generic [ref=f2e376]:
+          - generic [ref=f2e377]:
+            - generic [ref=f2e378]: "02"
+            - paragraph [ref=f2e381]: Qiymətləndirilib
+          - generic [ref=f2e383]:
+            - generic [ref=f2e384]: "04"
+            - paragraph [ref=f2e387]: Gözləyir
+      - generic [ref=f2e388]:
+        - generic [ref=f2e389]:
+          - generic [ref=f2e390]: Sıra
+          - generic [ref=f2e391]: Komanda və layihə
+          - generic [ref=f2e392]: Kateqoriya
+          - generic [ref=f2e393]: Status
+        - list [ref=f2e394]:
+          - listitem [ref=f2e395]:
+            - button "Team Atlas, RePlast layihəsini qiymətləndir" [ref=f2e396] [cursor=pointer]:
+              - generic [ref=f2e397]: "01"
+              - generic [ref=f2e398]:
+                - generic [ref=f2e399]: Team Atlas
+                - generic [ref=f2e400]: RePlast
+              - generic [ref=f2e401]: GreenTech
+              - generic [ref=f2e403]:
+                - generic [ref=f2e407]: Qiymətləndirilib
+                - generic [ref=f2e408]: 2,5 bal
+          - listitem [ref=f2e411]:
+            - button "Finora, PulPilotu layihəsini qiymətləndir" [ref=f2e412] [cursor=pointer]:
+              - generic [ref=f2e413]: "02"
+              - generic [ref=f2e414]:
+                - generic [ref=f2e415]: Finora
+                - generic [ref=f2e416]: PulPilotu
+              - generic [ref=f2e417]: FinTech
+              - generic [ref=f2e418]: Qiymətləndirilməyib
+          - listitem [ref=f2e426]:
+            - button "MedAI Collective, SəhhətAI layihəsini qiymətləndir" [ref=f2e427] [cursor=pointer]:
+              - generic [ref=f2e428]: "03"
+              - generic [ref=f2e429]:
+                - generic [ref=f2e430]: MedAI Collective
+                - generic [ref=f2e431]: SəhhətAI
+              - generic [ref=f2e432]: HealthTech
+              - generic [ref=f2e434]:
+                - generic [ref=f2e438]: Qiymətləndirilib
+                - generic [ref=f2e439]: 41,5 bal
+          - listitem [ref=f2e442]:
+            - button "KəndLab, AgroSense layihəsini qiymətləndir" [ref=f2e443] [cursor=pointer]:
+              - generic [ref=f2e444]: "04"
+              - generic [ref=f2e445]:
+                - generic [ref=f2e446]: KəndLab
+                - generic [ref=f2e447]: AgroSense
+              - generic [ref=f2e448]: AgriTech
+              - generic [ref=f2e449]: Qiymətləndirilməyib
+          - listitem [ref=f2e457]:
+            - button "Team Bridge, SkillBridge layihəsini qiymətləndir" [ref=f2e458] [cursor=pointer]:
+              - generic [ref=f2e459]: "05"
+              - generic [ref=f2e460]:
+                - generic [ref=f2e461]: Team Bridge
+                - generic [ref=f2e462]: SkillBridge
+              - generic [ref=f2e463]: EdTech
+              - generic [ref=f2e464]: Qiymətləndirilməyib
+          - listitem [ref=f2e472]:
+            - button "Volt Minds, GridWise layihəsini qiymətləndir" [ref=f2e473] [cursor=pointer]:
+              - generic [ref=f2e474]: "06"
+              - generic [ref=f2e475]:
+                - generic [ref=f2e476]: Volt Minds
+                - generic [ref=f2e477]: GridWise
+              - generic [ref=f2e478]: Clean Energy
+              - generic [ref=f2e479]: Qiymətləndirilməyib
+      - paragraph [ref=f2e487]: Yadda saxlanılan qiymətləndirməni yenidən açaraq dəyişə bilərsiniz.

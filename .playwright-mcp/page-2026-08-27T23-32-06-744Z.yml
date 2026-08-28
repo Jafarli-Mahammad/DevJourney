@@ -1,0 +1,86 @@
+- generic [ref=f2e82]:
+  - banner [ref=f2e83]:
+    - generic [ref=f2e84]:
+      - generic [ref=f2e93]:
+        - paragraph [ref=f2e94]: Münsif iş sahəsi
+        - paragraph [ref=f2e95]: DevJourney Startup Challenge
+      - generic [ref=f2e96]:
+        - generic [ref=f2e97]:
+          - generic [ref=f2e98]: Komandalar
+          - generic [ref=f2e101]: Qiymətləndirmə
+        - button "Qaranlıq rejimə keç" [ref=f2e102] [cursor=pointer]
+        - link "Münsif panelindən çıx" [ref=f2e105] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f2e110]: Çıxış
+  - main [ref=f2e111]:
+    - region [ref=f2e112]:
+      - generic [ref=f2e113]:
+        - generic [ref=f2e114]:
+          - paragraph [ref=f2e115]: Münsif qiymətləndirməsi · Aktiv mərhələ
+          - heading "Komandaları qiymətləndir" [level=1] [ref=f2e116]
+          - paragraph [ref=f2e117]: Qiymətləndirmək istədiyiniz komandanı seçin, meyarlar üzrə bal verin və rəyinizi qeyd edin.
+        - generic [ref=f2e118]:
+          - generic [ref=f2e119]:
+            - generic [ref=f2e120]: "01"
+            - paragraph [ref=f2e123]: Qiymətləndirilib
+          - generic [ref=f2e125]:
+            - generic [ref=f2e126]: "05"
+            - paragraph [ref=f2e129]: Gözləyir
+      - generic [ref=f2e130]:
+        - generic [ref=f2e131]:
+          - generic [ref=f2e132]: Sıra
+          - generic [ref=f2e133]: Komanda və layihə
+          - generic [ref=f2e134]: Kateqoriya
+          - generic [ref=f2e135]: Status
+        - list [ref=f2e136]:
+          - listitem [ref=f2e137]:
+            - button "Team Atlas, RePlast layihəsini qiymətləndir" [ref=f2e138] [cursor=pointer]:
+              - generic [ref=f2e139]: "01"
+              - generic [ref=f2e140]:
+                - generic [ref=f2e141]: Team Atlas
+                - generic [ref=f2e142]: RePlast
+              - generic [ref=f2e143]: GreenTech
+              - generic [ref=f2e144]: Qiymətləndirilməyib
+          - listitem [ref=f2e152]:
+            - button "Finora, PulPilotu layihəsini qiymətləndir" [ref=f2e153] [cursor=pointer]:
+              - generic [ref=f2e154]: "02"
+              - generic [ref=f2e155]:
+                - generic [ref=f2e156]: Finora
+                - generic [ref=f2e157]: PulPilotu
+              - generic [ref=f2e158]: FinTech
+              - generic [ref=f2e159]: Qiymətləndirilməyib
+          - listitem [ref=f2e167]:
+            - button "MedAI Collective, SəhhətAI layihəsini qiymətləndir" [ref=f2e168] [cursor=pointer]:
+              - generic [ref=f2e169]: "03"
+              - generic [ref=f2e170]:
+                - generic [ref=f2e171]: MedAI Collective
+                - generic [ref=f2e172]: SəhhətAI
+              - generic [ref=f2e173]: HealthTech
+              - generic [ref=f2e175]:
+                - generic [ref=f2e179]: Qiymətləndirilib
+                - generic [ref=f2e180]: 41,5 bal
+          - listitem [ref=f2e183]:
+            - button "KəndLab, AgroSense layihəsini qiymətləndir" [ref=f2e184] [cursor=pointer]:
+              - generic [ref=f2e185]: "04"
+              - generic [ref=f2e186]:
+                - generic [ref=f2e187]: KəndLab
+                - generic [ref=f2e188]: AgroSense
+              - generic [ref=f2e189]: AgriTech
+              - generic [ref=f2e190]: Qiymətləndirilməyib
+          - listitem [ref=f2e198]:
+            - button "Team Bridge, SkillBridge layihəsini qiymətləndir" [ref=f2e199] [cursor=pointer]:
+              - generic [ref=f2e200]: "05"
+              - generic [ref=f2e201]:
+                - generic [ref=f2e202]: Team Bridge
+                - generic [ref=f2e203]: SkillBridge
+              - generic [ref=f2e204]: EdTech
+              - generic [ref=f2e205]: Qiymətləndirilməyib
+          - listitem [ref=f2e213]:
+            - button "Volt Minds, GridWise layihəsini qiymətləndir" [ref=f2e214] [cursor=pointer]:
+              - generic [ref=f2e215]: "06"
+              - generic [ref=f2e216]:
+                - generic [ref=f2e217]: Volt Minds
+                - generic [ref=f2e218]: GridWise
+              - generic [ref=f2e219]: Clean Energy
+              - generic [ref=f2e220]: Qiymətləndirilməyib
+      - paragraph [ref=f2e228]: Yadda saxlanılan qiymətləndirməni yenidən açaraq dəyişə bilərsiniz.

@@ -35,8 +35,19 @@ namespace Application.Modules.PartnerProfile.Commands.UpdatePartnerProfile
 
         public async Task<object> Handle(UpdatePartnerProfileCommand request, CancellationToken cancellationToken)
         {
-            var profiles = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+            var userId = _currentUserService.UserId;
+            var email = _currentUserService.Email;
+
+            var profiles = await _partnerProfileRepository.GetAllAsync(
+                p => p.ApplicationUserId == userId || (!string.IsNullOrEmpty(email) && p.ContactEmail == email),
+                cancellationToken);
             var profile = profiles.FirstOrDefault();
+
+            if (profile == null)
+            {
+                var allProfiles = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
+                profile = allProfiles.FirstOrDefault();
+            }
 
             if (profile == null)
                 throw new NotFoundException("PartnerProfile", _currentUserService.UserId);

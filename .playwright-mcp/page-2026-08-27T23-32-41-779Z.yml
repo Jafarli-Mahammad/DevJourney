@@ -1,0 +1,124 @@
+- generic [ref=f2e82]:
+  - banner [ref=f2e83]:
+    - generic [ref=f2e84]:
+      - generic [ref=f2e93]:
+        - paragraph [ref=f2e94]: Münsif iş sahəsi
+        - paragraph [ref=f2e95]: DevJourney Startup Challenge
+      - generic [ref=f2e96]:
+        - generic [ref=f2e97]:
+          - generic [ref=f2e98]: Komandalar
+          - generic [ref=f2e101]: Qiymətləndirmə
+        - button "Qaranlıq rejimə keç" [ref=f2e102] [cursor=pointer]
+        - link "Münsif panelindən çıx" [ref=f2e105] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f2e110]: Çıxış
+  - main [ref=f2e111]:
+    - region [ref=f2e229]:
+      - button "Geri qayıt" [ref=f2e230] [cursor=pointer]
+      - generic [ref=f2e235]:
+        - generic [ref=f2e236]:
+          - generic [ref=f2e237]: GreenTech
+          - heading "RePlast" [level=1] [ref=f2e239]
+          - paragraph [ref=f2e240]: Team Atlas
+          - paragraph [ref=f2e241]: Plastik tullantıların mənbədə çeşidlənməsini təşviq edən ağıllı toplama və mükafat platforması.
+        - link "Layihəyə bax" [ref=f2e242] [cursor=pointer]:
+          - /url: https://example.com/replast
+      - generic [ref=f2e247]:
+        - generic [ref=f2e248]:
+          - generic [ref=f2e249]:
+            - generic [ref=f2e250]:
+              - heading "Qiymətləndirmə meyarları" [level=2] [ref=f2e251]
+              - paragraph [ref=f2e252]: Hər meyar üçün 0–10 arası bal daxil edin.
+            - generic [ref=f2e253]:
+              - generic [ref=f2e254]:
+                - generic [ref=f2e255]:
+                  - generic [ref=f2e256]: "01"
+                  - generic [ref=f2e257]:
+                    - text: İnnovasiya
+                    - paragraph [ref=f2e258]: İdeyanın yeniliyi və mövcud yanaşmalardan fərqi
+                - generic [ref=f2e259]:
+                  - button "İnnovasiya balını azalt" [ref=f2e260] [cursor=pointer]
+                  - generic [ref=f2e263]:
+                    - spinbutton "İnnovasiya" [ref=f2e264]: "0.5"
+                    - generic: /10
+                  - button "İnnovasiya balını artır" [ref=f2e265] [cursor=pointer]
+              - generic [ref=f2e269]:
+                - generic [ref=f2e270]:
+                  - generic [ref=f2e271]: "02"
+                  - generic [ref=f2e272]:
+                    - text: Texniki icra
+                    - paragraph [ref=f2e273]: Həllin işləkliyi, keyfiyyəti və texniki əsaslandırılması
+                - generic [ref=f2e274]:
+                  - button "Texniki icra balını azalt" [ref=f2e275] [cursor=pointer]
+                  - generic [ref=f2e278]:
+                    - spinbutton "Texniki icra" [ref=f2e279]: "0.5"
+                    - generic: /10
+                  - button "Texniki icra balını artır" [ref=f2e280] [cursor=pointer]
+              - generic [ref=f2e284]:
+                - generic [ref=f2e285]:
+                  - generic [ref=f2e286]: "03"
+                  - generic [ref=f2e287]:
+                    - text: Biznes modeli
+                    - paragraph [ref=f2e288]: Bazar ehtiyacı, davamlılıq və inkişaf potensialı
+                - generic [ref=f2e289]:
+                  - button "Biznes modeli balını azalt" [ref=f2e290] [cursor=pointer]
+                  - generic [ref=f2e293]:
+                    - spinbutton "Biznes modeli" [ref=f2e294]: "0.5"
+                    - generic: /10
+                  - button "Biznes modeli balını artır" [ref=f2e295] [cursor=pointer]
+              - generic [ref=f2e299]:
+                - generic [ref=f2e300]:
+                  - generic [ref=f2e301]: "04"
+                  - generic [ref=f2e302]:
+                    - text: Təqdimat / Pitch
+                    - paragraph [ref=f2e303]: Fikrin aydınlığı, struktur və suallara cavab keyfiyyəti
+                - generic [ref=f2e304]:
+                  - button "Təqdimat / Pitch balını azalt" [ref=f2e305] [cursor=pointer]
+                  - generic [ref=f2e308]:
+                    - spinbutton "Təqdimat / Pitch" [ref=f2e309]: "0.5"
+                    - generic: /10
+                  - button "Təqdimat / Pitch balını artır" [ref=f2e310] [cursor=pointer]
+              - generic [ref=f2e314]:
+                - generic [ref=f2e315]:
+                  - generic [ref=f2e316]: "05"
+                  - generic [ref=f2e317]:
+                    - text: Təsir
+                    - paragraph [ref=f2e318]: Həllin istifadəçilər və cəmiyyət üçün yaradacağı dəyər
+                - generic [ref=f2e319]:
+                  - button "Təsir balını azalt" [ref=f2e320] [cursor=pointer]
+                  - generic [ref=f2e323]:
+                    - spinbutton "Təsir" [ref=f2e324]: "0.5"
+                    - generic: /10
+                  - button "Təsir balını artır" [active] [ref=f2e325] [cursor=pointer]
+          - generic [ref=f2e329]:
+            - generic [ref=f2e330]: Münsif rəyi və tövsiyələri (Feedback)
+            - textbox "Münsif rəyi və tövsiyələri (Feedback)" [ref=f2e331]:
+              - /placeholder: Komandanın təqdimatı, texniki həlli və gələcək inkişafı üçün rəyinizi qeyd edin...
+        - complementary [ref=f2e332]:
+          - generic [ref=f2e333]:
+            - generic [ref=f2e334]:
+              - paragraph [ref=f2e335]: Ümumi nəticə
+              - generic [ref=f2e336]:
+                - generic [ref=f2e337]: 2,5
+                - generic [ref=f2e338]: / 50
+            - generic [ref=f2e339]:
+              - text: 0,5
+              - paragraph [ref=f2e340]: Orta bal
+          - paragraph [ref=f2e342]: 5/5 meyar tamamlanıb
+          - generic [ref=f2e343]:
+            - generic [ref=f2e344]:
+              - generic [ref=f2e345]: İnnovasiya
+              - generic [ref=f2e346]: 0,5
+            - generic [ref=f2e347]:
+              - generic [ref=f2e348]: Texniki icra
+              - generic [ref=f2e349]: 0,5
+            - generic [ref=f2e350]:
+              - generic [ref=f2e351]: Biznes modeli
+              - generic [ref=f2e352]: 0,5
+            - generic [ref=f2e353]:
+              - generic [ref=f2e354]: Təqdimat / Pitch
+              - generic [ref=f2e355]: 0,5
+            - generic [ref=f2e356]:
+              - generic [ref=f2e357]: Təsir
+              - generic [ref=f2e358]: 0,5
+          - button "Qiymətləndirməni təsdiqlə" [ref=f2e359] [cursor=pointer]

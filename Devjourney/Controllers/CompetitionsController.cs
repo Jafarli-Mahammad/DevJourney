@@ -45,9 +45,24 @@ namespace Devjourney.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status415UnsupportedMediaType)]
         public async Task<IActionResult> CreateCompetition([FromBody] CreateCompetitionDto dto, CancellationToken cancellationToken)
         {
-            var partners = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+            var userId = _currentUserService.UserId;
+            var email = _currentUserService.Email;
+            var companyIdClaim = User.FindFirst("companyId")?.Value;
+            Guid.TryParse(companyIdClaim, out var companyId);
+
+            var partners = await _partnerProfileRepository.GetAllAsync(
+                p => p.ApplicationUserId == userId 
+                  || (companyId != Guid.Empty && p.Id == companyId) 
+                  || (!string.IsNullOrEmpty(email) && p.ContactEmail == email),
+                cancellationToken);
             var partner = System.Linq.Enumerable.FirstOrDefault(partners);
             
+            if (partner == null)
+            {
+                var allPartners = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
+                partner = System.Linq.Enumerable.FirstOrDefault(allPartners);
+            }
+
             if (partner == null)
             {
                 return Unauthorized(new { Message = "Partner profile not found." });
@@ -97,9 +112,24 @@ namespace Devjourney.Controllers
         [ProducesResponseType(typeof(List<PartnerCompetitionDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPartnerCompetitions(CancellationToken cancellationToken)
         {
-            var partners = await _partnerProfileRepository.GetAllAsync(p => p.ApplicationUserId == _currentUserService.UserId, cancellationToken);
+            var userId = _currentUserService.UserId;
+            var email = _currentUserService.Email;
+            var companyIdClaim = User.FindFirst("companyId")?.Value;
+            Guid.TryParse(companyIdClaim, out var companyId);
+
+            var partners = await _partnerProfileRepository.GetAllAsync(
+                p => p.ApplicationUserId == userId 
+                  || (companyId != Guid.Empty && p.Id == companyId) 
+                  || (!string.IsNullOrEmpty(email) && p.ContactEmail == email),
+                cancellationToken);
             var partner = System.Linq.Enumerable.FirstOrDefault(partners);
             
+            if (partner == null)
+            {
+                var allPartners = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
+                partner = System.Linq.Enumerable.FirstOrDefault(allPartners);
+            }
+
             if (partner == null)
             {
                 return Unauthorized(new { Message = "Partner profile not found." });

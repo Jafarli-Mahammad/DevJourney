@@ -1,0 +1,86 @@
+- generic [ref=f3e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f3e3]:
+    - generic [ref=f3e4]:
+      - generic [ref=f3e5]:
+        - link "DevJourney" [ref=f3e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f3e10]: Partnyor
+      - navigation [ref=f3e12]:
+        - paragraph [ref=f3e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f3e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f3e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f3e30] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f3e39] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f3e54] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f3e61] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f3e67] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f3e73] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f3e79] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f3e90]:
+      - generic [ref=f3e98]:
+        - generic [ref=f3e99]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f3e100]: Universitet • Təşkilatçı
+      - generic [ref=f3e101]:
+        - button "Qaranlıq rejimə keç" [ref=f3e102] [cursor=pointer]
+        - button "Çıxış" [ref=f3e105] [cursor=pointer]
+  - generic [ref=f3e110]:
+    - banner [ref=f3e111]:
+      - generic [ref=f3e112]:
+        - paragraph [ref=f3e114]: İştirakçılar
+        - link "Bildirişlər" [ref=f3e115] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f3e119]:
+      - generic [ref=f3e120]:
+        - generic [ref=f3e122]:
+          - generic [ref=f3e130]:
+            - heading "İştirakçıların İdarə Edilməsi" [level=1] [ref=f3e131]
+            - paragraph [ref=f3e132]: Yarışa müraciət edən komandaları cədvəl üzərindən idarə edin.
+          - textbox "İştirakçı axtarışı" [ref=f3e134]:
+            - /placeholder: Komanda və ya şəxs axtar...
+        - tablist "İştirakçı idarəetmə mərhələləri" [ref=f3e136]:
+          - tab "Müraciətlər 1" [selected] [ref=f3e262] [cursor=pointer]:
+            - generic [ref=f3e143]: Müraciətlər
+            - generic [ref=f3e144]: "1"
+          - tab "Gözləmədə 1" [ref=f3e145] [cursor=pointer]:
+            - generic [ref=f3e149]: Gözləmədə
+            - generic [ref=f3e150]: "1"
+          - tab "Təsdiqlənənlər 3" [ref=f3e263] [cursor=pointer]:
+            - generic [ref=f3e156]: Təsdiqlənənlər
+            - generic [ref=f3e157]: "3"
+          - tab "Məkanda İştirak Edənlər 2" [ref=f3e158] [cursor=pointer]:
+            - generic [ref=f3e162]: Məkanda İştirak Edənlər
+            - generic [ref=f3e163]: "2"
+        - table [ref=f3e166]:
+          - rowgroup [ref=f3e167]:
+            - row [ref=f3e168]:
+              - columnheader "Komanda / İştirakçı Adı" [ref=f3e169]
+              - columnheader "Şəxslərin Sayı" [ref=f3e170]
+              - columnheader "Müraciət Tarixi / Giriş Saatı" [ref=f3e171]
+              - columnheader "Əməliyyatlar" [ref=f3e172]
+          - rowgroup [ref=f3e173]:
+            - row [ref=f3e219]:
+              - cell "Aysel Qasımova profilini yeni tabda aç ADA Fərdi iştirakçı" [ref=f3e220]:
+                - generic [ref=f3e226]:
+                  - generic [ref=f3e227]:
+                    - link "Aysel Qasımova profilini yeni tabda aç" [ref=f3e228] [cursor=pointer]:
+                      - /url: /profile/aysel-qasimova
+                      - generic [ref=f3e229]: Aysel Qasımova
+                    - generic [ref=f3e234]: ADA
+                  - paragraph [ref=f3e235]: Fərdi iştirakçı
+              - cell "1 nəfər" [ref=f3e236]
+              - cell "21 İyul 11:30" [ref=f3e243]
+              - cell [ref=f3e244]:
+                - generic [ref=f3e245]:
+                  - button "Profilə Bax" [ref=f3e246] [cursor=pointer]
+                  - button "Qəbul Et" [ref=f3e250] [cursor=pointer]
+                  - button "Gözləməyə Qoy" [ref=f3e253] [cursor=pointer]
+                  - button "Qəbul Etmə" [ref=f3e258] [cursor=pointer]

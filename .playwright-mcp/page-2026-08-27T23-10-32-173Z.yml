@@ -1,0 +1,22 @@
+- main [ref=e2]:
+  - region [ref=e3]:
+    - generic [ref=e5]:
+      - heading "Tərəfdaş / Şirkət Girişi" [level=1] [ref=e6]
+      - paragraph [ref=e7]: DevJourney Tərəfdaşlıq Portalında təşkilat və ya şirkət hesabınıza daxil olun.
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: Email
+        - textbox "Email" [ref=e12]:
+          - /placeholder: partner@devjourney.az
+      - generic [ref=e13]:
+        - generic [ref=e14]: Şifrə
+        - textbox "Şifrə" [ref=e15]:
+          - /placeholder: ••••••••
+      - generic [ref=e16]:
+        - generic [ref=e17]: Demo Tərəfdaş Hesabı
+        - button "partner@devjourney.az" [ref=e18] [cursor=pointer]
+      - button "Daxil Ol" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - text: Dəvət kodunuz var?
+      - link "Qeydiyyatdan keçin" [ref=e21] [cursor=pointer]:
+        - /url: /partner/register

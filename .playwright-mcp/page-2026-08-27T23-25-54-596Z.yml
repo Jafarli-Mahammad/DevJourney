@@ -1,0 +1,134 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - generic:
+          - link:
+            - /url: /partner/dashboard
+            - generic: DevJourney
+          - generic: Partnyor
+        - navigation:
+          - paragraph: İş sahəsi
+          - link:
+            - /url: /partner/dashboard
+            - generic: İdarəetmə
+          - link:
+            - /url: /partner/dashboard/event-management
+            - generic: Yarışın İdarəetməsi
+          - link:
+            - /url: /partner/dashboard/participants
+            - generic: İştirakçılar
+          - link:
+            - /url: /partner/dashboard/accounts
+            - generic: Profillər & Hesablar
+          - link:
+            - /url: /partner/dashboard/check-in
+            - generic: Məkanda İştirak
+          - link:
+            - /url: /partner/dashboard/certificates
+            - generic: Sertifikatlar
+          - link:
+            - /url: /partner/dashboard/achievements
+            - generic: Nailiyyətlər
+          - link:
+            - /url: /partner/dashboard/notifications
+            - generic: Bildirişlər
+          - link:
+            - /url: /partner/dashboard/scoreboard
+            - generic: Liderlər Cədvəli
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: AzTU İnnovasiya Mərkəzi
+              - generic: Universitet • Təşkilatçı
+          - generic:
+            - button
+            - button: Çıxış
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - paragraph: Profillər & Hesablar
+          - link:
+            - /url: /partner/dashboard/notifications
+      - main:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=1]: Hesablar və təşkilat iyerarxiyası
+                - paragraph: Yeni münsif və dəstəkçi hesabları açın, müvəqqəti giriş məlumatlarını yaradın və komandanın rol bölgüsünü idarə edin.
+              - generic:
+                - group:
+                  - button [pressed]: İyerarxiya
+                  - button: Cədvəl
+                - button: Yeni münsif hesabı
+                - button: Yeni dəstəkçi hesabı
+          - region:
+            - generic:
+              - generic:
+                - heading [level=2]: Təşkilatçı partnyor
+                - paragraph: Baş idarəetmə mərkəzi
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=3]: Münsiflər heyəti
+                      - generic: 1 hesab
+                    - generic:
+                      - article:
+                        - generic:
+                          - generic:
+                            - generic: A
+                            - generic:
+                              - heading [level=4]: Alex
+                              - paragraph: AI & Systems Architecture · Münsif Heyəti
+                          - button
+                        - generic:
+                          - link:
+                            - /url: mailto:alex@g.c
+                            - generic: alex@g.c
+                          - generic: Kodlu
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=3]: Dəstəkçilər (Staff)
+                      - generic: 0 hesab
+                    - generic:
+                      - generic:
+                        - paragraph: Hələ heç bir dəstəkçilər (staff) hesabı yoxdur
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - heading [level=3]: Könüllülər korpusu
+                      - generic: 0 şəxs
+                    - generic:
+                      - generic:
+                        - paragraph: Hələ heç bir könüllülər korpusu hesabı yoxdur
+          - status
+  - dialog [ref=f1e360]:
+    - button "Pəncərəni bağla" [active] [ref=f1e361] [cursor=pointer]
+    - generic [ref=f1e366]:
+      - heading "Yeni Münsif hesabı aç" [level=2] [ref=f1e374]
+      - paragraph [ref=f1e375]: Profil məlumatlarını daxil edin. Müvəqqəti şifrə və giriş kodu təhlükəsiz şəkildə avtomatik yaradılacaq.
+      - generic [ref=f1e376]:
+        - generic [ref=f1e377]:
+          - text: Ad və soyad
+          - textbox "Ad və soyad" [ref=f1e379]:
+            - /placeholder: "məsələn: Dr. Orxan Rəhimov"
+        - generic [ref=f1e380]:
+          - text: E-poçt ünvanı
+          - textbox "E-poçt ünvanı" [ref=f1e382]:
+            - /placeholder: orxan@company.com
+        - generic [ref=f1e383]:
+          - generic [ref=f1e384]: Şirkət / universitet(istəyə bağlı)
+          - textbox "Şirkət / universitet(istəyə bağlı)" [ref=f1e386]:
+            - /placeholder: "məsələn: AzTU / SOCAR"
+      - generic [ref=f1e387]:
+        - button "Ləğv et" [ref=f1e388] [cursor=pointer]
+        - button "Hesabı yarat" [ref=f1e389] [cursor=pointer]

@@ -1,0 +1,118 @@
+- generic [ref=f4e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - link "DevJourney" [ref=f4e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f4e10]: Partnyor
+      - navigation [ref=f4e12]:
+        - paragraph [ref=f4e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f4e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f4e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f4e30] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f4e38] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f4e53] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f4e61] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f4e67] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f4e73] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f4e79] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f4e90]:
+      - generic [ref=f4e98]:
+        - generic [ref=f4e99]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f4e100]: Universitet • Təşkilatçı
+      - generic [ref=f4e101]:
+        - button "Qaranlıq rejimə keç" [ref=f4e102] [cursor=pointer]
+        - button "Çıxış" [ref=f4e105] [cursor=pointer]
+  - generic [ref=f4e110]:
+    - banner [ref=f4e111]:
+      - generic [ref=f4e112]:
+        - paragraph [ref=f4e114]: Məkanda İştirak
+        - link "Bildirişlər" [ref=f4e115] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f4e119]:
+      - region [ref=f4e121]:
+        - generic [ref=f4e123]:
+          - generic [ref=f4e131]:
+            - heading "Məkanda iştirak" [level=1] [ref=f4e132]
+            - paragraph [ref=f4e133]: Seçilmiş komandaları və iştirakçıların check-in statusunu idarə edin.
+          - generic [ref=f4e134]:
+            - generic [ref=f4e135]: 0 / 20 iştirak edir
+            - tablist "İştirak görünüşü" [ref=f4e141]:
+              - tab "Komandalar" [selected] [ref=f4e142] [cursor=pointer]
+              - tab "İştirakçılar" [ref=f4e148] [cursor=pointer]
+              - tab "Finalistlər" [ref=f4e156] [cursor=pointer]
+        - tabpanel "Komandalar" [ref=f4e164]:
+          - generic "Seçilmiş komandalar" [ref=f4e165]:
+            - generic [ref=f4e166]:
+              - heading [level=3] [ref=f4e167]:
+                - button [expanded] [ref=f4e168] [cursor=pointer]:
+                  - generic [ref=f4e169]:
+                    - heading "DevTrio" [level=2] [ref=f4e170]
+                    - paragraph [ref=f4e171]: EcoPay — Yaşıl ödənişlər
+              - region "DevTrio EcoPay — Yaşıl ödənişlər" [ref=f4e174]:
+                - generic [ref=f4e175]:
+                  - generic [ref=f4e176]:
+                    - paragraph [ref=f4e177]: Komanda üzvləri
+                    - paragraph [ref=f4e178]: Statusu dəyişmək üçün iştirak düyməsindən istifadə edin
+                  - generic [ref=f4e179]:
+                    - generic [ref=f4e180]:
+                      - generic [ref=f4e181]:
+                        - generic [ref=f4e182]: AM
+                        - generic [ref=f4e183]:
+                          - paragraph [ref=f4e184]: Aylin Məmmədova
+                          - paragraph [ref=f4e185]: Komanda rəhbəri
+                      - 'switch "Aylin Məmmədova: İştirak etmir" [ref=f4e186] [cursor=pointer]':
+                        - generic [ref=f4e187]: İştirak etmir
+                    - generic [ref=f4e193]:
+                      - generic [ref=f4e194]:
+                        - generic [ref=f4e195]: MƏ
+                        - generic [ref=f4e196]:
+                          - paragraph [ref=f4e197]: Murad Əliyev
+                          - paragraph [ref=f4e198]: Frontend developer
+                      - 'switch "Murad Əliyev: İştirak etmir" [ref=f4e199] [cursor=pointer]':
+                        - generic [ref=f4e200]: İştirak etmir
+                    - generic [ref=f4e206]:
+                      - generic [ref=f4e207]:
+                        - generic [ref=f4e208]: NH
+                        - generic [ref=f4e209]:
+                          - paragraph [ref=f4e210]: Nigar Hüseynli
+                          - paragraph [ref=f4e211]: Backend developer
+                      - 'switch "Nigar Hüseynli: İştirak etmir" [ref=f4e212] [cursor=pointer]':
+                        - generic [ref=f4e213]: İştirak etmir
+                    - generic [ref=f4e219]:
+                      - generic [ref=f4e220]:
+                        - generic [ref=f4e221]: TQ
+                        - generic [ref=f4e222]:
+                          - paragraph [ref=f4e223]: Tural Qasımov
+                          - paragraph [ref=f4e224]: UI/UX dizayner
+                      - 'switch "Tural Qasımov: İştirak etmir" [ref=f4e225] [cursor=pointer]':
+                        - generic [ref=f4e226]: İştirak etmir
+            - heading [level=3] [ref=f4e233]:
+              - button [ref=f4e234] [cursor=pointer]:
+                - generic [ref=f4e235]:
+                  - heading "CyberGuard" [level=2] [ref=f4e236]
+                  - paragraph [ref=f4e237]: AI Anomaly Detector
+            - heading [level=3] [ref=f4e241]:
+              - button [ref=f4e242] [cursor=pointer]:
+                - generic [ref=f4e243]:
+                  - heading "AgriTech" [level=2] [ref=f4e244]
+                  - paragraph [ref=f4e245]: Ağıllı suvarma sistemi
+            - heading [level=3] [ref=f4e249]:
+              - button [ref=f4e250] [cursor=pointer]:
+                - generic [ref=f4e251]:
+                  - heading "HealthAI" [level=2] [ref=f4e252]
+                  - paragraph [ref=f4e253]: Rəqəmsal diaqnostika
+            - heading [level=3] [ref=f4e257]:
+              - button [ref=f4e258] [cursor=pointer]:
+                - generic [ref=f4e259]:
+                  - heading "Edutain" [level=2] [ref=f4e260]
+                  - paragraph [ref=f4e261]: Gamified Learning App

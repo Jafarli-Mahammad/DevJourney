@@ -1,0 +1,153 @@
+- generic [ref=f1e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]:
+        - link "DevJourney" [ref=f1e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f1e10]: Partnyor
+      - navigation [ref=f1e12]:
+        - paragraph [ref=f1e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f1e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f1e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f1e30] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f1e38] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f1e54] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f1e61] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f1e67] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f1e73] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f1e79] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f1e90]:
+      - generic [ref=f1e98]:
+        - generic [ref=f1e99]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f1e100]: Universitet • Təşkilatçı
+      - generic [ref=f1e101]:
+        - button "Qaranlıq rejimə keç" [ref=f1e102] [cursor=pointer]
+        - button "Çıxış" [ref=f1e105] [cursor=pointer]
+  - generic [ref=f1e110]:
+    - banner [ref=f1e111]:
+      - generic [ref=f1e112]:
+        - paragraph [ref=f1e114]: Profillər & Hesablar
+        - link "Bildirişlər" [ref=f1e115] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f1e119]:
+      - generic [ref=f1e120]:
+        - generic [ref=f1e122]:
+          - generic [ref=f1e123]:
+            - heading "Hesablar və təşkilat iyerarxiyası" [level=1] [ref=f1e124]
+            - paragraph [ref=f1e125]: Yeni münsif və dəstəkçi hesabları açın, müvəqqəti giriş məlumatlarını yaradın və komandanın rol bölgüsünü idarə edin.
+          - generic [ref=f1e126]:
+            - group "Hesab görünüşü" [ref=f1e127]:
+              - button "İyerarxiya" [pressed] [ref=f1e128] [cursor=pointer]
+              - button "Cədvəl" [ref=f1e134] [cursor=pointer]
+            - button "Yeni münsif hesabı" [ref=f1e140] [cursor=pointer]
+            - button "Yeni dəstəkçi hesabı" [ref=f1e147] [cursor=pointer]
+        - region "Təşkilat iyerarxiyası" [ref=f1e152]:
+          - generic [ref=f1e154]:
+            - heading "Təşkilatçı partnyor" [level=2] [ref=f1e158]
+            - paragraph [ref=f1e159]: Baş idarəetmə mərkəzi
+          - generic [ref=f1e163]:
+            - generic [ref=f1e166]:
+              - generic [ref=f1e167]:
+                - heading "Münsiflər heyəti" [level=3] [ref=f1e175]
+                - generic [ref=f1e176]: 2 hesab
+              - generic [ref=f1e177]:
+                - article [ref=f1e178]:
+                  - generic [ref=f1e179]:
+                    - generic [ref=f1e180]:
+                      - generic [ref=f1e181]: R
+                      - generic [ref=f1e182]:
+                        - heading "Dr. Rəşad Əliyev" [level=4] [ref=f1e183]
+                        - paragraph [ref=f1e184]: AzTU · Süni İntellekt Eksperti
+                    - button "Dr. Rəşad Əliyev hesabını sil" [ref=f1e185] [cursor=pointer]
+                  - generic [ref=f1e192]:
+                    - link "rashad@aztu.edu.az" [ref=f1e193] [cursor=pointer]:
+                      - /url: mailto:rashad@aztu.edu.az
+                    - generic [ref=f1e198]: Kodlu
+                - article [ref=f1e202]:
+                  - generic [ref=f1e203]:
+                    - generic [ref=f1e204]:
+                      - generic [ref=f1e205]: "N"
+                      - generic [ref=f1e206]:
+                        - heading "Nərgiz Məmmədova" [level=4] [ref=f1e207]
+                        - paragraph [ref=f1e208]: DesignStudio · UI/UX & Product Lead
+                    - button "Nərgiz Məmmədova hesabını sil" [ref=f1e209] [cursor=pointer]
+                  - generic [ref=f1e216]:
+                    - link "nargiz@design.az" [ref=f1e217] [cursor=pointer]:
+                      - /url: mailto:nargiz@design.az
+                    - generic [ref=f1e222]: Kodlu
+            - generic [ref=f1e228]:
+              - generic [ref=f1e229]:
+                - heading "Dəstəkçilər (Staff)" [level=3] [ref=f1e235]
+                - generic [ref=f1e236]: 2 hesab
+              - generic [ref=f1e237]:
+                - article [ref=f1e238]:
+                  - generic [ref=f1e239]:
+                    - generic [ref=f1e240]:
+                      - generic [ref=f1e241]: T
+                      - generic [ref=f1e242]:
+                        - heading "Tural Qasımov" [level=4] [ref=f1e243]
+                        - paragraph [ref=f1e244]: DevJourney · QR Check-in Məsul
+                    - button "Tural Qasımov hesabını sil" [ref=f1e245] [cursor=pointer]
+                  - generic [ref=f1e252]:
+                    - link "tural.staff@devjourney.az" [ref=f1e253] [cursor=pointer]:
+                      - /url: mailto:tural.staff@devjourney.az
+                    - generic [ref=f1e258]: QR icazəsi
+                - article [ref=f1e262]:
+                  - generic [ref=f1e263]:
+                    - generic [ref=f1e264]:
+                      - generic [ref=f1e265]: L
+                      - generic [ref=f1e266]:
+                        - heading "Leyla Rəhimova" [level=4] [ref=f1e267]
+                        - paragraph [ref=f1e268]: DevJourney · Mentor və Səhnə Koordinatoru
+                    - button "Leyla Rəhimova hesabını sil" [ref=f1e269] [cursor=pointer]
+                  - generic [ref=f1e276]:
+                    - link "leyla.staff@devjourney.az" [ref=f1e277] [cursor=pointer]:
+                      - /url: mailto:leyla.staff@devjourney.az
+                    - generic [ref=f1e282]: QR icazəsi
+            - generic [ref=f1e288]:
+              - generic [ref=f1e289]:
+                - heading "Könüllülər korpusu" [level=3] [ref=f1e293]
+                - generic [ref=f1e294]: 2 şəxs
+              - generic [ref=f1e295]:
+                - article [ref=f1e296]:
+                  - generic [ref=f1e297]:
+                    - generic [ref=f1e298]:
+                      - generic [ref=f1e299]: K
+                      - generic [ref=f1e300]:
+                        - heading "Kənan Əhmədov" [level=4] [ref=f1e301]
+                        - paragraph [ref=f1e302]: Volunteers.az · Qeydiyyat Masası Könüllüsü
+                    - generic [ref=f1e303]:
+                      - generic [ref=f1e304]: Formal profil
+                      - button "Kənan Əhmədov hesabını sil" [ref=f1e305] [cursor=pointer]
+                  - generic [ref=f1e313]:
+                    - link "kenan@volunteers.az" [ref=f1e314] [cursor=pointer]:
+                      - /url: mailto:kenan@volunteers.az
+                    - button "kenan@volunteers.az ünvanını kopyala" [ref=f1e319] [cursor=pointer]
+                    - link "Kənan Əhmədov üçün e-poçt yaz" [ref=f1e323] [cursor=pointer]:
+                      - /url: mailto:kenan@volunteers.az
+                - article [ref=f1e327]:
+                  - generic [ref=f1e328]:
+                    - generic [ref=f1e329]:
+                      - generic [ref=f1e330]: A
+                      - generic [ref=f1e331]:
+                        - heading "Aydan Əliyeva" [level=4] [ref=f1e332]
+                        - paragraph [ref=f1e333]: Volunteers.az · Səhnə Dəstəyi
+                    - generic [ref=f1e334]:
+                      - generic [ref=f1e335]: Formal profil
+                      - button "Aydan Əliyeva hesabını sil" [ref=f1e336] [cursor=pointer]
+                  - generic [ref=f1e344]:
+                    - link "aydan@volunteers.az" [ref=f1e345] [cursor=pointer]:
+                      - /url: mailto:aydan@volunteers.az
+                    - button "aydan@volunteers.az ünvanını kopyala" [ref=f1e350] [cursor=pointer]
+                    - link "Aydan Əliyeva üçün e-poçt yaz" [ref=f1e354] [cursor=pointer]:
+                      - /url: mailto:aydan@volunteers.az
+        - status [ref=f1e358]

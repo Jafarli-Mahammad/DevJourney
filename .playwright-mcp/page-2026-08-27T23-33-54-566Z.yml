@@ -1,0 +1,202 @@
+- generic [ref=f8e2]:
+  - complementary "Partnyor portalı naviqasiyası" [ref=f8e3]:
+    - generic [ref=f8e4]:
+      - generic [ref=f8e5]:
+        - link "DevJourney" [ref=f8e6] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - generic [ref=f8e10]: Partnyor
+      - navigation [ref=f8e12]:
+        - paragraph [ref=f8e13]: İş sahəsi
+        - link "İdarəetmə" [ref=f8e14] [cursor=pointer]:
+          - /url: /partner/dashboard
+        - link "Yarışın İdarəetməsi" [ref=f8e22] [cursor=pointer]:
+          - /url: /partner/dashboard/event-management
+        - link "İştirakçılar" [ref=f8e30] [cursor=pointer]:
+          - /url: /partner/dashboard/participants
+        - link "Profillər & Hesablar" [ref=f8e38] [cursor=pointer]:
+          - /url: /partner/dashboard/accounts
+        - link "Məkanda İştirak" [ref=f8e53] [cursor=pointer]:
+          - /url: /partner/dashboard/check-in
+        - link "Sertifikatlar" [ref=f8e60] [cursor=pointer]:
+          - /url: /partner/dashboard/certificates
+        - link "Nailiyyətlər" [ref=f8e66] [cursor=pointer]:
+          - /url: /partner/dashboard/achievements
+        - link "Bildirişlər" [ref=f8e72] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+        - link "Liderlər Cədvəli" [ref=f8e78] [cursor=pointer]:
+          - /url: /partner/dashboard/scoreboard
+    - generic [ref=f8e89]:
+      - generic [ref=f8e97]:
+        - generic [ref=f8e98]: AzTU İnnovasiya Mərkəzi
+        - generic [ref=f8e99]: Universitet • Təşkilatçı
+      - generic [ref=f8e100]:
+        - button "Qaranlıq rejimə keç" [ref=f8e101] [cursor=pointer]
+        - button "Çıxış" [ref=f8e104] [cursor=pointer]
+  - generic [ref=f8e109]:
+    - banner [ref=f8e110]:
+      - generic [ref=f8e111]:
+        - paragraph [ref=f8e113]: İdarəetmə
+        - link "Bildirişlər" [ref=f8e114] [cursor=pointer]:
+          - /url: /partner/dashboard/notifications
+    - main [ref=f8e118]:
+      - generic [ref=f8e119]:
+        - generic [ref=f8e130]:
+          - heading "Yeni Yarış Yaradın" [level=1] [ref=f8e131]
+          - paragraph [ref=f8e132]: Platformada yeni hakaton və ya yarışma elanı yerləşdirin.
+        - generic [ref=f8e133]:
+          - generic [ref=f8e134]:
+            - heading "Baza məlumatlar" [level=2] [ref=f8e144]
+            - generic [ref=f8e145]:
+              - generic [ref=f8e146]:
+                - generic [ref=f8e147]: Yarışın Adı
+                - textbox "Yarışın Adı" [ref=f8e149]:
+                  - /placeholder: "Məsələn: AI & Fintech Hackathon 2026"
+              - generic [ref=f8e150]:
+                - generic [ref=f8e151]: Qısa Başlıq / Xülasə
+                - textbox "Qısa Başlıq / Xülasə" [ref=f8e153]:
+                  - /placeholder: Yarış haqqında 1 cümləlik xülasə
+              - generic [ref=f8e154]:
+                - generic [ref=f8e155]: Geniş Ətraflı Məlumat
+                - textbox "Geniş Ətraflı Məlumat" [ref=f8e157]:
+                  - /placeholder: Yarışın məqsədi, qaydaları və iştirak şərtləri...
+              - generic [ref=f8e158]:
+                - generic [ref=f8e159]:
+                  - generic [ref=f8e160]: Yarışa Qatılmaq Forması
+                  - radiogroup "Yarışa qatılmaq forması" [ref=f8e162]:
+                    - radio "Yarışa Qatılmaq Forması" [checked] [ref=f8e163] [cursor=pointer]: Yalnız Komanda
+                    - radio "Həm Komanda, Həm Fərdi" [ref=f8e164] [cursor=pointer]
+                - generic [ref=f8e165]:
+                  - generic [ref=f8e166]: Maksimum Komanda Üzvü
+                  - spinbutton "Maksimum Komanda Üzvü" [ref=f8e169]: "4"
+          - generic [ref=f8e170]:
+            - heading "Tarixlər, məkan və etiketlər" [level=2] [ref=f8e178]
+            - generic [ref=f8e179]:
+              - generic [ref=f8e180]:
+                - generic [ref=f8e181]:
+                  - generic [ref=f8e182]: Başlama Tarixi
+                  - textbox "Başlama Tarixi" [ref=f8e184]
+                - generic [ref=f8e185]:
+                  - generic [ref=f8e186]: Bitmə Tarixi
+                  - textbox "Bitmə Tarixi" [ref=f8e188]
+                - generic [ref=f8e189]:
+                  - generic [ref=f8e190]: Qeydiyyat Formunun Son Tarixi və Saatı
+                  - textbox "Qeydiyyat Formunun Son Tarixi və Saatı" [ref=f8e192]
+                  - paragraph [ref=f8e193]: Bu vaxtdan sonra iştirakçı formu yeni müraciət qəbul etməyəcək.
+              - generic [ref=f8e194]:
+                - generic [ref=f8e195]:
+                  - generic [ref=f8e196]: Keçiriləcək Yer / Məkan
+                  - textbox "Keçiriləcək Yer / Məkan" [ref=f8e199]:
+                    - /placeholder: "Məsələn: AzTU İnnovasiya Mərkəzi"
+                - generic [ref=f8e200]:
+                  - generic [ref=f8e201]: Xəritə Linki
+                  - textbox "Xəritə Linki" [ref=f8e204]:
+                    - /placeholder: https://maps.google.com/...
+              - generic [ref=f8e205]:
+                - generic [ref=f8e206]: Yarışın Etiketləri
+                - generic [ref=f8e208]:
+                  - generic [ref=f8e209]:
+                    - button "Süni İntellekt" [pressed] [ref=f8e210] [cursor=pointer]
+                    - button "Fintech" [pressed] [ref=f8e214] [cursor=pointer]
+                    - button "Robotech" [ref=f8e218] [cursor=pointer]
+                    - button "GreenTech" [ref=f8e222] [cursor=pointer]
+                    - button "Cybersecurity" [ref=f8e226] [cursor=pointer]
+                    - button "Cloud" [ref=f8e230] [cursor=pointer]
+                  - generic [ref=f8e234]:
+                    - textbox "Fərdi etiket əlavə et..." [ref=f8e235]
+                    - button "Əlavə et" [ref=f8e236] [cursor=pointer]
+              - generic [ref=f8e237]:
+                - generic [ref=f8e238]:
+                  - generic [ref=f8e239]: Qiymətləndirmə Meyarları
+                  - generic [ref=f8e240]: İstəyə bağlıdır
+                - textbox "Qiymətləndirmə Meyarları" [ref=f8e241]:
+                  - /placeholder: "Məsələn: İdeyanın orijinallığı (30%), Texniki icra (40%), Təqdimat (30%)"
+          - generic [ref=f8e242]:
+            - heading "Media və əlaqə" [level=2] [ref=f8e249]
+            - generic [ref=f8e250]:
+              - generic [ref=f8e251]:
+                - generic [ref=f8e252]: Ön Şəkil (Banner / Cover Image)
+                - generic [ref=f8e254] [cursor=pointer]:
+                  - button "Ön Şəkil (Banner / Cover Image) Ön şəkli bura sürüşdürün və ya seçin PNG, JPG və ya WEBP" [ref=f8e255]
+                  - generic [ref=f8e256]:
+                    - generic [ref=f8e262]: Ön şəkli bura sürüşdürün və ya seçin
+                    - generic [ref=f8e263]: PNG, JPG və ya WEBP
+              - generic [ref=f8e264]:
+                - generic [ref=f8e265]:
+                  - generic [ref=f8e266]: Email
+                  - textbox "Email" [ref=f8e269]:
+                    - /placeholder: info@hackathon.az
+                - generic [ref=f8e270]:
+                  - generic [ref=f8e271]: Telefon
+                  - textbox "Telefon" [ref=f8e274]:
+                    - /placeholder: +994 50 000 00 00
+                - generic [ref=f8e275]:
+                  - generic [ref=f8e276]: Telegram / Sosial Link
+                  - textbox "Telegram / Sosial Link" [ref=f8e279]:
+                    - /placeholder: https://t.me/...
+          - generic [ref=f8e280]:
+            - heading "Agenda / Gündəlik" [level=2] [ref=f8e286]
+            - generic [ref=f8e287]:
+              - tablist "Agenda daxil etmə üsulu" [ref=f8e288]:
+                - tab "PDF Yüklə" [ref=f8e289] [cursor=pointer]
+                - tab "Əl ilə (Manual) Daxil Et" [selected] [ref=f8e296] [cursor=pointer]
+              - generic [ref=f8e300]:
+                - tablist "Agenda günü" [ref=f8e301]:
+                  - tab "1-ci Gün" [selected] [ref=f8e303] [cursor=pointer]
+                  - button "Gün əlavə et" [ref=f8e304] [cursor=pointer]
+                - generic [ref=f8e309]:
+                  - generic [ref=f8e310]:
+                    - textbox "1-ci gün, 1-ci sətir başlama saatı" [ref=f8e312]: 09:00
+                    - generic [ref=f8e313]: –
+                    - textbox "1-ci gün, 1-ci sətir bitmə saatı" [ref=f8e315]: 10:00
+                  - textbox "1-ci gün, 1-ci mərhələ başlığı" [ref=f8e316]:
+                    - /placeholder: "Məsələn: Qeydiyyat və Açılış"
+                    - text: Qeydiyyat və Check-in
+                  - button "1-ci gün, 1-ci agenda sətrini sil" [ref=f8e317] [cursor=pointer]
+                - generic [ref=f8e324]:
+                  - button "Yeni Saat / Mərhələ Əlavə Et" [ref=f8e325] [cursor=pointer]
+                  - generic [ref=f8e329]: 1 / 10 sətir
+          - generic [ref=f8e330]:
+            - heading "Layihə Təhvil Qaydaları" [level=2] [ref=f8e338]
+            - generic [ref=f8e339]:
+              - generic [ref=f8e340]:
+                - generic [ref=f8e341]:
+                  - generic [ref=f8e342]: Son Təhvil Tarixi Və Saatı
+                  - textbox "Son Təhvil Tarixi Və Saatı" [ref=f8e344]
+                  - paragraph [ref=f8e345]: Komandaların kod və təqdimatları sistemə yükləməsi üçün son vaxt.
+                - generic [ref=f8e346]:
+                  - generic [ref=f8e347]: GitHub Repozitoriyası
+                  - radiogroup "GitHub repozitoriyası tələbi" [ref=f8e349]:
+                    - radio "GitHub Repozitoriyası" [checked] [ref=f8e350] [cursor=pointer]:
+                      - generic [ref=f8e351]: Məcburi
+                      - generic [ref=f8e352]: GitHub linki olmadan təhvil verilməyəcək
+                    - radio "Könüllü / Tələb Olunmur Repozitoriya linki əlavə etmək vacib deyil" [ref=f8e353] [cursor=pointer]:
+                      - generic [ref=f8e354]: Könüllü / Tələb Olunmur
+                      - generic [ref=f8e355]: Repozitoriya linki əlavə etmək vacib deyil
+              - generic [ref=f8e356]:
+                - generic [ref=f8e357]: Canlı Layihə (Deployment Link)
+                - radiogroup "Canlı layihə linki tələbi" [ref=f8e359]:
+                  - radio "Canlı Layihə (Deployment Link)" [ref=f8e360] [cursor=pointer]:
+                    - generic [ref=f8e361]: Məcburi
+                    - generic [ref=f8e362]: Vebsayt, tətbiq və ya canlı deployment linki mütləqdir
+                  - radio "Könüllü Canlı link olduqda əlavə üstünlükdür" [checked] [ref=f8e363] [cursor=pointer]:
+                    - generic [ref=f8e364]: Könüllü
+                    - generic [ref=f8e365]: Canlı link olduqda əlavə üstünlükdür
+                  - radio "Tələb Olunmur Yalnız GitHub kodu kifayətdir" [ref=f8e366] [cursor=pointer]:
+                    - generic [ref=f8e367]: Tələb Olunmur
+                    - generic [ref=f8e368]: Yalnız GitHub kodu kifayətdir
+              - generic [ref=f8e369]:
+                - generic [ref=f8e370]: Pitch Deck Formatı
+                - radiogroup "Pitch deck formatı" [ref=f8e372]:
+                  - radio "Pitch Deck Formatı" [ref=f8e373] [cursor=pointer]:
+                    - generic [ref=f8e374]: Fayl Yükləmə
+                    - generic [ref=f8e375]: .pdf və ya .pptx faylı
+                  - radio "Təqdimat Linki Figma, Canva və ya Google Slides" [ref=f8e376] [cursor=pointer]:
+                    - generic [ref=f8e377]: Təqdimat Linki
+                    - generic [ref=f8e378]: Figma, Canva və ya Google Slides
+                  - radio "Hər İkisi Fayl və ya təqdimat linki qəbul olunur" [checked] [ref=f8e379] [cursor=pointer]:
+                    - generic [ref=f8e380]: Hər İkisi
+                    - generic [ref=f8e381]: Fayl və ya təqdimat linki qəbul olunur
+          - generic [ref=f8e382]:
+            - link "Ləğv Et" [ref=f8e383] [cursor=pointer]:
+              - /url: /partner/dashboard
+            - button "Yarışı Dərc Et" [ref=f8e384] [cursor=pointer]
