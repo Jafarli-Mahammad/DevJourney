@@ -6,5 +6,8 @@
     <NuGetAuditLevel>moderate</NuGetAuditLevel>
     <NuGetAuditMode>all</NuGetAuditMode>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Performance Optimizations -->
+    <TieredPGO>true</TieredPGO>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
 </Project>

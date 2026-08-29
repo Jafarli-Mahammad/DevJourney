@@ -16,6 +16,16 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ConfigureEndpointDefaults(listenOptions =>
+            {
+                listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
+            });
+            options.Limits.MaxConcurrentConnections = 100_000;
+            options.Limits.MaxConcurrentUpgradedConnections = 10_000;
+        });
+
         builder.Host.UseServiceProviderFactory(new DevJourneyServiceProviderFactory());
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -24,9 +34,10 @@ public partial class Program
             throw new InvalidOperationException("Database credentials must be provided via environment variables or secret manager. The default placeholder cannot be used.");
         }
 
-        builder.Services.AddDbContext<DataContext>(options =>
+        builder.Services.AddDbContextPool<DataContext>(options =>
             options.UseSqlServer(connectionString)
-                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)),
+            poolSize: 128);
         
         builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
         {
@@ -57,6 +68,8 @@ public partial class Program
         builder.Services.AddOpenTelemetry()
             .WithTracing(tracing =>
             {
+                tracing.SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(0.1)));
+
                 tracing.AddAspNetCoreInstrumentation()
                        .AddHttpClientInstrumentation()
                        .AddSqlClientInstrumentation();
@@ -99,6 +112,17 @@ public partial class Program
                 options.InstanceName = "DevJourney:";
             });
         }
+#pragma warning disable EXTEXP0018 // Type is for evaluation purposes only and is subject to change or removal in future updates.
+        builder.Services.AddHybridCache(options =>
+        {
+            options.MaximumPayloadBytes = 1024 * 1024;
+            options.DefaultEntryOptions = new Microsoft.Extensions.Caching.Hybrid.HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(5),
+                LocalCacheExpiration = TimeSpan.FromSeconds(30)
+            };
+        });
+#pragma warning restore EXTEXP0018
         builder.Services.AddResponseCompression();
 
         builder.Services.AddOutputCache(options =>
@@ -116,7 +140,11 @@ public partial class Program
         builder.Services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(IApplicationReferance).Assembly));
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, Devjourney.AppJsonSerializerContext.Default);
+            });
 
         builder.Services.AddAuthentication(options =>
         {
