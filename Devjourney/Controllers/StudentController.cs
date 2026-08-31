@@ -37,6 +37,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllStudentProfiles(CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllStudentProfilesQuery(), cancellationToken);

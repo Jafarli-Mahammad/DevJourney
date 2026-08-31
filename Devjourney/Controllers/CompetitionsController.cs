@@ -56,12 +56,6 @@ namespace Devjourney.Controllers
                   || (!string.IsNullOrEmpty(email) && p.ContactEmail == email),
                 cancellationToken);
             var partner = System.Linq.Enumerable.FirstOrDefault(partners);
-            
-            if (partner == null)
-            {
-                var allPartners = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
-                partner = System.Linq.Enumerable.FirstOrDefault(allPartners);
-            }
 
             if (partner == null)
             {
@@ -123,12 +117,6 @@ namespace Devjourney.Controllers
                   || (!string.IsNullOrEmpty(email) && p.ContactEmail == email),
                 cancellationToken);
             var partner = System.Linq.Enumerable.FirstOrDefault(partners);
-            
-            if (partner == null)
-            {
-                var allPartners = await _partnerProfileRepository.GetAllAsync(null, cancellationToken);
-                partner = System.Linq.Enumerable.FirstOrDefault(allPartners);
-            }
 
             if (partner == null)
             {

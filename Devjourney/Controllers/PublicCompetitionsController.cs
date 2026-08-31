@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,6 +46,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpGet("/api/competitions/{id:guid}/team")]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetMyTeam(Guid id)
@@ -54,6 +56,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("/api/competitions/{id:guid}/teams")]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateTeam(Guid id, [FromBody] CreateTeamCommand command)
@@ -64,6 +67,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("/api/competitions/{id:guid}/teams/join")]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> JoinTeam(Guid id, [FromBody] JoinTeamCommand command)
@@ -74,6 +78,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPut("/api/competitions/{id:guid}/submission")]
+        [Authorize]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateSubmission(Guid id, [FromBody] UpdateSubmissionCommand command)

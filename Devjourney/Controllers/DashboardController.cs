@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Modules.Dashboard.Queries.GetStudentDashboard;
@@ -8,6 +9,7 @@ namespace Devjourney.Controllers
     [ApiController]
     [Route("api/student/[controller]")]
     [ApiExplorerSettings(GroupName = "v1")]
+    [Authorize]
     public class DashboardController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -80,10 +80,12 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("seed-mock")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [ApiExplorerSettings(GroupName = "v1")]
-        public async Task<IActionResult> SeedMockCertificates()
+        public async Task<IActionResult> SeedMockCertificates([FromServices] Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
+            if (!env.IsDevelopment()) return NotFound();
+
             // Get some students to attach mock certificates to
             var students = await _studentProfileRepository.GetAllAsync(s => true);
             var studentList = System.Linq.Enumerable.ToList(students);

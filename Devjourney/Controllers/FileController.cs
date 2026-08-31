@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Devjourney.Controllers
@@ -16,6 +17,7 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("image")]
+        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadImage(IFormFile file, CancellationToken cancellationToken)
         {
@@ -40,6 +42,7 @@ namespace Devjourney.Controllers
 
         [HttpPost("document")]
         [HttpPost("file")]
+        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadDocument(IFormFile file, CancellationToken cancellationToken)
         {

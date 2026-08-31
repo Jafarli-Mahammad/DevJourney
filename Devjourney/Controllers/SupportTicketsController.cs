@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -7,6 +8,7 @@ namespace Devjourney.Controllers
     [Route("api/support-tickets")]
     [ApiExplorerSettings(GroupName = "v1,partner,company")]
     [Produces("application/json", "application/problem+json")]
+    [Authorize]
     public class SupportTicketsController : ControllerBase
     {
         [HttpGet]

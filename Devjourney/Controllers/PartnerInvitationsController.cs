@@ -45,9 +45,11 @@ namespace Devjourney.Controllers
         }
 
         [HttpPost("generate-mock")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GenerateMockInvitation([FromBody] GenerateMockInvitationCommand request, CancellationToken cancellationToken)
+        [Authorize(Roles = "Admin,COMPANY_ADMIN")]
+        public async Task<IActionResult> GenerateMockInvitation([FromBody] GenerateMockInvitationCommand request, [FromServices] Microsoft.AspNetCore.Hosting.IWebHostEnvironment env, CancellationToken cancellationToken)
         {
+            if (!env.IsDevelopment()) return NotFound();
+
             var result = await _mediator.Send(request, cancellationToken);
             return Ok(new { success = true, data = result });
         }

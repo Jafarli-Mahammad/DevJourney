@@ -1,0 +1,9 @@
+- generic [ref=e3]:
+  - generic [ref=e44]:
+    - generic [ref=e45]: Select a definition
+    - combobox "Select a definition" [disabled] [ref=e46]:
+      - option "DevJourney API (Student & Core)" [selected]
+      - option "Partner Portal API"
+      - option "Company API"
+      - option "Admin API"
+  - generic [ref=e47]: loading

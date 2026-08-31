@@ -15,6 +15,7 @@ namespace Devjourney.Controllers
     [Route("api/partner/accounts")]
     [ApiExplorerSettings(GroupName = "partner,company")]
     [Produces("application/json", "application/problem+json")]
+    [Authorize(Roles = "COMPANY_ADMIN,Admin,PARTNER")]
     public class PartnerAccountsController : ControllerBase
     {
         private readonly IMediator _mediator;

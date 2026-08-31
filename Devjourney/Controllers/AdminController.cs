@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -7,6 +8,7 @@ namespace Devjourney.Controllers
     [Route("api/admin")]
     [ApiExplorerSettings(GroupName = "admin")]
     [Produces("application/json", "application/problem+json")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         [HttpGet("companies")]
