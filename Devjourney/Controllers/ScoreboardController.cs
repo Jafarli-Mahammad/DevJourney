@@ -27,7 +27,7 @@ namespace Devjourney.Controllers
         public async Task<IActionResult> GetScoreboard()
         {
             var result = await _mediator.Send(new GetPublicScoreboardQuery());
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
 
         [HttpGet("/api/competitions/{id:guid}/results/me")]
@@ -36,7 +36,7 @@ namespace Devjourney.Controllers
         public async Task<IActionResult> GetMyResults(Guid id)
         {
             var result = await _mediator.Send(new GetMyResultsQuery { CompetitionId = id });
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
     }
 }

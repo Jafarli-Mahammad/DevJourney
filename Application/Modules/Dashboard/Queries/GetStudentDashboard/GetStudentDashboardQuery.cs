@@ -41,6 +41,7 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
 
         var profile = await _studentProfileRepository.GetByUserIdAsync(userId);
         int activeComps = 0;
+        var activeCompIds = new List<Guid>();
         if (profile != null)
         {
             var comps = await _competitionParticipantRepository.GetAllAsync(cp => 
@@ -48,6 +49,7 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
                 cp.IndividualStudentId == profile.Id || 
                 cp.Members.Any(m => m.StudentProfileId == profile.Id), cancellationToken);
             activeComps = comps.Count();
+            activeCompIds = comps.Select(c => c.CompetitionId).Distinct().ToList();
         }
         
         int xp = certCount * 50 + activeComps * 10;
@@ -57,6 +59,7 @@ public class GetStudentDashboardQueryHandler : IRequestHandler<GetStudentDashboa
             data = new { 
                 CertificatesCount = certCount, 
                 ActiveCompetitions = activeComps, 
+                ActiveCompetitionIds = activeCompIds,
                 DeveloperXp = xp,
                 Name = profile?.FirstName ?? "",
                 Surname = profile?.LastName ?? ""

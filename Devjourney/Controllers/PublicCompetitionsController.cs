@@ -32,16 +32,26 @@ namespace Devjourney.Controllers
         public async Task<IActionResult> GetAvailableCompetitions()
         {
             var result = await _mediator.Send(new GetAvailableCompetitionsQuery());
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
 
-        [HttpGet("/api/competitions/{id:guid}")]
+        [HttpGet("/api/competitions/{id}")]
         [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
         [Microsoft.AspNetCore.OutputCaching.OutputCache(PolicyName = "PublicDetails")]
-        public async Task<IActionResult> GetCompetitionDetails(Guid id)
+        public async Task<IActionResult> GetCompetitionDetails(string id)
         {
-            var result = await _mediator.Send(new GetCompetitionDetailsQuery { Id = id });
+            if (!Guid.TryParse(id, out var guidId))
+            {
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Competition not found" } });
+            }
+
+            var result = await _mediator.Send(new GetCompetitionDetailsQuery { Id = guidId });
+            if (result == null)
+            {
+                return NotFound(new { success = false, error = new { code = "NOT_FOUND", message = "Competition not found" } });
+            }
+
             return Ok(new { success = true, data = result });
         }
 
@@ -52,7 +62,7 @@ namespace Devjourney.Controllers
         public async Task<IActionResult> GetMyTeam(Guid id)
         {
             var result = await _mediator.Send(new GetMyTeamQuery { CompetitionId = id });
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
 
         [HttpPost("/api/competitions/{id:guid}/teams")]
@@ -63,7 +73,7 @@ namespace Devjourney.Controllers
         {
             command.CompetitionId = id;
             var result = await _mediator.Send(command);
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
 
         [HttpPost("/api/competitions/{id:guid}/teams/join")]
@@ -74,7 +84,7 @@ namespace Devjourney.Controllers
         {
             command.CompetitionId = id;
             var result = await _mediator.Send(command);
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
 
         [HttpPut("/api/competitions/{id:guid}/submission")]
@@ -85,7 +95,7 @@ namespace Devjourney.Controllers
         {
             command.CompetitionId = id;
             var result = await _mediator.Send(command);
-            return Ok(new { success = true, data = result });
+            return Ok(result);
         }
     }
 }
