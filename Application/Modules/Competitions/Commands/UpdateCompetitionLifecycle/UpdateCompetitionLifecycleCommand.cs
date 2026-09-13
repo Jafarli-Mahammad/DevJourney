@@ -2,6 +2,7 @@ using Application.Exceptions;
 using Application.Repositories;
 using Application.Repositories.Competitions;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,10 +22,14 @@ namespace Application.Modules.Competitions.Commands.UpdateCompetitionLifecycle
     public class UpdateCompetitionLifecycleCommandHandler : IRequestHandler<UpdateCompetitionLifecycleCommand, object>
     {
         private readonly ICompetitionRepository _competitionRepo;
+        private readonly HybridCache _hybridCache;
 
-        public UpdateCompetitionLifecycleCommandHandler(ICompetitionRepository competitionRepo)
+        public UpdateCompetitionLifecycleCommandHandler(
+            ICompetitionRepository competitionRepo,
+            HybridCache hybridCache)
         {
             _competitionRepo = competitionRepo;
+            _hybridCache = hybridCache;
         }
 
         public async Task<object> Handle(UpdateCompetitionLifecycleCommand request, CancellationToken cancellationToken)
@@ -39,6 +44,8 @@ namespace Application.Modules.Competitions.Commands.UpdateCompetitionLifecycle
             if (request.IsCertificatesPublished.HasValue) comp.IsCertificatesPublished = request.IsCertificatesPublished.Value;
 
             await _competitionRepo.EditAsync(comp);
+
+            await _hybridCache.RemoveByTagAsync("competitions", cancellationToken);
 
             return new { 
                 comp.Id, 

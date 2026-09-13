@@ -3,6 +3,7 @@ using Application.Modules.Competitions.Dtos;
 using Application.Repositories;
 using Application.Repositories.Competitions;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,10 +19,14 @@ namespace Application.Modules.Competitions.Commands.UpdateCompetition
     public class UpdateCompetitionCommandHandler : IRequestHandler<UpdateCompetitionCommand, Guid>
     {
         private readonly ICompetitionRepository _competitionRepo;
+        private readonly HybridCache _hybridCache;
 
-        public UpdateCompetitionCommandHandler(ICompetitionRepository competitionRepo)
+        public UpdateCompetitionCommandHandler(
+            ICompetitionRepository competitionRepo,
+            HybridCache hybridCache)
         {
             _competitionRepo = competitionRepo;
+            _hybridCache = hybridCache;
         }
 
         public async Task<Guid> Handle(UpdateCompetitionCommand request, CancellationToken cancellationToken)
@@ -50,8 +55,15 @@ namespace Application.Modules.Competitions.Commands.UpdateCompetition
             comp.PitchDeckFormat = request.Dto.PitchDeckFormat;
             comp.AgendaMode = request.Dto.AgendaMode ?? "MANUAL";
             comp.AgendaPdfUrl = request.Dto.AgendaPdfUrl;
+
+            if (request.Dto.IsPublished.HasValue)
+            {
+                comp.IsPublished = request.Dto.IsPublished.Value;
+            }
             
             await _competitionRepo.EditAsync(comp);
+
+            await _hybridCache.RemoveByTagAsync("competitions", cancellationToken);
 
             return comp.Id;
         }

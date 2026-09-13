@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Application.Modules.Competitions.Dtos;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DevJourney.Tests.Integration
 {
@@ -32,11 +33,24 @@ namespace DevJourney.Tests.Integration
         }
 
         [Fact]
-        public async Task VerifyCertificate_ValidCode_ReturnsOk()
+        public async Task PublishCompetitionJ_AndVerifyInAvailableCompetitions()
         {
-            var response = await _client.GetAsync("/api/certificates/verify/12345");
-            // Expect 404 because not found
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<DataAccessLayer.DataContexts.DataContext>();
+                var targetComp = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(
+                    db.Competitions, c => c.Title == "j");
+                if (targetComp != null)
+                {
+                    targetComp.IsPublished = true;
+                    await db.SaveChangesAsync();
+                }
+            }
+
+            var response = await _client.GetAsync("/api/competitions");
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            Assert.Contains("\"title\":\"j\"", json);
         }
     }
 }

@@ -1,11 +1,10 @@
 using Application.Modules.Competitions.Commands.CreateCompetition;
 using Application.Repositories;
 using Application.Repositories.Competitions;
-
-
 using Domain.Models.Entities.Competition;
 using MediatR;
-
+using Microsoft.Extensions.Caching.Hybrid;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -18,15 +17,18 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
         private readonly ICompetitionRepository _repository;
         private readonly IPartnerProfileRepository _partnerProfileRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
         public CreateCompetitionHandler(
             ICompetitionRepository repository,
             IPartnerProfileRepository partnerProfileRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            HybridCache hybridCache)
         {
             _repository = repository;
             _partnerProfileRepository = partnerProfileRepository;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<Guid> Handle(CreateCompetitionCommand request, CancellationToken cancellationToken)
@@ -66,7 +68,7 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
                 PitchDeckFormat = request.Dto.PitchDeckFormat,
                 AgendaMode = request.Dto.AgendaMode ?? "MANUAL",
                 AgendaPdfUrl = request.Dto.AgendaPdfUrl,
-                IsPublished = false,
+                IsPublished = request.Dto.IsPublished ?? true,
                 Stages = request.Dto.Stages?.Where(s => s != null).Select(s => new CompetitionStage
                 {
                     Id = Guid.NewGuid(),
@@ -80,6 +82,8 @@ namespace Application.Modules.Competitions.Commands.CreateCompetition
 
             await _repository.AddAsync(competition, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _hybridCache.RemoveByTagAsync("competitions", cancellationToken);
 
             return competition.Id;
         }
