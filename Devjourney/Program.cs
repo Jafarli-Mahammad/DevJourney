@@ -140,6 +140,9 @@ public partial class Program
         builder.Services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(IApplicationReferance).Assembly));
 
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<DataContext>(name: "database", tags: new[] { "ready" });
+
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -353,6 +356,38 @@ public partial class Program
         app.UseOutputCache();
 
         //app.MapRazorPages();
+
+        app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            ResponseWriter = async (context, report) =>
+            {
+                context.Response.ContentType = "application/json";
+                var response = new
+                {
+                    status = report.Status.ToString(),
+                    totalDuration = report.TotalDuration.TotalMilliseconds + "ms",
+                    checks = report.Entries.Select(e => new
+                    {
+                        name = e.Key,
+                        status = e.Value.Status.ToString(),
+                        description = e.Value.Description,
+                        duration = e.Value.Duration.TotalMilliseconds + "ms",
+                        error = e.Value.Exception?.Message
+                    })
+                };
+                await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
+            }
+        });
+
+        app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = _ => false
+        });
+
+        app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready")
+        });
 
         app.MapControllers();
 
