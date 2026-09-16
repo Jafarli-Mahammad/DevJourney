@@ -87,35 +87,41 @@ def build_system_prompt() -> str:
     Guides the model with strict domain rules, anti-hallucination guardrails, and .NET awareness.
     """
     return (
-        "You are an expert QA Engineer and Senior Code Reviewer performing a Git Pre-Commit review.\n"
-        "The project is a C# / .NET backend (Clean Architecture, ASP.NET Core, EF Core, MediatR, CQRS).\n\n"
-        "### YOUR TASK:\n"
-        "Analyze the staged git diff for critical logic bugs, security risks, and performance issues.\n\n"
-        "### GUIDELINES FOR ACCURACY:\n"
-        "1. DO NOT comment on styling, indentation, cosmetic spacing, or obvious framework boilerplate.\n"
-        "2. ONLY report high-signal, actionable issues with clear technical explanations.\n"
-        "3. Pay special attention to:\n"
-        "   - C# async anti-patterns (e.g., .Result, .Wait(), sync-over-async blocking, missing cancellation tokens).\n"
-        "   - Nullability issues (dereferencing nullable types without checks, missing null guards).\n"
-        "   - EF Core pitfalls (missing AsNoTracking on read queries, unintended client-side evaluation, unindexed filters).\n"
-        "   - Security (hardcoded secrets, tokens, connection strings, unvalidated user input).\n"
-        "   - Exception handling (swallowing exceptions, empty catch blocks, throwing generic System.Exception).\n\n"
-        "### RESPONSE FORMAT:\n"
-        "Use exactly this Markdown structure:\n"
-        "### 🔍 Summary\n"
-        "Brief 1-2 sentence overview of what is changing.\n\n"
-        "### 🐛 Bugs & Edge Cases\n"
-        "- Bullet points of potential runtime bugs or logic flaws (or '- None identified').\n\n"
-        "### ⚡ Performance & Resource Leaks\n"
-        "- Bullet points of query inefficiency, allocation/memory issues, or leaks (or '- None identified').\n\n"
-        "### 🔒 Security & Secrets\n"
-        "- Bullet points of exposed keys, injection risks, or auth flaws (or '- None identified').\n\n"
-        "### 💡 Recommendations\n"
-        "- 1-2 key suggestions if any, otherwise '- None'.\n\n"
-        "### 🎯 Verdict\n"
-        "End with exactly one of:\n"
-        "[VERDICT: LGTM] (if no bugs or only minor non-blocking suggestions)\n"
-        "[VERDICT: WARNINGS] (if potential logic bugs, security risks, or notable performance issues exist)\n"
+        "You are an expert .NET/C# QA Engineer and Senior Code Reviewer acting as a strict Git pre-commit gatekeeper.\n" +
+        "Your task is to analyze staged Git diffs and explicitly APPROVE or REJECT the commit based on quality and performance.\n\n" +
+        
+        "### CONTEXT\n" +
+        "Stack: C#, ASP.NET Core, EF Core, MediatR, CQRS, Clean Architecture.\n\n" +
+        
+        "### REVIEW CRITERIA (Focus exclusively on these):\n" +
+        "1. Performance & Efficiency: Unnecessary allocations, N+1 queries, missing AsNoTracking, blocking async (.Result/.Wait()), or sync-over-async.\n" +
+        "2. Code Quality & Logic: Null reference risks, unhandled exceptions, swallowing exceptions, mutating state in MediatR queries, or Clean Architecture boundary violations.\n" +
+        "3. Maintainability: Highly complex methods, massive code duplication, or improper dependency injection.\n" +
+        "IGNORE cosmetic spacing, styling, variable naming, and security/auth checks.\n\n" +
+        
+        "### INSTRUCTIONS\n" +
+        "1. Read the provided git diff carefully.\n" +
+        "2. Analyze the code based purely on the Review Criteria.\n" +
+        "3. If critical logic flaws, memory leaks, performance bottlenecks, or boundary violations exist, you MUST REJECT.\n" +
+        "4. If the code is efficient, logically sound, and contains zero blocking issues, you MUST APPROVE.\n\n" +
+        
+        "### OUTPUT FORMAT\n" +
+        "You must respond EXACTLY in the following Markdown structure. Do not add introductory conversational text.\n\n" +
+        
+        "### 🔍 Summary\n" +
+        "[1-2 sentences summarizing the architectural or logic changes]\n\n" +
+        
+        "### ⚙️ Analysis\n" +
+        "[Briefly think through the code against the criteria. Note how the changes impact performance or maintainability.]\n\n" +
+        
+        "### 🚀 QA & Performance Issues\n" +
+        "- [Bullet points of actionable bugs or bottlenecks found, or '- None identified']\n\n" +
+        
+        "### 💡 Maintainability Suggestions\n" +
+        "- [1-2 structural or efficiency improvements, or '- None']\n\n" +
+        
+        "### 🎯 Verdict\n" +
+        "[VERDICT: APPROVE] or [VERDICT: REJECT]"
     )
 
 
@@ -167,14 +173,14 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
         print(f"\n{YELLOW}⚠️ Error during Ollama inference: {e}{RESET}\n")
         return "", "ERROR"
 
-    # Extract Verdict
-    verdict = "LGTM"
-    if "[VERDICT: WARNINGS]" in full_response or "VERDICT: WARNINGS" in full_response:
-        verdict = "WARNINGS"
-    elif "[VERDICT: LGTM]" in full_response or "VERDICT: LGTM" in full_response:
-        verdict = "LGTM"
-    elif any(k in full_response.lower() for k in ["potential bug", "security risk", "memory leak", "critical issue"]):
-        verdict = "WARNINGS"
+    # Extract Verdict (Fix 1)
+    verdict = "APPROVE"
+    if "[VERDICT: REJECT]" in full_response or "VERDICT: REJECT" in full_response:
+        verdict = "REJECT"
+    elif "[VERDICT: APPROVE]" in full_response or "VERDICT: APPROVE" in full_response:
+        verdict = "APPROVE"
+    elif any(k in full_response.lower() for k in ["potential bug", "security risk", "memory leak", "critical issue", "boundary violation"]):
+        verdict = "REJECT"
 
     return full_response, verdict
 
@@ -188,7 +194,8 @@ def save_qa_report(repo_root: str, branch: str, files: list[str], review_text: s
     report_path = os.path.join(git_dir, "LAST_QA_REPORT.md")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    badge = "🟢 **PASSED (LGTM)**" if verdict == "LGTM" else "🟡 **WARNINGS REPORTED**"
+    # Fix 2
+    badge = "🟢 **PASSED (APPROVE)**" if verdict == "APPROVE" else "🔴 **REJECTED (ISSUES REPORTED)**"
 
     report_content = f"""# 🤖 Local QA Pre-Commit Report
 
@@ -225,11 +232,12 @@ def prompt_user_confirmation(verdict: str) -> bool:
 
     try:
         with open(tty_path, "r") as tty_in, open(tty_path, "w") as tty_out:
-            if verdict == "LGTM":
-                tty_out.write(f"{GREEN}{BOLD}✅ QA Verdict: LGTM! Proceeding with commit...{RESET}\n\n")
+            # Fix 3
+            if verdict == "APPROVE":
+                tty_out.write(f"{GREEN}{BOLD}✅ QA Verdict: APPROVED! Proceeding with commit...{RESET}\n\n")
                 return True
             else:
-                tty_out.write(f"{YELLOW}{BOLD}⚠️  QA Review highlighted potential warnings above.{RESET}\n")
+                tty_out.write(f"{YELLOW}{BOLD}⚠️  QA Review REJECTED this commit based on issues above.{RESET}\n")
                 tty_out.write(f"{BOLD}Proceed with commit anyway? [Y/n]: {RESET}")
                 tty_out.flush()
                 answer = tty_in.readline().strip().lower()
