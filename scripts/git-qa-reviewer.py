@@ -46,13 +46,40 @@ def is_ignored(filename: str) -> bool:
     return False
 
 
-def check_ollama_status() -> bool:
+def get_available_ollama_model() -> tuple[bool, str, list[str]]:
+    """
+    Checks if Ollama is running and returns (is_running, resolved_model_name, available_models).
+    """
     try:
         req = urllib.request.Request(f"{OLLAMA_ENDPOINT}/api/tags", method="GET")
-        with urllib.request.urlopen(req, timeout=2) as response:
-            return response.status == 200
+        with urllib.request.urlopen(req, timeout=3) as response:
+            if response.status != 200:
+                return False, "", []
+            data = json.loads(response.read().decode("utf-8"))
+            models = [m.get("name", "") for m in data.get("models", [])]
+            
+            # Check configured target model
+            target_model = OLLAMA_MODEL
+            if target_model in models:
+                return True, target_model, models
+            
+            # Match base name (e.g. qwen2.5-coder without tag or with :latest)
+            target_base = target_model.split(":")[0]
+            for m in models:
+                if m == target_base or m.startswith(f"{target_base}:"):
+                    return True, m, models
+            
+            # Match any coder or qwen model
+            for m in models:
+                if "qwen" in m.lower() or "coder" in m.lower():
+                    return True, m, models
+            
+            if models:
+                return True, models[0], models
+            
+            return True, "", []
     except Exception:
-        return False
+        return False, "", []
 
 
 def get_git_info() -> tuple[str, str, str]:
@@ -60,7 +87,7 @@ def get_git_info() -> tuple[str, str, str]:
     try:
         root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True).stdout.strip()
         branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-        author = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True).stdout.strip() or "Developer"
+        author = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, check=True).stdout.strip() or "Developer"
         return root, branch, author
     except Exception:
         return ".", "unknown", "Developer"
@@ -119,7 +146,7 @@ def build_system_prompt() -> str:
     )
 
 
-def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, str]:
+def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str]) -> tuple[str, str]:
     truncated = False
     if len(diff_text) > MAX_DIFF_CHARS:
         diff_text = diff_text[:MAX_DIFF_CHARS] + "\n\n... [Diff truncated: exceeding max token limit for pre-commit review] ..."
@@ -132,8 +159,11 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     )
 
     payload = {
-        "model": OLLAMA_MODEL,
-        "prompt": f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{user_prompt}<|im_end|>\n<|im_start|>assistant\n",
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
         "stream": True,
         "options": {
             "temperature": 0.1,  # Low temperature for deterministic, high-accuracy analysis
@@ -142,23 +172,23 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     }
 
     req = urllib.request.Request(
-        f"{OLLAMA_ENDPOINT}/api/generate",
+        f"{OLLAMA_ENDPOINT}/api/chat",
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"}
     )
 
     full_response = ""
-    print(f"\n{BOLD}{CYAN}🤖 QA Agent ({OLLAMA_MODEL}) reviewing {len(files)} staged file(s)...{RESET}\n")
+    print(f"\n{BOLD}{CYAN}🤖 QA Agent ({model_name}) reviewing {len(files)} staged file(s)...{RESET}\n")
     if truncated:
         print(f"{DIM}(Note: Large diff truncated to first {MAX_DIFF_CHARS} chars){RESET}\n")
 
     try:
-        with urllib.request.urlopen(req, timeout=90) as response:
+        with urllib.request.urlopen(req, timeout=120) as response:
             for line in response:
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
-                token = chunk.get("response", "")
+                token = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
                 sys.stdout.write(token)
                 sys.stdout.flush()
                 full_response += token
@@ -179,7 +209,7 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     return full_response, verdict
 
 
-def save_qa_report(repo_root: str, branch: str, files: list[str], review_text: str, verdict: str):
+def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str], review_text: str, verdict: str):
     """Saves the latest review report to .git/LAST_QA_REPORT.md"""
     git_dir = os.path.join(repo_root, ".git")
     if not os.path.exists(git_dir):
@@ -194,7 +224,7 @@ def save_qa_report(repo_root: str, branch: str, files: list[str], review_text: s
 
 - **Date:** `{now_str}`
 - **Branch:** `{branch}`
-- **Model:** `{OLLAMA_MODEL}`
+- **Model:** `{model_name}`
 - **Status:** {badge}
 
 ---
@@ -247,8 +277,15 @@ def main():
     if os.environ.get("SKIP_QA") == "1":
         return 0
 
-    if not check_ollama_status():
-        print(f"{DIM}[QA Hook] Ollama not reachable at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
+    is_running, resolved_model, available_models = get_available_ollama_model()
+
+    if not is_running:
+        print(f"{DIM}[QA Hook] Ollama is not reachable at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
+        return 0
+
+    if not resolved_model:
+        print(f"{YELLOW}[QA Hook] Ollama is running, but no suitable Qwen/Coder model was found.{RESET}")
+        print(f"{DIM}[QA Hook] To enable AI pre-commit reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
         return 0
 
     repo_root, branch, _ = get_git_info()
@@ -262,12 +299,12 @@ def main():
     if not diff_text.strip() or not files:
         return 0
 
-    response, verdict = stream_review_from_ollama(diff_text, files)
+    response, verdict = stream_review_from_ollama(resolved_model, diff_text, files)
     if verdict == "ERROR":
         return 0
 
     # Save to .git/LAST_QA_REPORT.md
-    save_qa_report(repo_root, branch, files, response, verdict)
+    save_qa_report(repo_root, branch, resolved_model, files, response, verdict)
 
     proceed = prompt_user_confirmation(verdict)
     if not proceed:
