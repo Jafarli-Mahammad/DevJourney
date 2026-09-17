@@ -172,11 +172,11 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
         ],
         "stream": True,
         "options": {
-            "temperature": 0.1,  # Low temperature for deterministic, high-accuracy analysis
+            "temperature": 0.1,
             "top_p": 0.85,
-        }
+        },
+        "keep_alive": 0
     }
-
     req = urllib.request.Request(
         f"{OLLAMA_ENDPOINT}/api/chat",
         data=json.dumps(payload).encode("utf-8"),

@@ -170,7 +170,8 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
             "temperature": 0.1,
             "top_p": 0.85,
             "num_ctx": 16384,
-        }
+        },
+        "keep_alive": "0"
     }
 
     req = urllib.request.Request(
