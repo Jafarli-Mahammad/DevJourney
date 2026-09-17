@@ -116,37 +116,37 @@ def build_system_prompt() -> str:
     return (
         "You are an expert .NET/C# QA Engineer and Senior Code Reviewer acting as a strict Git pre-commit gatekeeper.\n" +
         "Your task is to analyze staged Git diffs and explicitly APPROVE or REJECT the commit based on quality and performance.\n\n" +
-        
+
         "### CONTEXT\n" +
         "Stack: C#, ASP.NET Core, EF Core, MediatR, CQRS, Clean Architecture.\n\n" +
-        
+
         "### REVIEW CRITERIA (Focus exclusively on these):\n" +
         "1. Performance & Efficiency: Unnecessary allocations, N+1 queries, missing AsNoTracking, blocking async (.Result/.Wait()), or sync-over-async.\n" +
         "2. Code Quality & Logic: Null reference risks, unhandled exceptions, swallowing exceptions, mutating state in MediatR queries, or Clean Architecture boundary violations.\n" +
         "3. Maintainability: Highly complex methods, massive code duplication, or improper dependency injection.\n" +
         "IGNORE cosmetic spacing, styling, variable naming, and security/auth checks.\n\n" +
-        
+
         "### INSTRUCTIONS\n" +
         "1. Read the provided git diff carefully.\n" +
         "2. Analyze the code based purely on the Review Criteria.\n" +
         "3. If critical logic flaws, memory leaks, performance bottlenecks, or boundary violations exist, you MUST REJECT.\n" +
         "4. If the code is efficient, logically sound, and contains zero blocking issues, you MUST APPROVE.\n\n" +
-        
+
         "### OUTPUT FORMAT\n" +
         "You must respond EXACTLY in the following Markdown structure. Do not add introductory conversational text.\n\n" +
-        
+
         "### 🔍 Summary\n" +
         "[1-2 sentences summarizing the architectural or logic changes]\n\n" +
-        
+
         "### ⚙️ Analysis\n" +
         "[Briefly think through the code against the criteria. Note how the changes impact performance or maintainability.]\n\n" +
-        
+
         "### 🚀 QA & Performance Issues\n" +
         "- [Bullet points of actionable bugs or bottlenecks found, or '- None identified']\n\n" +
-        
+
         "### 💡 Maintainability Suggestions\n" +
         "- [1-2 structural or efficiency improvements, or '- None']\n\n" +
-        
+
         "### 🎯 Verdict\n" +
         "[VERDICT: APPROVE] or [VERDICT: REJECT]"
     )
@@ -177,6 +177,9 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
         },
         "keep_alive": 0
     }
+
+    # NOTE: /api/chat is the correct endpoint for a "messages" payload.
+    # /api/generate expects a "prompt" string instead and does not accept "messages".
     req = urllib.request.Request(
         f"{OLLAMA_ENDPOINT}/api/chat",
         data=json.dumps(payload).encode("utf-8"),
@@ -194,6 +197,7 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
+                # /api/chat streams {"message": {"content": "..."}} per chunk
                 token = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
                 sys.stdout.write(token)
                 sys.stdout.flush()
@@ -203,9 +207,11 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
         print(f"\n{YELLOW}⚠️ Error during Ollama inference: {e}{RESET}\n")
         return "", "ERROR"
 
-    # Extract Verdict (Fix 1)
+    # Fail-safe: an empty or non-substantive response must never silently pass.
     verdict = "APPROVE"
-    if "[VERDICT: REJECT]" in full_response or "VERDICT: REJECT" in full_response:
+    if not full_response.strip():
+        verdict = "REJECT"
+    elif "[VERDICT: REJECT]" in full_response or "VERDICT: REJECT" in full_response:
         verdict = "REJECT"
     elif "[VERDICT: APPROVE]" in full_response or "VERDICT: APPROVE" in full_response:
         verdict = "APPROVE"
@@ -224,8 +230,8 @@ def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str
     report_path = os.path.join(git_dir, "LAST_QA_REPORT.md")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Fix 2
     badge = "🟢 **PASSED (APPROVE)**" if verdict == "APPROVE" else "🔴 **REJECTED (ISSUES REPORTED)**"
+    body = review_text.strip() if review_text.strip() else "_(Model returned an empty response — treated as REJECT.)_"
 
     report_content = f"""# 🤖 Local QA Pre-Commit Report
 
@@ -241,7 +247,7 @@ def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str
 
 ---
 
-{review_text.strip()}
+{body}
 
 ---
 *Generated automatically by `.git/hooks/pre-commit` via Ollama.*
@@ -262,7 +268,6 @@ def prompt_user_confirmation(verdict: str) -> bool:
 
     try:
         with open(tty_path, "r") as tty_in, open(tty_path, "w") as tty_out:
-            # Fix 3
             if verdict == "APPROVE":
                 tty_out.write(f"{GREEN}{BOLD}✅ QA Verdict: APPROVED! Proceeding with commit...{RESET}\n\n")
                 return True
