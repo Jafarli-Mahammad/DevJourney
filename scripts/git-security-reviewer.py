@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-AI Pre-Commit Security Reviewer powered by local WhiteRabbitNeo via Ollama.
+AI Pre-Commit Security Reviewer powered by local DeepSeek-R1 (14B) via Ollama.
 Dedicated to detecting security vulnerabilities, authorization issues (BOLA/BFLA),
 hardcoded secrets, injection vectors, and untrusted data handling in .NET/C#.
 """
 
 import os
+import re
 import sys
 import json
 import fnmatch
@@ -16,8 +17,9 @@ import urllib.error
 
 # Configuration
 OLLAMA_ENDPOINT = os.environ.get("OLLAMA_ENDPOINT", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "whiterabbit")
+OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "deepseek-r1:14b")
 MAX_DIFF_CHARS = int(os.environ.get("MAX_DIFF_CHARS", "18000"))
+REQUEST_TIMEOUT = int(os.environ.get("SECURITY_REVIEW_TIMEOUT", "240"))
 
 # File exclusion patterns
 IGNORE_PATTERNS = [
@@ -82,47 +84,64 @@ def get_staged_diff() -> tuple[str, list[str]]:
     return res_diff.stdout, candidate_files
 
 
+def strip_thinking(text: str) -> str:
+    """Remove <think>...</think> reasoning blocks (DeepSeek-R1 style) before verdict parsing."""
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
+
+def extract_thinking(text: str) -> str:
+    """Pull out the <think>...</think> reasoning block, if present, for reporting purposes."""
+    match = re.search(r"<think>(.*?)</think>", text, flags=re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+
 def build_system_prompt() -> str:
     return (
         "You are an elite DevSecOps Gatekeeper and Application Security Auditor.\n"
         "Your task is to analyze staged Git diffs strictly for genuine, exploitable security vulnerabilities and explicit secret leaks.\n\n"
-        
+
+        "### CRITICAL GROUNDING RULE\n"
+        "You must base your entire analysis STRICTLY on the literal code shown in the diff below. "
+        "Do NOT infer, assume, or reference any library, API, or provider not explicitly present in the diff text. "
+        "If the diff is too small or ambiguous to assess meaningfully, state that explicitly and default to APPROVE "
+        "rather than inventing context.\n\n"
+
         "### CONTEXT\n"
         "Stack: C#, ASP.NET Core (Identity), EF Core, MediatR, CQRS, Clean Architecture.\n\n"
-        
+
         "### SECURITY REVIEW CRITERIA:\n"
         "1. Auth & BOLA (IDOR): Missing [Authorize] attributes, bypassing MediatR pipeline behaviors for auth, or missing tenant/user ownership validation before data access.\n"
         "2. Injection: Using EF Core 'FromSqlRaw' with string interpolation (SQLi), unvalidated file paths (Directory Traversal), or unsafe deserialization.\n"
         "3. Secrets: ACTUAL hardcoded production API keys, JWT symmetric keys, or DB passwords.\n"
         "4. Cryptography & Privacy: Custom crypto implementations, or logging plaintext PII/passwords.\n\n"
-        
+
         "### FALSE POSITIVE SUPPRESSION (CRITICAL):\n"
         "- IGNORE dependency injection boilerplate, localhost URLs, and standard routing.\n"
         "- IGNORE references to secrets via IConfiguration or Environment variables (these are safe).\n"
         "- IGNORE test data, mock variables, and appsettings.Development.json configurations.\n"
         "- DO NOT hallucinate vulnerabilities. Assume standard ASP.NET Core secure defaults are active unless the diff explicitly overrides them.\n\n"
-        
+
         "### INSTRUCTIONS\n"
         "1. Read the diff and identify the attack surface.\n"
         "2. Think step-by-step in the Threat Analysis section before concluding.\n"
         "3. If genuine, exploitable vulnerabilities or exposed production secrets exist, you MUST REJECT.\n"
         "4. If the code introduces no real attack surface, you MUST APPROVE.\n\n"
-        
+
         "### OUTPUT FORMAT\n"
         "You must respond EXACTLY in the following Markdown structure:\n\n"
-        
+
         "### 🛡️ Security Assessment Summary\n"
         "[1-2 sentences summarizing the attack surface changes]\n\n"
-        
+
         "### ⚙️ Threat Analysis\n"
         "[Briefly model the threat. Think step-by-step: Is authorization enforced? Is input sanitized? Are secrets actually exposed?]\n\n"
-        
+
         "### 🚨 Vulnerabilities\n"
         "- [Actionable bullet points of genuine exploits/leaks, or '- None identified']\n\n"
-        
+
         "### 🔒 Hardening Suggestions\n"
         "- [Defense-in-depth suggestions, or '- None']\n\n"
-        
+
         "### 🎯 Verdict\n"
         "[VERDICT: APPROVE] or [VERDICT: REJECT]"
     )
@@ -161,31 +180,48 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     )
 
     full_response = ""
+    in_think_block = False
     print(f"\n{BOLD}{MAGENTA}🛡️  Security Agent ({OLLAMA_MODEL}) reviewing {len(files)} staged file(s)...{RESET}\n")
     if truncated:
         print(f"{DIM}(Note: Large diff truncated to first {MAX_DIFF_CHARS} chars){RESET}\n")
 
     try:
-        with urllib.request.urlopen(req, timeout=120) as response:
+        with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
             for line in response:
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
                 token = chunk.get("message", {}).get("content", "")
-                sys.stdout.write(token)
-                sys.stdout.flush()
                 full_response += token
-        print("\n")
+
+                # Dim the reasoning trace in the terminal so it reads as "thinking",
+                # keep the actual answer in normal color.
+                if "<think>" in token:
+                    in_think_block = True
+                if "</think>" in token:
+                    in_think_block = False
+                    sys.stdout.write(RESET)
+                    sys.stdout.flush()
+                    continue
+
+                sys.stdout.write((DIM if in_think_block else RESET) + token)
+                sys.stdout.flush()
+        print(f"{RESET}\n")
     except Exception as e:
         print(f"\n{YELLOW}⚠️ Error during Ollama security review: {e}{RESET}\n")
         return "", "ERROR"
 
+    # Verdict parsing must ignore the <think> reasoning block — the model may
+    # mention words like "SQL injection" while reasoning ABOUT whether one
+    # exists, which would false-trigger the keyword fallback below otherwise.
+    answer_only = strip_thinking(full_response)
+
     verdict = "APPROVE"
-    if "[VERDICT: REJECT]" in full_response or "VERDICT: REJECT" in full_response:
+    if "[VERDICT: REJECT]" in answer_only or "VERDICT: REJECT" in answer_only:
         verdict = "REJECT"
-    elif "[VERDICT: APPROVE]" in full_response or "VERDICT: APPROVE" in full_response:
+    elif "[VERDICT: APPROVE]" in answer_only or "VERDICT: APPROVE" in answer_only:
         verdict = "APPROVE"
-    elif any(k in full_response.lower() for k in ["recommend rejecting", "reject this commit", "critical vulnerability", "sql injection", "idor vulnerability", "hardcoded credentials"]):
+    elif any(k in answer_only.lower() for k in ["recommend rejecting", "reject this commit", "critical vulnerability", "sql injection", "idor vulnerability", "hardcoded credentials"]):
         verdict = "REJECT"
 
     return full_response, verdict
@@ -199,6 +235,13 @@ def save_security_report(repo_root: str, branch: str, files: list[str], review_t
     report_path = os.path.join(git_dir, "LAST_SECURITY_REPORT.md")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     badge = "🟢 **PASSED (APPROVE)**" if verdict == "APPROVE" else "🔴 **REJECTED (SECURITY RISKS FOUND)**"
+
+    answer = strip_thinking(review_text)
+    reasoning = extract_thinking(review_text)
+    reasoning_block = (
+        f"\n<details>\n<summary>🧠 Model Reasoning (click to expand)</summary>\n\n{reasoning}\n\n</details>\n"
+        if reasoning else ""
+    )
 
     report_content = f"""# 🛡️ Local Security Pre-Commit Report
 
@@ -214,8 +257,8 @@ def save_security_report(repo_root: str, branch: str, files: list[str], review_t
 
 ---
 
-{review_text.strip()}
-
+{answer.strip()}
+{reasoning_block}
 ---
 *Generated automatically by `.git/hooks/pre-commit` via Ollama.*
 """
