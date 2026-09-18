@@ -41,25 +41,13 @@ namespace Devjourney.BackgroundServices
             // Purge Posts
             try
             {
-                int totalDeletedPosts = 0;
-                while (!stoppingToken.IsCancellationRequested)
-                {
-                    using var scope = _serviceProvider.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                using var scope = _serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-                    var posts = await dbContext.Posts
-                        .IgnoreQueryFilters()
-                        .Where(p => p.DeletedAt != null && p.DeletedAt <= thresholdDate)
-                        .Take(100)
-                        .ToListAsync(stoppingToken);
-
-                    if (posts.Count == 0)
-                        break;
-
-                    dbContext.Posts.RemoveRange(posts);
-                    await dbContext.SaveChangesAsync(stoppingToken);
-                    totalDeletedPosts += posts.Count;
-                }
+                var totalDeletedPosts = await dbContext.Posts
+                    .IgnoreQueryFilters()
+                    .Where(p => p.DeletedAt != null && p.DeletedAt <= thresholdDate)
+                    .ExecuteDeleteAsync(stoppingToken);
 
                 if (totalDeletedPosts > 0)
                 {
@@ -74,25 +62,13 @@ namespace Devjourney.BackgroundServices
             // Purge Users
             try
             {
-                int totalDeletedUsers = 0;
-                while (!stoppingToken.IsCancellationRequested)
-                {
-                    using var scope = _serviceProvider.CreateScope();
-                    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                using var scope = _serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-                    var users = await dbContext.Users
-                        .IgnoreQueryFilters()
-                        .Where(u => u.DeletedAt != null && u.DeletedAt <= thresholdDate)
-                        .Take(100)
-                        .ToListAsync(stoppingToken);
-
-                    if (users.Count == 0)
-                        break;
-
-                    dbContext.Users.RemoveRange(users);
-                    await dbContext.SaveChangesAsync(stoppingToken);
-                    totalDeletedUsers += users.Count;
-                }
+                var totalDeletedUsers = await dbContext.Users
+                    .IgnoreQueryFilters()
+                    .Where(u => u.DeletedAt != null && u.DeletedAt <= thresholdDate)
+                    .ExecuteDeleteAsync(stoppingToken);
 
                 if (totalDeletedUsers > 0)
                 {

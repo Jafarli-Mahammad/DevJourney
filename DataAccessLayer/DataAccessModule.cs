@@ -102,7 +102,7 @@ namespace DataAccessLayer
 
             builder.RegisterType<JwtService>()
                 .As<IJwtService>()
-                .InstancePerLifetimeScope();
+                .SingleInstance();
 
             builder.RegisterType<CurrentUserService>()
                .As<ICurrentUserService>()
