@@ -25,10 +25,18 @@ namespace DataAccessLayer.Repositories
                 return Array.Empty<Guid>();
             }
 
-            return values
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(value => Guid.Parse(value))
-                .ToArray();
+            var span = values.AsSpan();
+            var list = new List<Guid>();
+            foreach (var range in span.Split(','))
+            {
+                var segment = span[range].Trim();
+                if (!segment.IsEmpty && Guid.TryParse(segment, out var id))
+                {
+                    list.Add(id);
+                }
+            }
+
+            return list;
         }
 
         protected async Task<PagedResult<TItemDto>> GetPagedInternalAsync<TItemDto, TRow>(

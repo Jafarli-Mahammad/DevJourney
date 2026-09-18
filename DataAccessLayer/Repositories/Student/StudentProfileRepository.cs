@@ -48,6 +48,7 @@ namespace DataAccessLayer.Repositories
             if (profile == null) return null;
 
             var user = await DataContext.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == profile.ApplicationUserId, cancellationToken);
 
             return (profile, user?.Email);
@@ -56,6 +57,7 @@ namespace DataAccessLayer.Repositories
         public async Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await DataContext.StudentProfiles
+                .AsNoTracking()
                 .Include(sp => sp.University)
                 .Include(sp => sp.Profession)
                 .Include(sp => sp.MainRole)
@@ -70,6 +72,7 @@ namespace DataAccessLayer.Repositories
         public async Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, CancellationToken cancellationToken = default)
         {
             return await DataContext.StudentProfiles
+                .AsNoTracking()
                 .Include(sp => sp.University)
                 .Include(sp => sp.Profession)
                 .Include(sp => sp.MainRole)

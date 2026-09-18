@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Git pre-commit hook to trigger Qwen2.5-Coder AI QA Reviewer
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT_PATH="$REPO_ROOT/scripts/git-qa-reviewer.py"
+
+if [ -f "$SCRIPT_PATH" ]; then
+    python3 "$SCRIPT_PATH"
+    exit $?
+fi
+
+exit 0

@@ -22,6 +22,9 @@ namespace DataAccessLayer.Configurations.CompetitionConfig
                 .WithOne(s => s.Competition)
                 .HasForeignKey(s => s.CompetitionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(c => c.IsPublished);
+            builder.HasIndex(c => c.PartnerId);
         }
     }
 }
