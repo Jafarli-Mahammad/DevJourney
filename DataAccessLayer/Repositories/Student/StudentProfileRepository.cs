@@ -56,8 +56,18 @@ namespace DataAccessLayer.Repositories
 
         public async Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await DataContext.StudentProfiles
-                .AsNoTracking()
+            return await GetFullProfileByIdAsync(id, asNoTracking: true, cancellationToken);
+        }
+
+        public async Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, bool asNoTracking, CancellationToken cancellationToken = default)
+        {
+            var query = DataContext.StudentProfiles.AsQueryable();
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
                 .Include(sp => sp.University)
                 .Include(sp => sp.Profession)
                 .Include(sp => sp.MainRole)
@@ -71,8 +81,18 @@ namespace DataAccessLayer.Repositories
 
         public async Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, CancellationToken cancellationToken = default)
         {
-            return await DataContext.StudentProfiles
-                .AsNoTracking()
+            return await GetFullProfileByUserIdAsync(applicationUserId, asNoTracking: false, cancellationToken);
+        }
+
+        public async Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, bool asNoTracking, CancellationToken cancellationToken = default)
+        {
+            var query = DataContext.StudentProfiles.AsQueryable();
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
                 .Include(sp => sp.University)
                 .Include(sp => sp.Profession)
                 .Include(sp => sp.MainRole)

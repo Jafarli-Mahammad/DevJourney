@@ -41,7 +41,7 @@ namespace Application.Modules.Student.Queries.GetMyStudentProfile
                 throw new UnauthorizedException();
             }
 
-            var profile = await _studentProfileRepository.GetFullProfileByUserIdAsync(_currentUserService.UserId, cancellationToken);
+            var profile = await _studentProfileRepository.GetFullProfileByUserIdAsync(_currentUserService.UserId, asNoTracking: true, cancellationToken);
             if (profile == null)
             {
                 return null;

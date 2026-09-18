@@ -4,8 +4,10 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 SCRIPT_PATH="$REPO_ROOT/scripts/git-qa-reviewer.py"
 
 if [ -f "$SCRIPT_PATH" ]; then
-    python3 "$SCRIPT_PATH"
-    exit $?
+    if command -v python3 >/dev/null 2>&1; then
+        python3 "$SCRIPT_PATH"
+        exit $?
+    fi
 fi
 
 exit 0

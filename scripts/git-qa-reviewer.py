@@ -54,6 +54,7 @@ def get_available_ollama_model() -> tuple[bool, str, list[str]]:
         req = urllib.request.Request(f"{OLLAMA_ENDPOINT}/api/tags", method="GET")
         with urllib.request.urlopen(req, timeout=3) as response:
             if response.status != 200:
+                print(f"{DIM}[QA Hook] Ollama returned HTTP status {response.status}. Skipping AI check.{RESET}")
                 return False, "", []
             data = json.loads(response.read().decode("utf-8"))
             models = [m.get("name", "") for m in data.get("models", [])]
@@ -74,11 +75,16 @@ def get_available_ollama_model() -> tuple[bool, str, list[str]]:
                 if "qwen" in m.lower() or "coder" in m.lower():
                     return True, m, models
             
-            if models:
-                return True, models[0], models
-            
-            return True, "", []
-    except Exception:
+            # Do not fall back to arbitrary non-coding models
+            return True, "", models
+    except urllib.error.URLError as e:
+        print(f"{DIM}[QA Hook] Ollama connection error ({e.reason}) at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
+        return False, "", []
+    except json.JSONDecodeError as e:
+        print(f"{DIM}[QA Hook] Failed to parse Ollama tags response as JSON: {e}. Skipping AI check.{RESET}")
+        return False, "", []
+    except Exception as e:
+        print(f"{DIM}[QA Hook] Unexpected error discovering Ollama models: {e}. Skipping AI check.{RESET}")
         return False, "", []
 
 
@@ -293,11 +299,11 @@ def main():
     is_running, resolved_model, available_models = get_available_ollama_model()
 
     if not is_running:
-        print(f"{DIM}[QA Hook] Ollama is not reachable at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
         return 0
 
     if not resolved_model:
-        print(f"{YELLOW}[QA Hook] Ollama is running, but no suitable Qwen/Coder model was found.{RESET}")
+        available_str = f" (installed: {', '.join(available_models)})" if available_models else ""
+        print(f"{YELLOW}[QA Hook] Ollama is running, but no suitable Qwen/Coder model was found{available_str}.{RESET}")
         print(f"{DIM}[QA Hook] To enable AI pre-commit reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
         return 0
 
