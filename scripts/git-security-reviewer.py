@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-AI Pre-Commit Security Reviewer powered by local DeepSeek-R1 (14B) via Ollama.
+AI Pre-Commit Security Reviewer powered by local Qwen2.5-Coder (7B) via Ollama.
+(DeepSeek-R1 14B configuration preserved as commented-out option)
 Dedicated to detecting security vulnerabilities, authorization issues (BOLA/BFLA),
 hardcoded secrets, injection vectors, and untrusted data handling in .NET/C#.
 """
@@ -17,7 +18,13 @@ import urllib.error
 
 # Configuration
 OLLAMA_ENDPOINT = os.environ.get("OLLAMA_ENDPOINT", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "deepseek-r1:14b")
+
+# DeepSeek-R1 (14B) - commented out:
+# OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "deepseek-r1:14b")
+
+# Active Model: Qwen2.5-Coder
+OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "qwen2.5-coder:7b")
+
 MAX_DIFF_CHARS = int(os.environ.get("MAX_DIFF_CHARS", "18000"))
 REQUEST_TIMEOUT = int(os.environ.get("SECURITY_REVIEW_TIMEOUT", "240"))
 
@@ -49,13 +56,50 @@ def is_ignored(filename: str) -> bool:
     return False
 
 
-def check_ollama_status() -> bool:
+def get_available_ollama_model() -> tuple[bool, str, list[str]]:
+    """
+    Checks if Ollama is running and returns (is_running, resolved_model_name, available_models).
+    """
     try:
         req = urllib.request.Request(f"{OLLAMA_ENDPOINT}/api/tags", method="GET")
-        with urllib.request.urlopen(req, timeout=2) as response:
-            return response.status == 200
-    except Exception:
-        return False
+        with urllib.request.urlopen(req, timeout=3) as response:
+            if response.status != 200:
+                print(f"{DIM}[Security Hook] Ollama returned HTTP status {response.status}. Skipping AI check.{RESET}")
+                return False, "", []
+            data = json.loads(response.read().decode("utf-8"))
+            models = [m.get("name", "") for m in data.get("models", [])]
+            
+            # Check configured target model
+            target_model = OLLAMA_MODEL
+            if target_model in models:
+                return True, target_model, models
+            
+            # Match base name (e.g. qwen2.5-coder without tag or with :latest)
+            target_base = target_model.split(":")[0]
+            for m in models:
+                if m == target_base or m.startswith(f"{target_base}:"):
+                    return True, m, models
+            
+            # Match any coder or qwen model
+            for m in models:
+                if "qwen" in m.lower() or "coder" in m.lower():
+                    return True, m, models
+
+            # DeepSeek fallback (commented out):
+            # for m in models:
+            #     if "deepseek" in m.lower():
+            #         return True, m, models
+            
+            return True, "", models
+    except urllib.error.URLError as e:
+        print(f"{DIM}[Security Hook] Ollama connection error ({e.reason}) at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
+        return False, "", []
+    except json.JSONDecodeError as e:
+        print(f"{DIM}[Security Hook] Failed to parse Ollama tags response as JSON: {e}. Skipping AI check.{RESET}")
+        return False, "", []
+    except Exception as e:
+        print(f"{DIM}[Security Hook] Unexpected error discovering Ollama models: {e}. Skipping AI check.{RESET}")
+        return False, "", []
 
 
 def get_git_info() -> tuple[str, str, str]:
@@ -85,7 +129,7 @@ def get_staged_diff() -> tuple[str, list[str]]:
 
 
 def strip_thinking(text: str) -> str:
-    """Remove <think>...</think> reasoning blocks (DeepSeek-R1 style) before verdict parsing."""
+    """Remove <think>...</think> reasoning blocks (if present) before verdict parsing."""
     return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
 
@@ -147,7 +191,7 @@ def build_system_prompt() -> str:
     )
 
 
-def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, str]:
+def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str]) -> tuple[str, str]:
     truncated = False
     if len(diff_text) > MAX_DIFF_CHARS:
         diff_text = diff_text[:MAX_DIFF_CHARS] + "\n\n... [Diff truncated: exceeding max token limit for security review] ..."
@@ -160,7 +204,7 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     )
 
     payload = {
-        "model": OLLAMA_MODEL,
+        "model": model_name,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -169,9 +213,9 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
         "options": {
             "temperature": 0.1,
             "top_p": 0.85,
-            "num_ctx": 16384,
+            # "num_ctx": 16384,  # DeepSeek extended context window (commented out)
         },
-        "keep_alive": "0"
+        "keep_alive": 0  # Unload immediately after review so GPU memory is freed
     }
 
     req = urllib.request.Request(
@@ -182,7 +226,7 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
 
     full_response = ""
     in_think_block = False
-    print(f"\n{BOLD}{MAGENTA}🛡️  Security Agent ({OLLAMA_MODEL}) reviewing {len(files)} staged file(s)...{RESET}\n")
+    print(f"\n{BOLD}{MAGENTA}🛡️  Security Agent ({model_name}) reviewing {len(files)} staged file(s)...{RESET}\n")
     if truncated:
         print(f"{DIM}(Note: Large diff truncated to first {MAX_DIFF_CHARS} chars){RESET}\n")
 
@@ -192,11 +236,10 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
-                token = chunk.get("message", {}).get("content", "")
+                token = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
                 full_response += token
 
-                # Dim the reasoning trace in the terminal so it reads as "thinking",
-                # keep the actual answer in normal color.
+                # Dim the reasoning trace if <think> blocks are present
                 if "<think>" in token:
                     in_think_block = True
                 if "</think>" in token:
@@ -212,13 +255,13 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
         print(f"\n{YELLOW}⚠️ Error during Ollama security review: {e}{RESET}\n")
         return "", "ERROR"
 
-    # Verdict parsing must ignore the <think> reasoning block — the model may
-    # mention words like "SQL injection" while reasoning ABOUT whether one
-    # exists, which would false-trigger the keyword fallback below otherwise.
+    # Verdict parsing ignores any <think> reasoning block if present
     answer_only = strip_thinking(full_response)
 
     verdict = "APPROVE"
-    if "[VERDICT: REJECT]" in answer_only or "VERDICT: REJECT" in answer_only:
+    if not answer_only.strip():
+        verdict = "REJECT"
+    elif "[VERDICT: REJECT]" in answer_only or "VERDICT: REJECT" in answer_only:
         verdict = "REJECT"
     elif "[VERDICT: APPROVE]" in answer_only or "VERDICT: APPROVE" in answer_only:
         verdict = "APPROVE"
@@ -228,7 +271,7 @@ def stream_review_from_ollama(diff_text: str, files: list[str]) -> tuple[str, st
     return full_response, verdict
 
 
-def save_security_report(repo_root: str, branch: str, files: list[str], review_text: str, verdict: str):
+def save_security_report(repo_root: str, branch: str, model_name: str, files: list[str], review_text: str, verdict: str):
     git_dir = os.path.join(repo_root, ".git")
     if not os.path.exists(git_dir):
         return
@@ -248,7 +291,7 @@ def save_security_report(repo_root: str, branch: str, files: list[str], review_t
 
 - **Date:** `{now_str}`
 - **Branch:** `{branch}`
-- **Model:** `{OLLAMA_MODEL}`
+- **Model:** `{model_name}`
 - **Status:** {badge}
 
 ---
@@ -303,8 +346,16 @@ def main():
     if os.environ.get("SKIP_SECURITY_REVIEW") == "1" or os.environ.get("SKIP_QA") == "1":
         return 0
 
-    if not check_ollama_status():
-        print(f"{DIM}[Security Hook] Ollama not reachable at {OLLAMA_ENDPOINT}. Skipping AI security check.{RESET}")
+    is_running, resolved_model, available_models = get_available_ollama_model()
+
+    if not is_running:
+        return 0
+
+    if not resolved_model:
+        available_str = f" (installed: {', '.join(available_models)})" if available_models else ""
+        print(f"{YELLOW}[Security Hook] Ollama is running, but no suitable Qwen/Coder model was found{available_str}.{RESET}")
+        print(f"{DIM}[Security Hook] To enable AI pre-commit security reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
+        # print(f"{DIM}[Security Hook] For DeepSeek-R1: `ollama pull deepseek-r1:14b`{RESET}")
         return 0
 
     repo_root, branch, _ = get_git_info()
@@ -318,11 +369,11 @@ def main():
     if not diff_text.strip() or not files:
         return 0
 
-    response, verdict = stream_review_from_ollama(diff_text, files)
+    response, verdict = stream_review_from_ollama(resolved_model, diff_text, files)
     if verdict == "ERROR":
         return 0
 
-    save_security_report(repo_root, branch, files, response, verdict)
+    save_security_report(repo_root, branch, resolved_model, files, response, verdict)
 
     proceed = prompt_user_confirmation(verdict)
     if not proceed:
