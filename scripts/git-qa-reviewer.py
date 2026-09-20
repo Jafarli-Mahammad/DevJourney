@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 AI Pre-Commit QA Reviewer powered by local Ollama (Qwen2.5-Coder 7B).
-Optimized specifically for 7B parameter reasoning, C#/.NET Clean Architecture,
-and high-signal code quality checks.
+Optimized specifically for high-signal code quality, domain-aware grounding,
+deterministic anti-pattern detection, and zero-fluff gatekeeping.
 """
 
 import os
+import re
 import sys
 import json
 import fnmatch
@@ -17,7 +18,7 @@ import urllib.error
 # Configuration
 OLLAMA_ENDPOINT = os.environ.get("OLLAMA_ENDPOINT", "http://localhost:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5-coder:7b")
-MAX_DIFF_CHARS = int(os.environ.get("MAX_DIFF_CHARS", "18000"))
+MAX_DIFF_CHARS = int(os.environ.get("MAX_DIFF_CHARS", "20000"))
 
 # File exclusion patterns
 IGNORE_PATTERNS = [
@@ -46,6 +47,53 @@ def is_ignored(filename: str) -> bool:
     return False
 
 
+def classify_files(files: list[str]) -> dict[str, list[str]]:
+    categories = {
+        "dotnet": [],
+        "python": [],
+        "shell": [],
+        "web": [],
+        "docs_configs": []
+    }
+    for f in files:
+        ext = os.path.splitext(f)[1].lower()
+        if ext in (".cs", ".fs", ".csproj", ".sln"):
+            categories["dotnet"].append(f)
+        elif ext in (".py", ".pyi"):
+            categories["python"].append(f)
+        elif ext in (".sh", ".bash", ".zsh"):
+            categories["shell"].append(f)
+        elif ext in (".ts", ".tsx", ".js", ".jsx", ".vue", ".svelte", ".html", ".css"):
+            categories["web"].append(f)
+        else:
+            categories["docs_configs"].append(f)
+    return categories
+
+
+def run_deterministic_qa_checks(file_diffs: dict[str, str]) -> list[str]:
+    """Runs instant (sub-millisecond) pattern checks only on relevant language files."""
+    findings = []
+    for filepath, diff in file_diffs.items():
+        ext = os.path.splitext(filepath)[1].lower()
+        added_lines = [line[1:] for line in diff.splitlines() if line.startswith("+") and not line.startswith("+++")]
+
+        for line in added_lines:
+            s_line = line.strip()
+            # C# checks
+            if ext in (".cs", ".fs"):
+                if re.search(r"\.(?:Result\b|Wait\(\)|GetAwaiter\(\)\.GetResult\(\))", s_line):
+                    findings.append(f"[{filepath}] Potential sync-over-async blocking call: `{s_line}`")
+                if re.search(r"\basync\s+void\s+(?!On[A-Z]|.*EventHandler|.*Click|.*Command)", s_line):
+                    findings.append(f"[{filepath}] Potential async void method: `{s_line}`")
+
+            # Python checks
+            elif ext in (".py", ".pyi"):
+                if re.search(r"^\s*except\s*:\s*(?:#.*)?$", s_line):
+                    findings.append(f"[{filepath}] Bare except clause catching BaseException: `{s_line}`")
+
+    return findings
+
+
 def get_available_ollama_model() -> tuple[bool, str, list[str]]:
     """
     Checks if Ollama is running and returns (is_running, resolved_model_name, available_models).
@@ -58,24 +106,20 @@ def get_available_ollama_model() -> tuple[bool, str, list[str]]:
                 return False, "", []
             data = json.loads(response.read().decode("utf-8"))
             models = [m.get("name", "") for m in data.get("models", [])]
-            
-            # Check configured target model
+
             target_model = OLLAMA_MODEL
             if target_model in models:
                 return True, target_model, models
-            
-            # Match base name (e.g. qwen2.5-coder without tag or with :latest)
+
             target_base = target_model.split(":")[0]
             for m in models:
                 if m == target_base or m.startswith(f"{target_base}:"):
                     return True, m, models
-            
-            # Match any coder or qwen model
+
             for m in models:
                 if "qwen" in m.lower() or "coder" in m.lower():
                     return True, m, models
-            
-            # Do not fall back to arbitrary non-coding models
+
             return True, "", models
     except urllib.error.URLError as e:
         print(f"{DIM}[QA Hook] Ollama connection error ({e.reason}) at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
@@ -89,82 +133,191 @@ def get_available_ollama_model() -> tuple[bool, str, list[str]]:
 
 
 def get_git_info() -> tuple[str, str, str]:
-    """Returns (repo_root, current_branch, commit_author)"""
     try:
         root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True).stdout.strip()
         branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-        author = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, check=True).stdout.strip() or "Developer"
+        author = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True).stdout.strip() or "Developer"
         return root, branch, author
-    except Exception:
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
         return ".", "unknown", "Developer"
 
 
-def get_staged_diff() -> tuple[str, list[str]]:
+def get_staged_diff_per_file() -> dict[str, str]:
     cmd_files = ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"]
     res_files = subprocess.run(cmd_files, capture_output=True, text=True, check=True)
     staged_files = [f.strip() for f in res_files.stdout.splitlines() if f.strip()]
 
     candidate_files = [f for f in staged_files if not is_ignored(f)]
 
-    if not candidate_files:
-        return "", []
+    file_diffs = {}
+    for f in candidate_files:
+        cmd_diff = ["git", "diff", "--cached", "--unified=6", "--", f]
+        diff_out = subprocess.run(cmd_diff, capture_output=True, text=True, check=True).stdout
+        if diff_out.strip():
+            file_diffs[f] = diff_out
+    return file_diffs
 
-    cmd_diff = ["git", "diff", "--cached", "--unified=3", "--"] + candidate_files
-    res_diff = subprocess.run(cmd_diff, capture_output=True, text=True, check=True)
-    return res_diff.stdout, candidate_files
+
+def build_clean_diff_text(file_diffs: dict[str, str], max_chars: int) -> tuple[str, bool]:
+    """Assembles diff text by whole files to prevent mid-line or broken syntax truncation."""
+    accumulated = []
+    current_len = 0
+    truncated = False
+
+    for filepath, diff in file_diffs.items():
+        if current_len + len(diff) <= max_chars or not accumulated:
+            accumulated.append(diff)
+            current_len += len(diff)
+        else:
+            truncated = True
+            accumulated.append(f"\n... [Diff for `{filepath}` omitted: pre-commit max char limit reached] ...\n")
+
+    return "\n".join(accumulated), truncated
 
 
-def build_system_prompt() -> str:
-    """
-    Highly structured prompt optimized for Qwen2.5-Coder 7B.
-    Guides the model with strict domain rules, anti-hallucination guardrails, and .NET awareness.
-    """
+def strip_thinking(text: str) -> str:
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
+
+def build_system_prompt(categories: dict[str, list[str]], deterministic_findings: list[str]) -> str:
+    langs = []
+    rules = []
+
+    if categories["dotnet"]:
+        langs.append("C# / .NET (Clean Architecture, MediatR, EF Core)")
+        rules.append(
+            "- C# / .NET:\n"
+            "  * Async: Detect sync-over-async (.Result, .Wait()), missing await on Task returns, or async void.\n"
+            "  * EF Core & CQRS: Detect N+1 queries in loops, missing AsNoTracking() on read-only queries, or mutating state in MediatR query handlers.\n"
+            "  * Null safety: Detect unguarded null dereferences on reference types."
+        )
+
+    if categories["python"]:
+        langs.append("Python")
+        rules.append(
+            "- Python:\n"
+            "  * Detect swallowed exceptions, mutable default args, or unclosed file/stream handles.\n"
+            "  * Detect failure to check subprocess return codes or unhandled JSON decoding."
+        )
+
+    if categories["shell"]:
+        langs.append("Shell / Bash")
+        rules.append(
+            "- Shell:\n"
+            "  * Detect unquoted variable expansions in commands, failure to handle exit codes, or broken pipe handling."
+        )
+
+    if categories["web"]:
+        langs.append("Frontend / TypeScript / JavaScript")
+        rules.append(
+            "- Frontend:\n"
+            "  * Detect unhandled Promise rejections, memory leaks (un-cleaned listeners/intervals), or state mutation bugs."
+        )
+
+    stack_str = ", ".join(langs) if langs else "General Code"
+    rules_str = "\n".join(rules) if rules else "- Focus on syntax, unhandled error cases, and logic flow."
+
+    findings_block = ""
+    if deterministic_findings:
+        findings_block = (
+            "\n### ⚠️ AUTOMATED PRE-SCAN FINDINGS (Verify these carefully):\n" +
+            "\n".join(f"- {finding}" for finding in deterministic_findings) +
+            "\n"
+        )
+
     return (
-        "You are an expert .NET/C# QA Engineer and Senior Code Reviewer acting as a strict Git pre-commit gatekeeper.\n" +
-        "Your task is to analyze staged Git diffs and explicitly APPROVE or REJECT the commit based on quality and performance.\n\n" +
-
-        "### CONTEXT\n" +
-        "Stack: C#, ASP.NET Core, EF Core, MediatR, CQRS, Clean Architecture.\n\n" +
-
-        "### REVIEW CRITERIA (Focus exclusively on these):\n" +
-        "1. Performance & Efficiency: Unnecessary allocations, N+1 queries, missing AsNoTracking, blocking async (.Result/.Wait()), or sync-over-async.\n" +
-        "2. Code Quality & Logic: Null reference risks, unhandled exceptions, swallowing exceptions, mutating state in MediatR queries, or Clean Architecture boundary violations.\n" +
-        "3. Maintainability: Highly complex methods, massive code duplication, or improper dependency injection.\n" +
-        "IGNORE cosmetic spacing, styling, variable naming, and security/auth checks.\n\n" +
-
-        "### INSTRUCTIONS\n" +
-        "1. Read the provided git diff carefully.\n" +
-        "2. Analyze the code based purely on the Review Criteria.\n" +
-        "3. If critical logic flaws, memory leaks, performance bottlenecks, or boundary violations exist, you MUST REJECT.\n" +
-        "4. If the code is efficient, logically sound, and contains zero blocking issues, you MUST APPROVE.\n\n" +
-
-        "### OUTPUT FORMAT\n" +
-        "You must respond EXACTLY in the following Markdown structure. Do not add introductory conversational text.\n\n" +
-
-        "### 🔍 Summary\n" +
-        "[1-2 sentences summarizing the architectural or logic changes]\n\n" +
-
-        "### ⚙️ Analysis\n" +
-        "[Briefly think through the code against the criteria. Note how the changes impact performance or maintainability.]\n\n" +
-
-        "### 🚀 QA & Performance Issues\n" +
-        "- [Bullet points of actionable bugs or bottlenecks found, or '- None identified']\n\n" +
-
-        "### 💡 Maintainability Suggestions\n" +
-        "- [1-2 structural or efficiency improvements, or '- None']\n\n" +
-
-        "### 🎯 Verdict\n" +
+        f"You are an elite Principal Software Engineer acting as a strict Git pre-commit QA gatekeeper.\n"
+        f"Staged Technology Stack: {stack_str}\n\n"
+        "### STRICT GROUNDING & ANTI-FLUFF RULES:\n"
+        "1. GROUNDING: Evaluate ONLY the code visible in the diff and surrounding context. Never speculate on unseen code or dependencies.\n"
+        "2. FORBIDDEN GENERIC ADVICE: Do NOT suggest 'add unit tests', 'consider logging', 'check race conditions', or 'refactor for maintainability'. Every reported issue MUST cite a concrete, demonstrable defect in the diff.\n"
+        "3. SILENCE ON CLEAN CODE: If there are zero critical logic bugs, memory leaks, or performance bottlenecks, you MUST output '- None identified' and APPROVE.\n"
+        "4. DO NOT OUTPUT RAW JSON: You must format your response strictly using the Markdown headers below.\n\n"
+        "### DOMAIN CRITERIA:\n"
+        f"{rules_str}\n"
+        f"{findings_block}\n"
+        "### OUTPUT FORMAT (Follow exactly):\n\n"
+        "### 🔍 Summary\n"
+        "[1-2 crisp sentences describing the architectural or logic changes]\n\n"
+        "### ⚙️ Analysis\n"
+        "[Technical evaluation of the code against the criteria]\n\n"
+        "### 🚀 QA & Performance Issues\n"
+        "- [Actionable defect with code/line reference, or '- None identified']\n\n"
+        "### 💡 Actionable Improvement\n"
+        "- [One concrete technical improvement directly applicable to this diff, or '- None']\n\n"
+        "### 🎯 Verdict\n"
         "[VERDICT: APPROVE] or [VERDICT: REJECT]"
     )
 
 
-def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str]) -> tuple[str, str]:
-    truncated = False
-    if len(diff_text) > MAX_DIFF_CHARS:
-        diff_text = diff_text[:MAX_DIFF_CHARS] + "\n\n... [Diff truncated: exceeding max token limit for pre-commit review] ..."
-        truncated = True
+def parse_verdict(response_text: str) -> str:
+    """
+    Robustly parses verdict. Fails closed (REJECT) if rejections or unresolved issues are found.
+    Handles JSON responses, raw markdown, and token patterns.
+    """
+    clean = strip_thinking(response_text).strip()
+    if not clean:
+        return "REJECT"
 
-    system_prompt = build_system_prompt()
+    # 1. Handle JSON response fallback (e.g. {"response": "REJECT"})
+    json_candidate = clean
+    json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", clean, re.DOTALL)
+    if json_match:
+        json_candidate = json_match.group(1).strip()
+    elif clean.startswith("{") and clean.endswith("}"):
+        json_candidate = clean
+
+    if json_candidate.startswith("{"):
+        try:
+            data = json.loads(json_candidate)
+            val = str(data.get("response", "") or data.get("verdict", "")).strip().upper()
+            if "REJECT" in val:
+                return "REJECT"
+            if "APPROVE" in val:
+                return "APPROVE"
+        except (json.JSONDecodeError, ValueError, TypeError, AttributeError):
+            pass
+
+    # 2. Check for actionable bulleted issues under QA Issues
+    issues_match = re.search(r"###\s*🚀\s*QA & Performance Issues\s*[\r\n]+(.*?)(?:\n###|\Z)", clean, re.DOTALL | re.IGNORECASE)
+    if issues_match:
+        content = issues_match.group(1).strip()
+        has_real_issues = any(
+            l.strip().startswith("-") and not re.search(r"\bnone(?:\s+identified)?\b", l, re.IGNORECASE)
+            for l in content.splitlines()
+        )
+        if has_real_issues:
+            return "REJECT"
+
+    # 3. Check explicit ### 🎯 Verdict section
+    verdict_section = re.search(r"###\s*🎯\s*Verdict\s*[\r\n]+(.*?)(?:\n\n|\Z)", clean, re.IGNORECASE | re.DOTALL)
+    if verdict_section:
+        verdict_text = verdict_section.group(1).strip()
+        if re.search(r"\bREJECT\b", verdict_text, re.IGNORECASE):
+            return "REJECT"
+        if re.search(r"\bAPPROVE\b", verdict_text, re.IGNORECASE):
+            return "APPROVE"
+
+    # 4. Check explicit bracketed or formatted tokens
+    if re.search(r"\[VERDICT:\s*REJECT\]", clean, re.IGNORECASE) or re.search(r"\bVERDICT:\s*REJECT\b", clean, re.IGNORECASE):
+        return "REJECT"
+    if re.search(r"\[VERDICT:\s*APPROVE\]", clean, re.IGNORECASE) or re.search(r"\bVERDICT:\s*APPROVE\b", clean, re.IGNORECASE):
+        return "APPROVE"
+
+    # 5. Raw REJECT presence anywhere in text
+    if re.search(r"\bREJECT\b", clean, re.IGNORECASE):
+        return "REJECT"
+
+    # 6. Explicit APPROVE presence
+    if re.search(r"\bAPPROVE\b", clean, re.IGNORECASE):
+        return "APPROVE"
+
+    # 7. Fail-safe: unknown or non-standard response defaults to REJECT
+    return "REJECT"
+
+
+def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str], categories: dict[str, list[str]], deterministic_findings: list[str], truncated: bool) -> tuple[str, str]:
+    system_prompt = build_system_prompt(categories, deterministic_findings)
     user_prompt = (
         f"Staged Files ({len(files)}):\n" + "\n".join(f"- `{f}`" for f in files) +
         f"\n\n```diff\n{diff_text}\n```"
@@ -180,12 +333,11 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
         "options": {
             "temperature": 0.1,
             "top_p": 0.85,
+            "num_ctx": 16384,
         },
-        "keep_alive": 0
+        "keep_alive": 0  # Evict model from GPU immediately after inference
     }
 
-    # NOTE: /api/chat is the correct endpoint for a "messages" payload.
-    # /api/generate expects a "prompt" string instead and does not accept "messages".
     req = urllib.request.Request(
         f"{OLLAMA_ENDPOINT}/api/chat",
         data=json.dumps(payload).encode("utf-8"),
@@ -195,15 +347,14 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
     full_response = ""
     print(f"\n{BOLD}{CYAN}🤖 QA Agent ({model_name}) reviewing {len(files)} staged file(s)...{RESET}\n")
     if truncated:
-        print(f"{DIM}(Note: Large diff truncated to first {MAX_DIFF_CHARS} chars){RESET}\n")
+        print(f"{DIM}(Note: Staged diff exceeded pre-commit limit; truncated at file boundaries){RESET}\n")
 
     try:
-        with urllib.request.urlopen(req, timeout=120) as response:
+        with urllib.request.urlopen(req, timeout=180) as response:
             for line in response:
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
-                # /api/chat streams {"message": {"content": "..."}} per chunk
                 token = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
                 sys.stdout.write(token)
                 sys.stdout.flush()
@@ -213,22 +364,11 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str])
         print(f"\n{YELLOW}⚠️ Error during Ollama inference: {e}{RESET}\n")
         return "", "ERROR"
 
-    # Fail-safe: an empty or non-substantive response must never silently pass.
-    verdict = "APPROVE"
-    if not full_response.strip():
-        verdict = "REJECT"
-    elif "[VERDICT: REJECT]" in full_response or "VERDICT: REJECT" in full_response:
-        verdict = "REJECT"
-    elif "[VERDICT: APPROVE]" in full_response or "VERDICT: APPROVE" in full_response:
-        verdict = "APPROVE"
-    elif any(k in full_response.lower() for k in ["potential bug", "security risk", "memory leak", "critical issue", "boundary violation"]):
-        verdict = "REJECT"
-
+    verdict = parse_verdict(full_response)
     return full_response, verdict
 
 
 def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str], review_text: str, verdict: str):
-    """Saves the latest review report to .git/LAST_QA_REPORT.md"""
     git_dir = os.path.join(repo_root, ".git")
     if not os.path.exists(git_dir):
         return
@@ -288,6 +428,9 @@ def prompt_user_confirmation(verdict: str) -> bool:
                 else:
                     tty_out.write(f"{RED}Commit aborted by user.{RESET}\n\n")
                     return False
+    except (KeyboardInterrupt, EOFError):
+        print(f"\n{RED}Commit aborted.{RESET}")
+        return False
     except Exception:
         return True
 
@@ -295,6 +438,28 @@ def prompt_user_confirmation(verdict: str) -> bool:
 def main():
     if os.environ.get("SKIP_QA") == "1":
         return 0
+
+    repo_root, branch, _ = get_git_info()
+
+    try:
+        file_diffs = get_staged_diff_per_file()
+    except subprocess.CalledProcessError as e:
+        print(f"{YELLOW}[QA Hook] Could not read git diff: {e}{RESET}")
+        return 0
+
+    if not file_diffs:
+        return 0
+
+    files = list(file_diffs.keys())
+    categories = classify_files(files)
+
+    # FAST PATH: If only documentation or static configuration files are staged, skip LLM
+    has_code = any([categories["dotnet"], categories["python"], categories["shell"], categories["web"]])
+    if not has_code:
+        print(f"{DIM}[QA Hook] Only documentation or static configs staged. Skipping AI QA check.{RESET}")
+        return 0
+
+    deterministic_findings = run_deterministic_qa_checks(file_diffs)
 
     is_running, resolved_model, available_models = get_available_ollama_model()
 
@@ -307,22 +472,12 @@ def main():
         print(f"{DIM}[QA Hook] To enable AI pre-commit reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
         return 0
 
-    repo_root, branch, _ = get_git_info()
+    diff_text, truncated = build_clean_diff_text(file_diffs, MAX_DIFF_CHARS)
 
-    try:
-        diff_text, files = get_staged_diff()
-    except subprocess.CalledProcessError as e:
-        print(f"{YELLOW}[QA Hook] Could not read git diff: {e}{RESET}")
-        return 0
-
-    if not diff_text.strip() or not files:
-        return 0
-
-    response, verdict = stream_review_from_ollama(resolved_model, diff_text, files)
+    response, verdict = stream_review_from_ollama(resolved_model, diff_text, files, categories, deterministic_findings, truncated)
     if verdict == "ERROR":
         return 0
 
-    # Save to .git/LAST_QA_REPORT.md
     save_qa_report(repo_root, branch, resolved_model, files, response, verdict)
 
     proceed = prompt_user_confirmation(verdict)
