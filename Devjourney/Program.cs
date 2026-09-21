@@ -14,16 +14,33 @@ public partial class Program
 {
     private static async Task Main(string[] args)
     {
+        // Phase: Wire & Token Claim Minification - strip SOAP XML URI schemas
+        System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+        System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
+
         var builder = WebApplication.CreateBuilder(args);
 
         builder.WebHost.ConfigureKestrel(options =>
         {
+            options.AddServerHeader = false;
             options.ConfigureEndpointDefaults(listenOptions =>
             {
                 listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
             });
             options.Limits.MaxConcurrentConnections = 100_000;
             options.Limits.MaxConcurrentUpgradedConnections = 10_000;
+            options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(2);
+            options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
+            options.Limits.Http2.InitialConnectionWindowSize = 1024 * 1024;
+            options.Limits.Http2.InitialStreamWindowSize = 512 * 1024;
+        });
+
+        builder.Services.Configure<Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions>(socketOptions =>
+        {
+            socketOptions.IOQueueCount = 0; // Direct ThreadPool dispatch
+            socketOptions.NoDelay = true;   // TCP_NODELAY (disable Nagle's algorithm)
+            socketOptions.MaxReadBufferSize = 64 * 1024;
+            socketOptions.MaxWriteBufferSize = 64 * 1024;
         });
 
         builder.Host.UseServiceProviderFactory(new DevJourneyServiceProviderFactory());
@@ -122,8 +139,49 @@ public partial class Program
                 LocalCacheExpiration = TimeSpan.FromSeconds(30)
             };
         });
-#pragma warning restore EXTEXP0018
-        builder.Services.AddResponseCompression();
+        // Phase: Real-Time Communication Layer (SignalR + MessagePack + Redis Backplane)
+        builder.Services.AddScoped<Application.Common.Interfaces.IRealTimeNotificationService, Devjourney.Services.SignalRRealTimeNotificationService>();
+        var signalRBuilder = builder.Services.AddSignalR(options =>
+        {
+            options.EnableDetailedErrors = builder.Environment.IsDevelopment();
+            options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+            options.MaximumReceiveMessageSize = 64 * 1024; // 64 KB per message
+        })
+        .AddMessagePackProtocol();
+
+        if (!string.IsNullOrWhiteSpace(redisConnection))
+        {
+            signalRBuilder.AddStackExchangeRedis(redisConnection, options =>
+            {
+                options.Configuration.ChannelPrefix = StackExchange.Redis.RedisChannel.Literal("DevJourney_SignalR");
+            });
+        }
+
+        // Phase: High-Efficiency Network Compression (Brotli + Gzip Fastest Level)
+        builder.Services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProvider>();
+            options.Providers.Add<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProvider>();
+            options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes.Concat(new[]
+            {
+                "application/json",
+                "application/problem+json",
+                "application/x-ndjson",
+                "image/svg+xml"
+            });
+        });
+
+        builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Fastest;
+        });
+
+        builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Fastest;
+        });
 
         builder.Services.AddOutputCache(options =>
         {
@@ -179,7 +237,13 @@ public partial class Program
             {
                 OnMessageReceived = context =>
                 {
-                    if (context.Request.Cookies.ContainsKey("accessToken"))
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                    {
+                        context.Token = accessToken;
+                    }
+                    else if (context.Request.Cookies.ContainsKey("accessToken"))
                     {
                         context.Token = context.Request.Cookies["accessToken"];
                     }
@@ -296,7 +360,8 @@ public partial class Program
         var app = builder.Build();
 
         app.UseResponseCompression();
-
+        app.UseMiddleware<Devjourney.Middlewares.HeaderMinificationMiddleware>();
+        app.UseMiddleware<Devjourney.Middlewares.FastETagMiddleware>();
         app.UseMiddleware<Devjourney.Middlewares.GlobalExceptionMiddleware>();
 
         app.MapGet("/", () => "Hello World!");
@@ -326,7 +391,17 @@ public partial class Program
         app.UseHttpsRedirection();
 
         app.UseDefaultFiles();
-        app.UseStaticFiles();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            OnPrepareResponse = ctx =>
+            {
+                var path = ctx.Context.Request.Path.Value ?? string.Empty;
+                if (path.StartsWith("/uploads/") || path.EndsWith(".js") || path.EndsWith(".css") || path.EndsWith(".webp") || path.EndsWith(".svg"))
+                {
+                    ctx.Context.Response.Headers.CacheControl = "public, max-age=31536000, immutable";
+                }
+            }
+        });
 
         if (app.Environment.IsDevelopment())
         {
@@ -390,6 +465,10 @@ public partial class Program
         });
 
         app.MapControllers();
+
+        // Phase: Real-Time SignalR Hub Endpoints
+        app.MapHub<Devjourney.Hubs.ScoreboardHub>("/hubs/scoreboard");
+        app.MapHub<Devjourney.Hubs.CompetitionHub>("/hubs/competition");
 
         app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 

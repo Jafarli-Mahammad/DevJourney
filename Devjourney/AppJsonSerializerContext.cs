@@ -36,6 +36,10 @@ namespace Devjourney
     [JsonSerializable(typeof(Application.Repositories.PagedResult<Application.Modules.Posts.Queries.GetB2BCoursePromoPost.B2BCoursePromoPostPagedItemDto>))]
     [JsonSerializable(typeof(Application.Repositories.PagedResult<Application.Modules.Posts.Queries.GetCorporateEventPost.CorporateEventPostPagedItemDto>))]
     [JsonSerializable(typeof(Application.Repositories.PagedResult<Application.Modules.Posts.Queries.GetNetworkingEventPost.NetworkingEventPostPagedItemDto>))]
+    [JsonSerializable(typeof(Application.Common.Models.RealTime.ScoreboardDeltaDto))]
+    [JsonSerializable(typeof(Application.Common.Models.RealTime.CompetitionPhaseNotificationDto))]
+    [JsonSerializable(typeof(Application.Common.Models.RealTime.CompetitionAnnouncementDto))]
+    [JsonSerializable(typeof(Application.Common.Models.RealTime.TimerSyncDto))]
     public partial class AppJsonSerializerContext : JsonSerializerContext
     {
     }
