@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-AI Pre-Commit QA Reviewer powered by local Ollama (Qwen2.5-Coder 7B).
-Optimized specifically for high-signal code quality, domain-aware grounding,
-deterministic anti-pattern detection, and zero-fluff gatekeeping.
+AI Pre-Commit Security Reviewer powered by local Qwen2.5-Coder (7B) via Ollama.
+(DeepSeek-R1 14B configuration preserved as commented-out option)
+Dedicated to detecting genuine, exploitable vulnerabilities, secret leaks,
+SQL injection, and unsafe untrusted data handling without false alarms.
 """
 
 import os
@@ -17,8 +18,15 @@ import urllib.error
 
 # Configuration
 OLLAMA_ENDPOINT = os.environ.get("OLLAMA_ENDPOINT", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5-coder:7b")
+
+# DeepSeek-R1 (14B) - commented out:
+# OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "deepseek-r1:14b")
+
+# Active Model: Qwen2.5-Coder
+OLLAMA_MODEL = os.environ.get("OLLAMA_SECURITY_MODEL", "qwen2.5-coder:7b")
+
 MAX_DIFF_CHARS = int(os.environ.get("MAX_DIFF_CHARS", "20000"))
+REQUEST_TIMEOUT = int(os.environ.get("SECURITY_REVIEW_TIMEOUT", "180"))
 
 # File exclusion patterns
 IGNORE_PATTERNS = [
@@ -34,6 +42,7 @@ CYAN = "\033[96m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RED = "\033[91m"
+MAGENTA = "\033[95m"
 BOLD = "\033[1m"
 DIM = "\033[2m"
 RESET = "\033[0m"
@@ -70,39 +79,58 @@ def classify_files(files: list[str]) -> dict[str, list[str]]:
     return categories
 
 
-def run_deterministic_qa_checks(file_diffs: dict[str, str]) -> list[str]:
-    """Runs instant (sub-millisecond) pattern checks only on relevant language files."""
+def run_deterministic_security_scan(file_diffs: dict[str, str]) -> list[str]:
+    """
+    Sub-millisecond static analyzer checking for definitive leaks and high-risk injection patterns
+    only on relevant files.
+    """
     findings = []
+
     for filepath, diff in file_diffs.items():
+        # Do not let reviewer scripts self-trigger on their own pattern definitions
+        if os.path.basename(filepath).startswith("git-") and filepath.endswith(".py"):
+            continue
+
         ext = os.path.splitext(filepath)[1].lower()
         added_lines = [line[1:] for line in diff.splitlines() if line.startswith("+") and not line.startswith("+++")]
 
         for line in added_lines:
             s_line = line.strip()
-            # C# checks
-            if ext in (".cs", ".fs"):
-                if re.search(r"\.(?:Result\b|Wait\(\)|GetAwaiter\(\)\.GetResult\(\))", s_line):
-                    findings.append(f"[{filepath}] Potential sync-over-async blocking call: `{s_line}`")
-                if re.search(r"\basync\s+void\s+(?!On[A-Z]|.*EventHandler|.*Click|.*Command)", s_line):
-                    findings.append(f"[{filepath}] Potential async void method: `{s_line}`")
 
-            # Python checks
-            elif ext in (".py", ".pyi"):
-                if re.search(r"^\s*except\s*:\s*(?:#.*)?$", s_line):
-                    findings.append(f"[{filepath}] Bare except clause catching BaseException: `{s_line}`")
+            # 1. Private keys (all files)
+            if re.search(r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----", s_line):
+                findings.append(f"[{filepath}] Hardcoded Private Key detected: `{s_line[:40]}...`")
+
+            # 2. Cloud & SaaS tokens (all files)
+            if re.search(r"\b(?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16}\b", s_line):
+                findings.append(f"[{filepath}] AWS Access Key ID detected: `{s_line[:30]}...`")
+            if re.search(r"\bgh[pousr]_[A-Za-z0-9_]{36,}\b", s_line):
+                findings.append(f"[{filepath}] GitHub Personal Access Token detected: `{s_line[:30]}...`")
+
+            # 3. EF Core SQLi via string interpolation in raw queries (C# only)
+            if ext in (".cs", ".fs"):
+                if re.search(r"\.(?:FromSqlRaw|ExecuteSqlRaw|ExecuteSqlInterpolated)\s*\(\s*\$\"", s_line):
+                    findings.append(f"[{filepath}] SQL Injection: String interpolation inside EF Core raw SQL method: `{s_line}`")
+
+            # 4. Dangerous shell execution with untrusted input (Python / Shell only)
+            if ext in (".py", ".sh", ".bash"):
+                if re.search(r"shell\s*=\s*True", s_line) and any(x in s_line for x in ["+", "format", "f\"", "f'"]):
+                    findings.append(f"[{filepath}] Potential Command Injection with shell=True and string formatting: `{s_line}`")
+
+            # 5. Raw hardcoded password literals
+            if re.search(r"""(?i)\b(?:password|passwd|client_secret)\s*[:=]\s*["'][^"'\$\{\}]{10,}["']""", s_line):
+                if not any(safe_word in s_line.lower() for safe_word in ["mock", "test", "fake", "dummy", "example", "placeholder", "localhost", "secret_name", "env."]):
+                    findings.append(f"[{filepath}] Potential Hardcoded Secret Literal: `{s_line[:45]}...`")
 
     return findings
 
 
 def get_available_ollama_model() -> tuple[bool, str, list[str]]:
-    """
-    Checks if Ollama is running and returns (is_running, resolved_model_name, available_models).
-    """
     try:
         req = urllib.request.Request(f"{OLLAMA_ENDPOINT}/api/tags", method="GET")
         with urllib.request.urlopen(req, timeout=3) as response:
             if response.status != 200:
-                print(f"{DIM}[QA Hook] Ollama returned HTTP status {response.status}. Skipping AI check.{RESET}")
+                print(f"{DIM}[Security Hook] Ollama returned HTTP status {response.status}. Skipping AI check.{RESET}")
                 return False, "", []
             data = json.loads(response.read().decode("utf-8"))
             models = [m.get("name", "") for m in data.get("models", [])]
@@ -120,15 +148,20 @@ def get_available_ollama_model() -> tuple[bool, str, list[str]]:
                 if "qwen" in m.lower() or "coder" in m.lower():
                     return True, m, models
 
+            # DeepSeek fallback (commented out):
+            # for m in models:
+            #     if "deepseek" in m.lower():
+            #         return True, m, models
+
             return True, "", models
     except urllib.error.URLError as e:
-        print(f"{DIM}[QA Hook] Ollama connection error ({e.reason}) at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
+        print(f"{DIM}[Security Hook] Ollama connection error ({e.reason}) at {OLLAMA_ENDPOINT}. Skipping AI check.{RESET}")
         return False, "", []
     except json.JSONDecodeError as e:
-        print(f"{DIM}[QA Hook] Failed to parse Ollama tags response as JSON: {e}. Skipping AI check.{RESET}")
+        print(f"{DIM}[Security Hook] Failed to parse Ollama tags response as JSON: {e}. Skipping AI check.{RESET}")
         return False, "", []
     except Exception as e:
-        print(f"{DIM}[QA Hook] Unexpected error discovering Ollama models: {e}. Skipping AI check.{RESET}")
+        print(f"{DIM}[Security Hook] Unexpected error discovering Ollama models: {e}. Skipping AI check.{RESET}")
         return False, "", []
 
 
@@ -179,87 +212,92 @@ def strip_thinking(text: str) -> str:
     return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
 
+def extract_thinking(text: str) -> str:
+    match = re.search(r"<think>(.*?)</think>", text, flags=re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+
 def build_system_prompt(categories: dict[str, list[str]], deterministic_findings: list[str]) -> str:
     langs = []
     rules = []
 
     if categories["dotnet"]:
-        langs.append("C# / .NET (Clean Architecture, MediatR, EF Core)")
+        langs.append("C# / ASP.NET Core (.NET)")
         rules.append(
-            "- C# / .NET:\n"
-            "  * Async: Detect sync-over-async (.Result, .Wait()), missing await on Task returns, or async void.\n"
-            "  * EF Core & CQRS: Detect N+1 queries in loops, missing AsNoTracking() on read-only queries, or mutating state in MediatR query handlers.\n"
-            "  * Null safety: Detect unguarded null dereferences on reference types."
+            "- C# / ASP.NET Core:\n"
+            "  * Injection: Flag EF Core raw queries using string interpolation ($) instead of parameterized queries.\n"
+            "  * Auth/BOLA: Flag public API controller actions exposing sensitive data modification without [Authorize] or permission policies.\n"
+            "  * Secrets: Flag raw connection strings containing plaintext DB passwords."
         )
 
-    if categories["python"]:
-        langs.append("Python")
+    if categories["python"] or categories["shell"]:
+        langs.append("Python / Shell DevOps Scripting")
         rules.append(
-            "- Python:\n"
-            "  * Detect swallowed exceptions, mutable default args, or unclosed file/stream handles.\n"
-            "  * Detect failure to check subprocess return codes or unhandled JSON decoding."
-        )
-
-    if categories["shell"]:
-        langs.append("Shell / Bash")
-        rules.append(
-            "- Shell:\n"
-            "  * Detect unquoted variable expansions in commands, failure to handle exit codes, or broken pipe handling."
+            "- Developer Tooling & Scripts:\n"
+            "  * IMPORTANT GROUNDING: Local CLI scripts, git hooks, and build tools run under developer privileges.\n"
+            "    DO NOT flag them for missing authentication, role-based authorization, or user login policies!\n"
+            "  * Injection: Flag unsafe command construction with unvalidated inputs passed to shell=True, exec, or eval.\n"
+            "  * Secrets: Reading environment variables via os.environ or os.getenv is standard and SAFE. Do NOT flag this."
         )
 
     if categories["web"]:
-        langs.append("Frontend / TypeScript / JavaScript")
+        langs.append("Frontend / Web")
         rules.append(
             "- Frontend:\n"
-            "  * Detect unhandled Promise rejections, memory leaks (un-cleaned listeners/intervals), or state mutation bugs."
+            "  * Flag dangerous innerHTML injections or sensitive backend secrets packaged into client-side code."
         )
 
     stack_str = ", ".join(langs) if langs else "General Code"
-    rules_str = "\n".join(rules) if rules else "- Focus on syntax, unhandled error cases, and logic flow."
+    rules_str = "\n".join(rules) if rules else "- Focus on genuine exploitable vulnerabilities and secret leaks."
 
     findings_block = ""
     if deterministic_findings:
         findings_block = (
-            "\n### ⚠️ AUTOMATED PRE-SCAN FINDINGS (Verify these carefully):\n" +
+            "\n### 🚨 AUTOMATED PRE-SCAN SECURITY FINDINGS (Confirm these in your report):\n" +
             "\n".join(f"- {finding}" for finding in deterministic_findings) +
             "\n"
         )
+    else:
+        findings_block = "\n### ✅ AUTOMATED PRE-SCAN: Static pattern check found no hardcoded keys or SQL interpolation.\n"
 
     return (
-        f"You are an elite Principal Software Engineer acting as a strict Git pre-commit QA gatekeeper.\n"
+        "You are an elite Principal DevSecOps and Application Security Auditor.\n"
         f"Staged Technology Stack: {stack_str}\n\n"
-        "### STRICT GROUNDING & ANTI-FLUFF RULES:\n"
-        "1. GROUNDING: Evaluate ONLY the code visible in the diff and surrounding context. Never speculate on unseen code or dependencies.\n"
-        "2. FORBIDDEN GENERIC ADVICE: Do NOT suggest 'add unit tests', 'consider logging', 'check race conditions', or 'refactor for maintainability'. Every reported issue MUST cite a concrete, demonstrable defect in the diff.\n"
-        "3. SILENCE ON CLEAN CODE: If there are zero critical logic bugs, memory leaks, or performance bottlenecks, you MUST output '- None identified' and APPROVE.\n"
+        "### STRICT GROUNDING & ANTI-HALLUCINATION RULES:\n"
+        "1. GROUNDING: Base findings strictly on demonstrable attack surfaces in the diff. Never hallucinate invisible dependencies or libraries.\n"
+        "2. SAFE PATTERNS (DO NOT FLAG):\n"
+        "   - Reading environment variables (os.environ, IConfiguration, process.env) is standard and SAFE.\n"
+        "   - Local scripts, pre-commit hooks, and tooling do NOT require user authorization or JWT policies.\n"
+        "   - Localhost URLs, test values, and mock tokens are SAFE.\n"
+        "3. SILENCE ON SECURE CODE: If there are no genuine, exploitable vulnerabilities or exposed production secrets, you MUST output '- None identified' and APPROVE.\n"
         "4. DO NOT OUTPUT RAW JSON: You must format your response strictly using the Markdown headers below.\n\n"
-        "### DOMAIN CRITERIA:\n"
+        "### DOMAIN SECURITY CRITERIA:\n"
         f"{rules_str}\n"
         f"{findings_block}\n"
         "### OUTPUT FORMAT (Follow exactly):\n\n"
-        "### 🔍 Summary\n"
-        "[1-2 crisp sentences describing the architectural or logic changes]\n\n"
-        "### ⚙️ Analysis\n"
-        "[Technical evaluation of the code against the criteria]\n\n"
-        "### 🚀 QA & Performance Issues\n"
-        "- [Actionable defect with code/line reference, or '- None identified']\n\n"
-        "### 💡 Actionable Improvement\n"
-        "- [One concrete technical improvement directly applicable to this diff, or '- None']\n\n"
+        "### 🛡️ Security Assessment Summary\n"
+        "[1-2 crisp sentences summarizing the security posture of the changes]\n\n"
+        "### ⚙️ Threat Analysis\n"
+        "[Technical evaluation of inputs, execution boundaries, and secrets]\n\n"
+        "### 🚨 Vulnerabilities\n"
+        "- [Actionable, exploitable vulnerability with code reference, or '- None identified']\n\n"
+        "### 🔒 Hardening Suggestions\n"
+        "- [Concrete defense-in-depth improvement directly applicable to this diff, or '- None']\n\n"
         "### 🎯 Verdict\n"
         "[VERDICT: APPROVE] or [VERDICT: REJECT]"
     )
 
 
-def parse_verdict(response_text: str) -> str:
-    """
-    Robustly parses verdict. Fails closed (REJECT) if rejections or unresolved issues are found.
-    Handles JSON responses, raw markdown, and token patterns.
-    """
+def parse_verdict(response_text: str, deterministic_findings: list[str]) -> str:
+    # If the deterministic scanner caught a confirmed hardcoded key or raw SQLi interpolation, reject immediately
+    if deterministic_findings:
+        return "REJECT"
+
     clean = strip_thinking(response_text).strip()
     if not clean:
         return "REJECT"
 
-    # 1. Handle JSON response fallback (e.g. {"response": "REJECT"})
+    # 1. Handle JSON response fallback
     json_candidate = clean
     json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", clean, re.DOTALL)
     if json_match:
@@ -278,15 +316,15 @@ def parse_verdict(response_text: str) -> str:
         except (json.JSONDecodeError, ValueError, TypeError, AttributeError):
             pass
 
-    # 2. Check for actionable bulleted issues under QA Issues
-    issues_match = re.search(r"###\s*🚀\s*QA & Performance Issues\s*[\r\n]+(.*?)(?:\n###|\Z)", clean, re.DOTALL | re.IGNORECASE)
-    if issues_match:
-        content = issues_match.group(1).strip()
-        has_real_issues = any(
+    # 2. Check for actionable vulnerabilities listed under Vulnerabilities section
+    vuln_match = re.search(r"###\s*🚨\s*Vulnerabilities\s*[\r\n]+(.*?)(?:\n###|\Z)", clean, re.DOTALL | re.IGNORECASE)
+    if vuln_match:
+        vuln_content = vuln_match.group(1).strip()
+        has_real_vulns = any(
             l.strip().startswith("-") and not re.search(r"\bnone(?:\s+identified)?\b", l, re.IGNORECASE)
-            for l in content.splitlines()
+            for l in vuln_content.splitlines()
         )
-        if has_real_issues:
+        if has_real_vulns:
             return "REJECT"
 
     # 3. Check explicit ### 🎯 Verdict section
@@ -335,7 +373,7 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str],
             "top_p": 0.85,
             "num_ctx": 16384,
         },
-        "keep_alive": 0  # Evict model from GPU immediately after inference
+        "keep_alive": 0  # Evict model from GPU immediately after review
     }
 
     req = urllib.request.Request(
@@ -345,41 +383,56 @@ def stream_review_from_ollama(model_name: str, diff_text: str, files: list[str],
     )
 
     full_response = ""
-    print(f"\n{BOLD}{CYAN}🤖 QA Agent ({model_name}) reviewing {len(files)} staged file(s)...{RESET}\n")
+    in_think_block = False
+    print(f"\n{BOLD}{MAGENTA}🛡️  Security Agent ({model_name}) reviewing {len(files)} staged file(s)...{RESET}\n")
     if truncated:
         print(f"{DIM}(Note: Staged diff exceeded pre-commit limit; truncated at file boundaries){RESET}\n")
 
     try:
-        with urllib.request.urlopen(req, timeout=180) as response:
+        with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
             for line in response:
                 if not line:
                     continue
                 chunk = json.loads(line.decode("utf-8"))
                 token = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
-                sys.stdout.write(token)
-                sys.stdout.flush()
                 full_response += token
-        print("\n")
+
+                if "<think>" in token:
+                    in_think_block = True
+                if "</think>" in token:
+                    in_think_block = False
+                    sys.stdout.write(RESET)
+                    sys.stdout.flush()
+                    continue
+
+                sys.stdout.write((DIM if in_think_block else RESET) + token)
+                sys.stdout.flush()
+        print(f"{RESET}\n")
     except Exception as e:
-        print(f"\n{YELLOW}⚠️ Error during Ollama inference: {e}{RESET}\n")
+        print(f"\n{YELLOW}⚠️ Error during Ollama security review: {e}{RESET}\n")
         return "", "ERROR"
 
-    verdict = parse_verdict(full_response)
+    verdict = parse_verdict(full_response, deterministic_findings)
     return full_response, verdict
 
 
-def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str], review_text: str, verdict: str):
+def save_security_report(repo_root: str, branch: str, model_name: str, files: list[str], review_text: str, verdict: str):
     git_dir = os.path.join(repo_root, ".git")
     if not os.path.exists(git_dir):
         return
 
-    report_path = os.path.join(git_dir, "LAST_QA_REPORT.md")
+    report_path = os.path.join(git_dir, "LAST_SECURITY_REPORT.md")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    badge = "🟢 **PASSED (APPROVE)**" if verdict == "APPROVE" else "🔴 **REJECTED (SECURITY RISKS FOUND)**"
 
-    badge = "🟢 **PASSED (APPROVE)**" if verdict == "APPROVE" else "🔴 **REJECTED (ISSUES REPORTED)**"
-    body = review_text.strip() if review_text.strip() else "_(Model returned an empty response — treated as REJECT.)_"
+    answer = strip_thinking(review_text)
+    reasoning = extract_thinking(review_text)
+    reasoning_block = (
+        f"\n<details>\n<summary>🧠 Model Reasoning (click to expand)</summary>\n\n{reasoning}\n\n</details>\n"
+        if reasoning else ""
+    )
 
-    report_content = f"""# 🤖 Local QA Pre-Commit Report
+    report_content = f"""# 🛡️ Local Security Pre-Commit Report
 
 - **Date:** `{now_str}`
 - **Branch:** `{branch}`
@@ -393,8 +446,8 @@ def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str
 
 ---
 
-{body}
-
+{answer.strip()}
+{reasoning_block}
 ---
 *Generated automatically by `.git/hooks/pre-commit` via Ollama.*
 """
@@ -402,41 +455,42 @@ def save_qa_report(repo_root: str, branch: str, model_name: str, files: list[str
     try:
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(report_content)
-        print(f"{DIM}📄 Full QA report saved to: .git/LAST_QA_REPORT.md{RESET}")
+        print(f"{DIM}📄 Full Security report saved to: .git/LAST_SECURITY_REPORT.md{RESET}")
     except Exception as e:
-        print(f"{DIM}[QA Hook] Could not save report file: {e}{RESET}")
+        print(f"{DIM}[Security Hook] Could not save report file: {e}{RESET}")
 
 
 def prompt_user_confirmation(verdict: str) -> bool:
-    tty_path = "/dev/tty"
-    if not os.path.exists(tty_path):
+    if verdict == "APPROVE":
+        print(f"{GREEN}{BOLD}✅ Security Verdict: APPROVED! No blocking security risks detected.{RESET}\n")
         return True
 
+    print(f"{RED}{BOLD}🛑 Security Review REJECTED this commit based on risks above.{RESET}\n")
+    tty_path = "/dev/tty"
     try:
-        with open(tty_path, "r") as tty_in, open(tty_path, "w") as tty_out:
-            if verdict == "APPROVE":
-                tty_out.write(f"{GREEN}{BOLD}✅ QA Verdict: APPROVED! Proceeding with commit...{RESET}\n\n")
-                return True
-            else:
-                tty_out.write(f"{YELLOW}{BOLD}⚠️  QA Review REJECTED this commit based on issues above.{RESET}\n")
-                tty_out.write(f"{BOLD}Proceed with commit anyway? [Y/n]: {RESET}")
+        if os.path.exists(tty_path):
+            with open(tty_path, "r") as tty_in, open(tty_path, "w") as tty_out:
+                tty_out.write(f"{BOLD}Proceed with commit anyway? [y/N]: {RESET}")
                 tty_out.flush()
                 answer = tty_in.readline().strip().lower()
-                if answer in ("", "y", "yes"):
-                    tty_out.write(f"{GREEN}Proceeding with commit.{RESET}\n\n")
+                if answer in ("y", "yes"):
+                    tty_out.write(f"{YELLOW}Bypassing security rejection upon user request.{RESET}\n\n")
                     return True
                 else:
-                    tty_out.write(f"{RED}Commit aborted by user.{RESET}\n\n")
+                    tty_out.write(f"{RED}Commit aborted due to security rejection.{RESET}\n\n")
                     return False
     except (KeyboardInterrupt, EOFError):
         print(f"\n{RED}Commit aborted.{RESET}")
         return False
     except Exception:
-        return True
+        pass
+
+    print(f"{RED}Non-interactive session: Aborting commit due to security rejection.{RESET}\n")
+    return False
 
 
 def main():
-    if os.environ.get("SKIP_QA") == "1":
+    if os.environ.get("SKIP_SECURITY_REVIEW") == "1" or os.environ.get("SKIP_QA") == "1":
         return 0
 
     repo_root, branch, _ = get_git_info()
@@ -444,7 +498,7 @@ def main():
     try:
         file_diffs = get_staged_diff_per_file()
     except subprocess.CalledProcessError as e:
-        print(f"{YELLOW}[QA Hook] Could not read git diff: {e}{RESET}")
+        print(f"{YELLOW}[Security Hook] Could not read git diff: {e}{RESET}")
         return 0
 
     if not file_diffs:
@@ -453,13 +507,15 @@ def main():
     files = list(file_diffs.keys())
     categories = classify_files(files)
 
+    # Deterministic static scan runs in < 2ms
+    deterministic_findings = run_deterministic_security_scan(file_diffs)
+
     # FAST PATH: If only documentation or static configuration files are staged, skip LLM
     has_code = any([categories["dotnet"], categories["python"], categories["shell"], categories["web"]])
     if not has_code:
-        print(f"{DIM}[QA Hook] Only documentation or static configs staged. Skipping AI QA check.{RESET}")
-        return 0
-
-    deterministic_findings = run_deterministic_qa_checks(file_diffs)
+        if not deterministic_findings:
+            print(f"{DIM}[Security Hook] Only documentation or static configs staged (secrets scan clean). Skipping AI security check.{RESET}")
+            return 0
 
     is_running, resolved_model, available_models = get_available_ollama_model()
 
@@ -468,8 +524,9 @@ def main():
 
     if not resolved_model:
         available_str = f" (installed: {', '.join(available_models)})" if available_models else ""
-        print(f"{YELLOW}[QA Hook] Ollama is running, but no suitable Qwen/Coder model was found{available_str}.{RESET}")
-        print(f"{DIM}[QA Hook] To enable AI pre-commit reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
+        print(f"{YELLOW}[Security Hook] Ollama is running, but no suitable Qwen/Coder model was found{available_str}.{RESET}")
+        print(f"{DIM}[Security Hook] To enable AI pre-commit security reviews, run: `ollama pull qwen2.5-coder:7b`{RESET}")
+        # print(f"{DIM}[Security Hook] For DeepSeek-R1: `ollama pull deepseek-r1:14b`{RESET}")
         return 0
 
     diff_text, truncated = build_clean_diff_text(file_diffs, MAX_DIFF_CHARS)
@@ -478,7 +535,7 @@ def main():
     if verdict == "ERROR":
         return 0
 
-    save_qa_report(repo_root, branch, resolved_model, files, response, verdict)
+    save_security_report(repo_root, branch, resolved_model, files, response, verdict)
 
     proceed = prompt_user_confirmation(verdict)
     if not proceed:

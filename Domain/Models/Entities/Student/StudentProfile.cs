@@ -82,10 +82,16 @@ namespace Domain.Models.Entities.Student
 
         public void SetSkills(IEnumerable<Guid>? skillIds)
         {
-            _studentSkills.Clear();
-            if (skillIds != null)
+            var targetIds = skillIds?.Distinct().ToHashSet() ?? new HashSet<Guid>();
+
+            // Remove skills no longer selected
+            _studentSkills.RemoveAll(s => !targetIds.Contains(s.SkillId));
+
+            // Add newly selected skills
+            var existingIds = _studentSkills.Select(s => s.SkillId).ToHashSet();
+            foreach (var skillId in targetIds)
             {
-                foreach (var skillId in skillIds.Distinct())
+                if (!existingIds.Contains(skillId))
                 {
                     _studentSkills.Add(new StudentSkill
                     {
@@ -98,10 +104,23 @@ namespace Domain.Models.Entities.Student
 
         public void SetLanguages(IEnumerable<(Guid LanguageId, LanguageProficiencyLevel ProficiencyLevel)>? languages)
         {
-            _studentLanguages.Clear();
-            if (languages != null)
+            var targetList = languages?.ToList() ?? new List<(Guid LanguageId, LanguageProficiencyLevel ProficiencyLevel)>();
+            var targetDict = targetList
+                .GroupBy(l => l.LanguageId)
+                .ToDictionary(g => g.Key, g => g.Last().ProficiencyLevel);
+
+            // Remove languages no longer selected
+            _studentLanguages.RemoveAll(l => !targetDict.ContainsKey(l.LanguageId));
+
+            // Update existing or add new languages
+            foreach (var (langId, level) in targetDict)
             {
-                foreach (var (langId, level) in languages)
+                var existing = _studentLanguages.FirstOrDefault(l => l.LanguageId == langId);
+                if (existing != null)
+                {
+                    existing.ProficiencyLevel = level;
+                }
+                else
                 {
                     _studentLanguages.Add(new StudentLanguage
                     {

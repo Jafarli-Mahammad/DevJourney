@@ -10,6 +10,8 @@ namespace Application.Repositories
         Task<List<(StudentProfile Profile, string? Email)>> GetAllWithEmailAsync(CancellationToken cancellationToken = default);
         Task<(StudentProfile Profile, string? Email)?> GetWithEmailByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<StudentProfile?> GetFullProfileByIdAsync(Guid id, bool asNoTracking, CancellationToken cancellationToken = default);
         Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, CancellationToken cancellationToken = default);
+        Task<StudentProfile?> GetFullProfileByUserIdAsync(Guid applicationUserId, bool asNoTracking, CancellationToken cancellationToken = default);
     }
 }
