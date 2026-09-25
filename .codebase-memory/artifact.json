@@ -1,11 +1,11 @@
 {
     "schema_version": 2,
-    "commit": "05283ae93744c2dc2e0d21c0811ba8d2bb1e1b2d",
-    "indexed_at": "2026-09-25T18:25:54Z",
+    "commit": "48b703fc37fc877d426107c53be750e50be3f410",
+    "indexed_at": "2026-09-25T19:02:51Z",
     "project": "home-mahammadjafarli-source-repos-DevJourney",
-    "nodes": 3906,
-    "edges": 11084,
-    "original_size": 14286848,
-    "compressed_size": 2046140,
+    "nodes": 8172,
+    "edges": 30962,
+    "original_size": 60424192,
+    "compressed_size": 5347328,
     "compression_level": 3
 }

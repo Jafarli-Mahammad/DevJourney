@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevJourney — 3D Architecture Dependency Graph</title>
+    <script>
+      // Ensure default query parameters for standalone GitHub Pages viewing
+      const url = new URL(window.location.href);
+      let replaced = false;
+      if (!url.searchParams.has('tab')) {
+        url.searchParams.set('tab', 'graph');
+        replaced = true;
+      }
+      if (!url.searchParams.has('project')) {
+        url.searchParams.set('project', 'home-mahammadjafarli-source-repos-DevJourney');
+        replaced = true;
+      }
+      if (replaced) {
+        window.history.replaceState({}, '', url.toString());
+      }
+
+      // Static Mock Interceptor for GitHub Pages / Standalone Hosting
+      const _origFetch = window.fetch;
+      window.fetch = async function(resource, init) {
+        const reqUrl = typeof resource === 'string' ? resource : (resource && resource.url) || '';
+        
+        // Resolve relative to current document location
+        const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+
+        if (reqUrl.includes('/api/layout')) {
+          return _origFetch(basePath + 'data/layout.json');
+        }
+        if (reqUrl.includes('/api/repo-info')) {
+          return _origFetch(basePath + 'data/repo-info.json');
+        }
+        if (reqUrl.includes('/api/ui-config')) {
+          return _origFetch(basePath + 'data/ui-config.json');
+        }
+        if (reqUrl.includes('/api/project-health')) {
+          return _origFetch(basePath + 'data/project-health.json');
+        }
+        if (reqUrl.includes('/api/adr')) {
+          return _origFetch(basePath + 'data/adr.json');
+        }
+        if (reqUrl.startsWith('/api/') || reqUrl.includes('/api/')) {
+          return new Response(JSON.stringify({}), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
+        return _origFetch(resource, init);
+      };
+    </script>
+    <script type="module" crossorigin src="./assets/index-BiHLJL7z.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Bk-h0GSQ.css">
+  </head>
+  <body class="bg-[#0a0a10] text-[#e4e4ed] min-h-screen">
+    <div id="root"></div>
+  </body>
+</html>

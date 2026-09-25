@@ -106,23 +106,31 @@ The full codebase structure and AST relationship topology is indexed using [Code
   <img src="docs/architecture-graph.png" alt="DevJourney 3D Architecture Dependency Graph" width="100%" />
 </div>
 
-#### 🌐 Hosting the Interactive 3D Graph on GitHub Pages
+#### 🌐 Interactive 3D Graph & GitHub Pages Hosting
 
-You can host and explore the interactive 3D graph via GitHub Pages:
+The interactive 3D graph web application is fully pre-packaged and self-contained inside the [`docs/`](docs/) directory:
 
-1. **Local Graph Inspection:**
-   Run the Codebase Memory UI server locally:
-   ```bash
-   npx codebase-memory-mcp
-   ```
-   Open `http://localhost:9749` to interactively inspect nodes, filter by layer/module, trace call chains, and navigate dead-code analysis.
+1. **Viewing Locally:**
+   - **Standalone Static Mode:** Serve the `docs/` directory with any static file server:
+     ```bash
+     npx serve docs
+     # or: python3 -m http.server 8080 --directory docs
+     ```
+   - **Live MCP Engine Mode:** Run Codebase Memory locally for real-time query exploration and AST re-indexing:
+     ```bash
+     npx codebase-memory-mcp
+     ```
+     Open `http://localhost:9749/?tab=graph&project=home-mahammadjafarli-source-repos-DevJourney`.
 
-2. **Deploying Static Visualization to GitHub Pages:**
-   - The graph topology is persisted in [`.codebase-memory/graph.db.zst`](.codebase-memory/graph.db.zst).
-   - Export your static UI bundle and graph data into a `gh-pages` branch or the `/docs` folder.
-   - In GitHub, navigate to **Settings** > **Pages** > **Build and deployment**.
-   - Select **Source**: `Deploy from a branch` and choose branch `main` with folder `/docs` (or your dedicated `gh-pages` branch).
-   - Once deployed, your interactive graph will be accessible at `https://<your-username>.github.io/DevJourney/`.
+2. **Publishing Live to GitHub Pages:**
+   - The [`docs/`](docs/) directory contains the pre-rendered WebGL 3D client (`index.html`, assets, and AST layout data).
+   - In your GitHub repository:
+     1. Go to **Settings** > **Pages**.
+     2. Under **Build and deployment** > **Source**, choose **Deploy from a branch**.
+     3. Select **Branch**: `main` and **Folder**: `/docs`.
+     4. Click **Save**.
+   - Your live interactive 3D graph will be accessible at:
+     `https://<your-username>.github.io/DevJourney/`
 
 ---
 
