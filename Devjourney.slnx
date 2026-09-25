@@ -2,9 +2,6 @@
   <Folder Name="/Certificates/">
     <File Path="..\DevJourneyFront\devjourney\public\assets\certificates\baku-id-finalist copy.svg" />
   </Folder>
-  <Folder Name="/FrontendFrames/">
-    <File Path="..\..\..\Downloads\DevJourney Frames\frontend_screenshots.pdf" />
-  </Folder>
   <Folder Name="/Route/">
     <File Path="..\DevJourneyFront\devjourney\Route.md" />
     <File Path="..\routes.md" />

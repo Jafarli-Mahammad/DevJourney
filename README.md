@@ -98,6 +98,32 @@ flowchart LR
     DataLayer --> Redis
 ```
 
+### 🌌 3D Codebase Knowledge & Dependency Graph
+
+The full codebase structure and AST relationship topology is indexed using [Codebase Memory](https://github.com/DeusData/codebase-memory-mcp) (analyzing **3,904 nodes** and **11,082 structural relationships** across classes, interfaces, CQRS handlers, methods, and routes):
+
+<div align="center">
+  <img src="docs/architecture-graph.png" alt="DevJourney 3D Architecture Dependency Graph" width="100%" />
+</div>
+
+#### 🌐 Hosting the Interactive 3D Graph on GitHub Pages
+
+You can host and explore the interactive 3D graph via GitHub Pages:
+
+1. **Local Graph Inspection:**
+   Run the Codebase Memory UI server locally:
+   ```bash
+   npx codebase-memory-mcp
+   ```
+   Open `http://localhost:9749` to interactively inspect nodes, filter by layer/module, trace call chains, and navigate dead-code analysis.
+
+2. **Deploying Static Visualization to GitHub Pages:**
+   - The graph topology is persisted in [`.codebase-memory/graph.db.zst`](.codebase-memory/graph.db.zst).
+   - Export your static UI bundle and graph data into a `gh-pages` branch or the `/docs` folder.
+   - In GitHub, navigate to **Settings** > **Pages** > **Build and deployment**.
+   - Select **Source**: `Deploy from a branch` and choose branch `main` with folder `/docs` (or your dedicated `gh-pages` branch).
+   - Once deployed, your interactive graph will be accessible at `https://<your-username>.github.io/DevJourney/`.
+
 ---
 
 ## 🛠️ Tech Stack
